@@ -1,4 +1,4 @@
-# mathAI
+# mathAI - Frontend
 
 Work in progress!
 
