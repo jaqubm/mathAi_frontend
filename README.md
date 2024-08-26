@@ -1,5 +1,7 @@
 # mathAI
 
+Work in progress!
+
 ## Tech stack
 
 - Next.js
