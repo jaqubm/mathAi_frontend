@@ -6,7 +6,7 @@ on:
       - main
 
 env:
-  API_URL: ${{ secrets.API_URL }}
+  API_URL: ${{ variables.API_URL }}
 
 jobs:
   build_and_deploy_job:
