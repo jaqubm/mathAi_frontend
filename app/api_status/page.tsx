@@ -1,16 +1,14 @@
-'use client'
-
 import React from "react";
+
 import {Vortex} from "@/components/ui/vortex";
-import { Button } from "@/components/ui/button"
-import {useRouter} from "next/navigation";
 
-export default function VortexDemo() {
-    const router = useRouter()
-
-    const redirectApiStatus = () => {
-        router.push('/api_status')
+export default async function ApiStatusPage() {
+    const getApiStatus = async () => {
+        const response = await fetch(`${process.env.API_URL}/api/status`)
+        return response.json()
     }
+
+    const apiStatus = await getApiStatus()
 
     return (
         <div className="w-full mx-auto rounded-md  h-screen overflow-hidden">
@@ -23,12 +21,8 @@ export default function VortexDemo() {
                 </h2>
 
                 <p className="text-white text-sm md:text-2xl max-w-xl mt-6 text-center">
-                    Work in progress!
+                    apiStatus: {apiStatus.apiStatus}
                 </p>
-
-                <Button variant='secondary' className='mt-6' onClick={redirectApiStatus}>
-                    API Status
-                </Button>
             </Vortex>
         </div>
     );
