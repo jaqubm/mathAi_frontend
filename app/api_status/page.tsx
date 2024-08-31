@@ -4,11 +4,23 @@ import {Vortex} from "@/components/ui/vortex";
 
 export default async function ApiStatusPage() {
     const getApiStatus = async () => {
-        const response = await fetch(`${process.env.API_URL}/api/status`)
-        return response.json()
+        try {
+            const response = await fetch(`${process.env.API_URL}/api/status`, {
+                cache: "no-cache",
+            })
+            return response.json()
+        }
+        catch (e) {
+            return {
+                apiStatus: "Failed",
+                openAIApiConnectionStatus: "Failed"
+            }
+        }
     }
 
     const apiStatus = await getApiStatus()
+
+    console.log(apiStatus)
 
     return (
         <div className="w-full mx-auto rounded-md  h-screen overflow-hidden">
@@ -22,6 +34,9 @@ export default async function ApiStatusPage() {
 
                 <p className="text-white text-sm md:text-2xl max-w-xl mt-6 text-center">
                     apiStatus: {apiStatus.apiStatus}
+                </p>
+                <p className="text-white text-sm md:text-2xl max-w-xl mt-6 text-center">
+                    openAIApiConnectionStatus: {apiStatus.openAIApiConnectionStatus}
                 </p>
             </Vortex>
         </div>
