@@ -20,8 +20,6 @@ export default async function ApiStatusPage() {
 
     const apiStatus = await getApiStatus()
 
-    console.log(apiStatus)
-
     return (
         <div className="w-full mx-auto rounded-md  h-screen overflow-hidden">
             <Vortex
