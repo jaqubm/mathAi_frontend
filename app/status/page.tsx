@@ -1,7 +1,7 @@
 import React from "react";
 
 import {Vortex} from "@/components/ui/vortex";
-import { Button } from "@/components/ui/button"
+import {Button} from "@/components/ui/button"
 import Link from "next/link";
 
 const getApiStatus = async () => {
@@ -14,8 +14,7 @@ const getApiStatus = async () => {
             throw new Error(`HTTP error! Status: ${response.status}`)
         }
 
-        const data = await response.json()
-        return data
+        return await response.json()
     }
     catch (e) {
         console.log(e)
