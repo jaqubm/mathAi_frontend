@@ -1,23 +1,33 @@
 import React from "react";
 
 import {Vortex} from "@/components/ui/vortex";
+import { Button } from "@/components/ui/button"
+import Link from "next/link";
 
-export default async function ApiStatusPage() {
-    const getApiStatus = async () => {
-        try {
-            const response = await fetch(`${process.env.API_URL}/api/status`, {
-                cache: "no-cache",
-            })
-            return response.json()
+const getApiStatus = async () => {
+    try {
+        const response = await fetch(`${process.env.API_URL}/api/status`, {
+            cache: "no-cache",
+        })
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`)
         }
-        catch (e) {
-            return {
-                apiStatus: "Failed",
-                openAIApiConnectionStatus: "Failed"
-            }
+
+        const data = await response.json()
+        return data
+    }
+    catch (e) {
+        console.log(e)
+        
+        return {
+            apiStatus: "Failed",
+            openAIApiConnectionStatus: "Failed"
         }
     }
+}
 
+export default async function ApiStatusPage() {
     const apiStatus = await getApiStatus()
 
     return (
@@ -36,6 +46,12 @@ export default async function ApiStatusPage() {
                 <p className="text-white text-sm md:text-2xl max-w-xl mt-6 text-center">
                     openAIApiConnectionStatus: {apiStatus.openAIApiConnectionStatus}
                 </p>
+
+                <Link href='/'>
+                    <Button variant='secondary' className='mt-6'>
+                        Main Page
+                    </Button>
+                </Link>
             </Vortex>
         </div>
     );
