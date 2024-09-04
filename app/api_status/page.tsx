@@ -8,9 +8,17 @@ export default async function ApiStatusPage() {
             const response = await fetch(`${process.env.API_URL}/api/status`, {
                 cache: "no-cache",
             })
-            return response.json()
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`)
+            }
+
+            const data = await response.json()
+            return data
         }
         catch (e) {
+            console.log(e)
+            
             return {
                 apiStatus: "Failed",
                 openAIApiConnectionStatus: "Failed"
@@ -19,8 +27,6 @@ export default async function ApiStatusPage() {
     }
 
     const apiStatus = await getApiStatus()
-
-    console.log(apiStatus)
 
     return (
         <div className="w-full mx-auto rounded-md  h-screen overflow-hidden">
