@@ -9,7 +9,7 @@ export default function VortexDemo() {
     const router = useRouter()
 
     const redirectApiStatus = () => {
-        router.push('/api_status')
+        router.push('/status')
     }
 
     return (
