@@ -1,9 +1,3 @@
-import React from "react";
-
-import {Vortex} from "@/components/ui/vortex";
-import {Button} from "@/components/ui/button"
-import Link from "next/link";
-
 const getApiStatus = async () => {
     try {
         const response = await fetch(`${process.env.API_URL}/api/status`, {
@@ -30,28 +24,17 @@ export default async function ApiStatusPage() {
     const apiStatus = await getApiStatus()
 
     return (
-        <div className="w-full mx-auto rounded-md  h-screen overflow-hidden">
-            <Vortex
-                backgroundColor="black"
-                className="flex items-center flex-col justify-center px-2 md:px-10 py-4 w-full h-full"
-            >
-                <h2 className="text-white text-2xl md:text-6xl font-bold text-center">
-                    mathAi
-                </h2>
+        <div className="w-full mx-auto rounded-md  h-screen overflow-hidden flex flex-col justify-center items-center">
+            <h2 className="text-2xl md:text-6xl font-bold text-center">
+                mathAi
+            </h2>
 
-                <p className="text-white text-sm md:text-2xl max-w-xl mt-6 text-center">
-                    apiStatus: {apiStatus.apiStatus}
-                </p>
-                <p className="text-white text-sm md:text-2xl max-w-xl mt-6 text-center">
-                    openAIApiConnectionStatus: {apiStatus.openAIApiConnectionStatus}
-                </p>
-
-                <Link href='/'>
-                    <Button variant='secondary' className='mt-6'>
-                        Main Page
-                    </Button>
-                </Link>
-            </Vortex>
+            <p className="text-sm md:text-2xl max-w-xl mt-6 text-center">
+                apiStatus: {apiStatus.apiStatus}
+            </p>
+            <p className="text-sm md:text-2xl max-w-xl mt-6 text-center">
+                openAIApiConnectionStatus: {apiStatus.openAIApiConnectionStatus}
+            </p>
         </div>
     );
 }
