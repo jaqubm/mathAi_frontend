@@ -5,6 +5,7 @@ Work in progress!
 ## Tech stack
 
 - Next.js
+- Auth.js with Google OAuth
 - Tailwind CSS
 - TypeScript
 - ESLint
