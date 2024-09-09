@@ -7,7 +7,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         async signIn({ account }) {
             if (account) {
                 try {
-                    const response = await fetch(`${process.env.API_URL}/user/login`, {
+                    console.log(account.providerAccountId)
+                    const response = await fetch(`${process.env.API_URL}/User/Login`, {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
@@ -29,6 +30,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             }
 
             return false
-        }
+        },
     }
 })

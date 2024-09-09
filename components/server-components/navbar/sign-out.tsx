@@ -11,7 +11,7 @@ export function SignOut() {
         >
             <DropdownMenuItem>
                 <button type="submit">
-                    Sign Out
+                    Wyloguj się
                 </button>
             </DropdownMenuItem>
         </form>
