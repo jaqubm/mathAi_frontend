@@ -1,4 +1,5 @@
 import {Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
+import React from "react";
 
 const getApiStatus = async () => {
     try {
@@ -17,7 +18,8 @@ const getApiStatus = async () => {
 
         return {
             apiStatus: "Failed",
-            openAIApiConnectionStatus: "Failed"
+            databaseConnectionStatus: "Failed",
+            openAiApiConnectionStatus: "Failed",
         }
     }
 }
@@ -26,33 +28,39 @@ export default async function Status() {
     const apiStatus = await getApiStatus()
 
     return (
-        <Table>
-            <TableHeader>
-                <TableRow>
-                    <TableHead>
-                        Status witryny mathAi
-                    </TableHead>
-                </TableRow>
-                <TableRow>
-                    <TableHead>
-                        Połączenie
-                    </TableHead>
-                    <TableHead>
-                        Status
-                    </TableHead>
-                </TableRow>
-            </TableHeader>
+        <div>
+            <h2 className="md:text-6xl font-bold text-center">
+                mathAi
+            </h2>
 
-            <TableBody>
-                <TableRow>
-                    <TableCell>API mathAi</TableCell>
-                    <TableCell>{apiStatus.apiStatus}</TableCell>
-                </TableRow>
-                <TableRow>
-                    <TableCell>OpenAI</TableCell>
-                    <TableCell>{apiStatus.openAIApiConnectionStatus}</TableCell>
-                </TableRow>
-            </TableBody>
-        </Table>
+            <Table>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead>
+                            Połączenie
+                        </TableHead>
+                        <TableHead>
+                            Status
+                        </TableHead>
+                    </TableRow>
+                </TableHeader>
+
+                <TableBody>
+                    <TableRow>
+                        <TableCell>mathAi API</TableCell>
+                        <TableCell>{apiStatus.apiStatus}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell>mathAi Database</TableCell>
+                        <TableCell>{apiStatus.databaseConnectionStatus}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell>OpenAI</TableCell>
+                        <TableCell>{apiStatus.openAiApiConnectionStatus}</TableCell>
+                    </TableRow>
+                </TableBody>
+            </Table>
+
+        </div>
     )
 }
