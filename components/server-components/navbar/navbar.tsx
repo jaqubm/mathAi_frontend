@@ -8,7 +8,6 @@ import {Sheet, SheetContent, SheetTrigger} from "@/components/ui/sheet"
 import {
     DropdownMenu,
     DropdownMenuContent,
-    DropdownMenuItem,
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
@@ -19,16 +18,35 @@ import {auth} from "@/auth";
 import {SignOut} from "@/components/server-components/navbar/sign-out";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {
-    Dialog,
-    DialogClose,
+    DialogAccountType,
     DialogContent,
     DialogDescription,
-    DialogFooter,
     DialogHeader,
-    DialogTitle,
-    DialogTrigger
-} from "@/components/ui/dialog";
+    DialogTitle
+} from "@/components/server-components/navbar/dialog-account-type";
 import {redirect} from "next/navigation";
+import React from "react";
+
+async function FirstTimeSignIn(email: string) {
+    if (email === "")
+        return false
+
+    try {
+        const response = await fetch(`${process.env.API_URL}/User/FirstTimeSignIn/${email}`, {
+            method: "Get",
+        })
+
+        if (response.ok) {
+            const firstTimeSignIn = await response.text()
+            return firstTimeSignIn === "true";
+        } else {
+            const errorMessage = await response.text()
+            console.error('Error: ', errorMessage)
+        }
+    } catch (e) {
+        console.error('Error: ', e)
+    }
+}
 
 async function IsTeacher(email: string) {
     if (email === "")
@@ -71,15 +89,45 @@ async function UpdateToTeacher(email: string) {
     }
 }
 
+async function UpdateToStudent(email: string) {
+    if (email === "")
+        return
+
+    try {
+        const response = await fetch(`${process.env.API_URL}/User/UpdateToStudent/${email}`, {
+            method: "Put",
+        })
+
+        if (response.ok) {
+            return
+        } else {
+            const errorMessage = await response.text()
+            console.error('Error: ', errorMessage)
+        }
+    } catch (e) {
+        console.error('Error: ', e)
+    }
+}
+
 export async function Navbar() {
     const user = await auth()
 
+    const firstTimeSignIn = await FirstTimeSignIn(user?.user?.email ?? "")
+
     const isTeacher = await IsTeacher(user?.user?.email ?? "")
 
-    const onClickUpdate = async () => {
+    const onClickUpdateToTeacher = async () => {
         'use server'
 
         await UpdateToTeacher(user?.user?.email ?? "")
+
+        redirect("/")
+    }
+
+    const onClickUpdateToStudent = async () => {
+        'use server'
+
+        await UpdateToStudent(user?.user?.email ?? "")
 
         redirect("/")
     }
@@ -135,9 +183,11 @@ export async function Navbar() {
             <div className="flex items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
 
                 {user ? (
-                    <Dialog>
+                    <DialogAccountType open={firstTimeSignIn}>
+
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
+
                                 <Button variant="secondary" size="icon" className="rounded-full">
                                     <Avatar>
                                         <AvatarImage src={user.user?.image?.toString()} alt={user.user?.name?.toString()} className="w-full h-full"/>
@@ -145,45 +195,50 @@ export async function Navbar() {
                                             <CircleUser className="h-5 w-5"/>
                                         </AvatarFallback>
                                     </Avatar>
+
                                     <span className="sr-only">Menu użytkownika</span>
                                 </Button>
+
                             </DropdownMenuTrigger>
+
                             <DropdownMenuContent className="w-fit flex flex-col items-center" align="center">
+
                                 <DropdownMenuLabel>{user.user?.name}</DropdownMenuLabel>
+
                                 <DropdownMenuSeparator/>
-                                {!isTeacher ? (
-                                    <DialogTrigger asChild>
-                                        <DropdownMenuItem>
-                                            Jesteś nauczycielem?
-                                        </DropdownMenuItem>
-                                    </DialogTrigger>
-                                ) : null}
+
                                 <SignOut/>
+
                             </DropdownMenuContent>
                         </DropdownMenu>
 
                         <DialogContent className="sm:max-w-md">
 
                             <DialogHeader>
-                                <DialogTitle>Jesteś nauczycielem?</DialogTitle>
+                                <DialogTitle>Twoje pierwsze logowanie?</DialogTitle>
                                 <DialogDescription>
-                                    Zaktualizuj swoje konto to konta nauczyciela.
+                                    Wybierz typ konta jakie ma zostać zastosowane.
+                                    Pamiętaj, tej decyzji nie można zmienić!
                                 </DialogDescription>
                             </DialogHeader>
 
-                            <DialogFooter className="flex items-center">
-                                <DialogClose asChild>
-                                    <form action={onClickUpdate}>
-                                        <Button type="submit">
-                                            Potwierdź
-                                        </Button>
-                                    </form>
-                                </DialogClose>
-                            </DialogFooter>
+                            <div className="flex items-center justify-center gap-3">
+                                <form action={onClickUpdateToTeacher}>
+                                    <Button type="submit">
+                                        Jestem nauczycielem
+                                    </Button>
+                                </form>
+
+                                <form action={onClickUpdateToStudent}>
+                                    <Button type="submit">
+                                        Jestem uczniem
+                                    </Button>
+                                </form>
+                            </div>
 
                         </DialogContent>
 
-                    </Dialog>
+                    </DialogAccountType>
                 ) : (
                     <SignIn/>
                 )}
