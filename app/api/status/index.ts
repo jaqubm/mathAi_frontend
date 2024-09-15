@@ -7,13 +7,15 @@ export const getApiStatus = async () => {
         })
 
         if (!response.ok) {
-            return new Error(`HTTP error! Status: ${response.status}`)
+            return {
+                apiStatus: "Failed",
+                databaseConnectionStatus: "Failed",
+                openAiApiConnectionStatus: "Failed",
+            }
         }
 
         return await response.json()
     } catch (e) {
-        console.error(e)
-
         return {
             apiStatus: "Failed",
             databaseConnectionStatus: "Failed",

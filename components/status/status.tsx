@@ -18,7 +18,7 @@ export default function Status() {
         };
 
         fetchStatus()
-            .then(r => setApiStatus(r));
+            .then(r => setApiStatus(r))
     }, []);
 
     return (
