@@ -3,7 +3,7 @@ export async function FirstTimeSignIn(email: string) {
         return false
 
     try {
-        const response = await fetch(`${process.env.API_URL}/User/FirstTimeSignIn/${email}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/User/FirstTimeSignIn/${email}`, {
             method: "Get",
         })
 
@@ -24,7 +24,7 @@ export async function IsTeacher(email: string) {
         return false
 
     try {
-        const response = await fetch(`${process.env.API_URL}/User/IsTeacher/${email}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/User/IsTeacher/${email}`, {
             method: "Get",
         })
 
@@ -45,7 +45,7 @@ export async function UpdateToTeacher(email: string) {
         return
 
     try {
-        const response = await fetch(`${process.env.API_URL}/User/UpdateToTeacher/${email}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/User/UpdateToTeacher/${email}`, {
             method: "Put",
         })
 
@@ -65,7 +65,7 @@ export async function UpdateToStudent(email: string) {
         return
 
     try {
-        const response = await fetch(`${process.env.API_URL}/User/UpdateToStudent/${email}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/User/UpdateToStudent/${email}`, {
             method: "Put",
         })
 
