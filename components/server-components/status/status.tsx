@@ -1,31 +1,25 @@
-import {Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
-import React from "react";
+'use client'
 
-const getApiStatus = async () => {
-    try {
-        const response = await fetch(`${process.env.API_URL}/api/status`, {
-            cache: "no-cache",
-        })
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
+import React, {useEffect, useState} from "react";
+import {Spinner} from "@/components/ui/spinner";
+import {getApiStatus} from "@/app/api/status/status";
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`)
-        }
+export default function Status() {
+    const [apiStatus, setApiStatus] = useState({
+        apiStatus: null,
+        databaseConnectionStatus: null,
+        openAiApiConnectionStatus: null
+    });
 
-        return await response.json()
-    }
-    catch (e) {
-        console.log(e)
+    useEffect(() => {
+        const fetchStatus = async () => {
+            return await getApiStatus();
+        };
 
-        return {
-            apiStatus: "Failed",
-            databaseConnectionStatus: "Failed",
-            openAiApiConnectionStatus: "Failed",
-        }
-    }
-}
-
-export default async function Status() {
-    const apiStatus = await getApiStatus()
+        fetchStatus()
+            .then(r => setApiStatus(r));
+    }, []);
 
     return (
         <div>
@@ -48,19 +42,18 @@ export default async function Status() {
                 <TableBody>
                     <TableRow>
                         <TableCell>mathAi API</TableCell>
-                        <TableCell>{apiStatus.apiStatus}</TableCell>
+                        <TableCell>{apiStatus.apiStatus ?? <Spinner size="small"/>}</TableCell>
                     </TableRow>
                     <TableRow>
                         <TableCell>mathAi Database</TableCell>
-                        <TableCell>{apiStatus.databaseConnectionStatus}</TableCell>
+                        <TableCell>{apiStatus.databaseConnectionStatus ?? <Spinner size="small"/>}</TableCell>
                     </TableRow>
                     <TableRow>
                         <TableCell>OpenAI</TableCell>
-                        <TableCell>{apiStatus.openAiApiConnectionStatus}</TableCell>
+                        <TableCell>{apiStatus.openAiApiConnectionStatus ?? <Spinner size="small"/>}</TableCell>
                     </TableRow>
                 </TableBody>
             </Table>
-
         </div>
-    )
+    );
 }
