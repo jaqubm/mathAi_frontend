@@ -3,7 +3,7 @@
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import React, {useEffect, useState} from "react";
 import {Spinner} from "@/components/ui/spinner";
-import {getApiStatus} from "@/app/api/status/status";
+import {getApiStatus} from "@/app/api/status";
 
 export default function Status() {
     const [apiStatus, setApiStatus] = useState({

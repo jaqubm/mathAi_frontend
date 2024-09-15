@@ -1,4 +1,4 @@
-import Status from "@/components/server-components/status/status";
+import Status from "@/components/status/status";
 
 export default function ApiStatusPage() {
     return (
