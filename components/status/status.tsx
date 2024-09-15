@@ -23,9 +23,9 @@ export default function Status() {
 
     return (
         <div>
-            <h2 className="md:text-6xl font-bold text-center">
+            <h1 className="md:text-6xl font-bold text-center">
                 mathAi
-            </h2>
+            </h1>
 
             <Table>
                 <TableHeader>

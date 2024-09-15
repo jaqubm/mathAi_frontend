@@ -62,6 +62,12 @@ export async function Navbar() {
                     Strona Główna
                 </Link>
                 <Link
+                    href="/generate"
+                    className="text-muted-foreground transition-colors hover:text-foreground"
+                >
+                    Generuj Zestaw Zadań
+                </Link>
+                <Link
                     href="/status"
                     className="text-muted-foreground transition-colors hover:text-foreground"
                 >
@@ -88,6 +94,12 @@ export async function Navbar() {
                             className="text-muted-foreground hover:text-foreground"
                         >
                             Strona Główna
+                        </Link>
+                        <Link
+                            href="/generate"
+                            className="text-muted-foreground hover:text-foreground"
+                        >
+                            Generuj Zestaw Zadań
                         </Link>
                         <Link
                             href="/status"
