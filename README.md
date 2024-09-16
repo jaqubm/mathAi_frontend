@@ -6,6 +6,7 @@ Work in progress!
 
 - Next.js
 - Auth.js with Google OAuth
+- MathLive
 - Tailwind CSS
 - TypeScript
 - ESLint
