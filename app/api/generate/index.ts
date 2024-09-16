@@ -4,8 +4,6 @@ import {auth} from "@/auth";
 
 export const generateExerciseSet = async (data: any) => {
     try {
-        console.log('Received data on the server:', data)
-
         const user = await auth()
 
         if (user) {
@@ -21,10 +19,11 @@ export const generateExerciseSet = async (data: any) => {
         })
 
         if (response.ok) {
-            const jsonResponse = await response.json()
-            return { success: true, data: jsonResponse }
+            const exerciseSetId = await response.text()
+            return { success: true, data: exerciseSetId }
         } else {
-            return { success: false, error: `HTTP error! Status: ${response.status}` }
+            const error = await response.text()
+            return { success: false, error: `HTTP error! Status: ${response.status} - ${error}` }
         }
     } catch (error) {
         console.error('Error generating exercise set:', error)

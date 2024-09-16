@@ -12,10 +12,10 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import {ModeToggle} from "@/components/server-components/navbar/mode-toggle";
-import SignIn from "@/components/server-components/navbar/sign-in";
+import {ModeToggle} from "@/components/navbar/mode-toggle";
+import SignIn from "@/components/navbar/sign-in";
 import {auth} from "@/auth";
-import {SignOut} from "@/components/server-components/navbar/sign-out";
+import {SignOut} from "@/components/navbar/sign-out";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {
     DialogAccountType,
@@ -23,7 +23,7 @@ import {
     DialogDescription,
     DialogHeader,
     DialogTitle
-} from "@/components/server-components/navbar/dialog-account-type";
+} from "@/components/navbar/dialog-account-type";
 import {redirect} from "next/navigation";
 import React from "react";
 import {FirstTimeSignIn, IsTeacher, UpdateToStudent, UpdateToTeacher} from "@/app/api/user";
@@ -56,7 +56,7 @@ export async function Navbar() {
 
             <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
                 <Link
-                    href="/"
+                    href="/public"
                     className="text-muted-foreground transition-colors hover:text-foreground"
                 >
                     Strona Główna
@@ -90,7 +90,7 @@ export async function Navbar() {
 
                     <nav className="grid gap-6 text-lg font-medium">
                         <Link
-                            href="/"
+                            href="/public"
                             className="text-muted-foreground hover:text-foreground"
                         >
                             Strona Główna
