@@ -45,7 +45,7 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
     console.log(isExerciseSetOwner)
 
     return (
-        <div className="w-full mx-auto rounded-md h-screen overflow-hidden flex flex-col justify-center items-center">
+        <>
             {/* Multi-Step Loader */}
             <MultiStepLoader loadingStates={loadingStates} loading={loading} duration={1000} />
 
@@ -63,6 +63,6 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
                     <p>Error: {error}</p>
                 </div>
             )}
-        </div>
+        </>
     );
 }

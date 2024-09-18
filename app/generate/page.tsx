@@ -5,7 +5,7 @@ import {Form, FormControl, FormField, FormItem, FormLabel} from "@/components/ui
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import {useRouter} from "next/navigation";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
@@ -19,13 +19,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-
-const loadingStates = [
-    { text: "Przygotowywanie danych..." },
-    { text: "Komunikowanie się z serwerem..." },
-    { text: "Generowanie zadań..." },
-    { text: "Już prawie gotowe..." },
-]
+import {generateExerciseSetLoadingStates, generateExerciseSetTopics} from "@/app/data";
 
 const formSchema = z.object({
     UserId: z.string().nullable().optional(),
@@ -34,70 +28,6 @@ const formSchema = z.object({
     Subject: z.string().min(1),
     NumberOfExercises: z.number().int().nonnegative(),
 })
-
-const topics: { [key: string]: { [key: string]: string[] } } = {
-    "Szkoła Podstawowa": {
-        "4": [
-            "Arytmetyka: Liczby naturalne, całkowite, ułamki",
-            "Arytmetyka: Działania arytmetyczne: dodawanie, odejmowanie, mnożenie, dzielenie",
-            "Arytmetyka: Procenty, proporcje",
-            "Geometria: Figury płaskie: kwadraty, prostokąty, trójkąty, koła",
-            "Geometria: Obwody i pola figur",
-            "Geometria: Podstawy brył: sześciany, prostopadłościany",
-            "Podstawy algebry: Wyrażenia algebraiczne",
-            "Podstawy algebry: Proste równania i nierówności"
-        ],
-        "5": [
-            "Arytmetyka: Liczby naturalne, całkowite, ułamki",
-            "Arytmetyka: Działania arytmetyczne: dodawanie, odejmowanie, mnożenie, dzielenie",
-            "Arytmetyka: Procenty, proporcje",
-            "Geometria: Figury płaskie: kwadraty, prostokąty, trójkąty, koła",
-            "Geometria: Obwody i pola figur",
-            "Geometria: Podstawy brył: sześciany, prostopadłościany",
-            "Podstawy algebry: Wyrażenia algebraiczne",
-            "Podstawy algebry: Proste równania i nierówności"
-        ],
-        "6": [
-            "Arytmetyka: Liczby naturalne, całkowite, ułamki",
-            "Arytmetyka: Działania arytmetyczne: dodawanie, odejmowanie, mnożenie, dzielenie",
-            "Arytmetyka: Procenty, proporcje",
-            "Geometria: Figury płaskie: kwadraty, prostokąty, trójkąty, koła",
-            "Geometria: Obwody i pola figur",
-            "Geometria: Podstawy brył: sześciany, prostopadłościany",
-            "Podstawy algebry: Wyrażenia algebraiczne",
-            "Podstawy algebry: Proste równania i nierówności"
-        ],
-        "7": [
-            "Algebra: Równania i nierówności liniowe",
-            "Algebra: Układy równań",
-            "Algebra: Funkcje: definicje, wykresy, własności funkcji liniowych i kwadratowych",
-            "Geometria: Twierdzenie Pitagorasa",
-            "Geometria: Kąty i ich miary",
-            "Geometria: Konstrukcje geometryczne",
-            "Geometria: Figury przestrzenne: objętości i pola powierzchni brył",
-            "Statystyka i prawdopodobieństwo: Podstawowe pojęcia statystyczne",
-            "Statystyka i prawdopodobieństwo: Prawdopodobieństwo zdarzeń",
-            "Trygonometria: Podstawy trygonometrii: kąty, sinus, cosinus, tangens"
-        ],
-        "8": [
-            "Algebra: Równania i nierówności liniowe",
-            "Algebra: Układy równań",
-            "Algebra: Funkcje: definicje, wykresy, własności funkcji liniowych i kwadratowych",
-            "Geometria: Twierdzenie Pitagorasa",
-            "Geometria: Kąty i ich miary",
-            "Geometria: Konstrukcje geometryczne",
-            "Geometria: Figury przestrzenne: objętości i pola powierzchni brył",
-            "Statystyka i prawdopodobieństwo: Podstawowe pojęcia statystyczne",
-            "Statystyka i prawdopodobieństwo: Prawdopodobieństwo zdarzeń",
-            "Trygonometria: Podstawy trygonometrii: kąty, sinus, cosinus, tangens"
-        ]
-    },
-    "Liceum": {
-        "1": [
-            "Test"
-        ],
-    },
-}
 
 export default function GeneratePage() {
     const router = useRouter()
@@ -160,7 +90,7 @@ export default function GeneratePage() {
     const handleGradeChange = (value: string) => {
         const grade = parseInt(value, 10)
         setSelectedGrade(grade)
-        setAvailableSubjects(topics[selectedSchoolType][grade] || [])
+        setAvailableSubjects(generateExerciseSetTopics[selectedSchoolType][grade] || [])
         setSelectedSubject("")
         form.setValue("Grade", grade)
     }
@@ -176,10 +106,11 @@ export default function GeneratePage() {
     }
 
     return (
-        <div className="w-full mx-auto rounded-md  h-screen overflow-hidden flex flex-col justify-center items-center">
+        <>
             <div className="w-full max-w-7xl">
                 <div className="relative w-full h-full flex flex-col items-center justify-center">
-                    <MultiStepLoader loadingStates={loadingStates} loading={loading} duration={2000}/>
+                    <MultiStepLoader loadingStates={generateExerciseSetLoadingStates} loading={loading}
+                                     duration={2000}/>
 
                     <Form {...form} >
                         <form onSubmit={form.handleSubmit(onSubmit)}
@@ -198,7 +129,7 @@ export default function GeneratePage() {
                                                     <SelectValue placeholder="Wybierz rodzaj szkoły"/>
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    {Object.keys(topics).map((schoolType) => (
+                                                    {Object.keys(generateExerciseSetTopics).map((schoolType) => (
                                                         <SelectItem key={schoolType} value={schoolType}>
                                                             {schoolType}
                                                         </SelectItem>
@@ -223,7 +154,7 @@ export default function GeneratePage() {
                                                     <SelectValue placeholder="Wybierz klasę"/>
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    {Object.keys(topics[selectedSchoolType] || {}).map((grade) => (
+                                                    {Object.keys(generateExerciseSetTopics[selectedSchoolType] || {}).map((grade) => (
                                                         <SelectItem key={grade} value={grade}>
                                                             {grade}
                                                         </SelectItem>
@@ -298,7 +229,8 @@ export default function GeneratePage() {
                 <AlertDialogContent>
                     <AlertDialogHeader>
                         <AlertDialogTitle>Błąd Generowania!</AlertDialogTitle>
-                        <AlertDialogDescription>Wystąpił błąd podczas generowania twojego zestawu zadań!</AlertDialogDescription>
+                        <AlertDialogDescription>Wystąpił błąd podczas generowania twojego zestawu
+                            zadań!</AlertDialogDescription>
                         <AlertDialogDescription>Error message: {alertMessage}</AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
@@ -307,6 +239,6 @@ export default function GeneratePage() {
                 </AlertDialogContent>
             </AlertDialog>
 
-        </div>
+        </>
     )
 }

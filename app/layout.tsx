@@ -29,7 +29,14 @@ export default function RootLayout({
         >
           <Navbar/>
 
-          {children}
+          <div
+              className="w-full mx-auto rounded-md  h-screen overflow-hidden flex flex-col justify-center items-center">
+
+            <h1 className="md:text-6xl text-4xl font-bold text-center py-6">mathAi</h1>
+
+            {children}
+
+          </div>
 
         </ThemeProvider>
 

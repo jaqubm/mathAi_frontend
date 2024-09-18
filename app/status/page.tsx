@@ -22,11 +22,7 @@ export default function StatusPage() {
     }, []);
 
     return (
-        <div className="w-fit mx-auto rounded-md  h-screen overflow-hidden flex flex-col justify-center items-center">
-            <h1 className="md:text-6xl font-bold text-center">
-                mathAi
-            </h1>
-
+        <div className="w-fit">
             <Table>
                 <TableHeader>
                     <TableRow>
