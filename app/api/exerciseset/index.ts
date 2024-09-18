@@ -20,6 +20,9 @@ export const getExerciseSet = async (exerciseSetId: string) => {
 }
 
 export const checkExerciseSetOwnership = async (exerciseSetOwnerId: string) => {
+    if (!exerciseSetOwnerId)
+        return false
+
     const user = await auth()
 
     return user?.user?.email === exerciseSetOwnerId

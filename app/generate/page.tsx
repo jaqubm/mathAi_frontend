@@ -139,11 +139,10 @@ export default function GeneratePage() {
 
         const result = await generateExerciseSet(validatedData)
 
-        setLoading(false)
-
         if (result.success) {
             router.push(`/exerciseset/${result.data}`)
         } else {
+            setLoading(false)
             setAlertMessage(result.error || "Failed to generate the exercise set.")
             setShowAlert(true)
         }
