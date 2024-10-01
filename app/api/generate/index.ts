@@ -16,6 +16,7 @@ export const generateExerciseSet = async (data: any) => {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(data),
+            signal: AbortSignal.timeout(180000),
         })
 
         if (response.ok) {

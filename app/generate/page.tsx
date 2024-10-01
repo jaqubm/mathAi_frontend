@@ -69,8 +69,6 @@ export default function GeneratePage() {
 
         const result = await generateExerciseSet(validatedData)
 
-        console.log(result)
-
         if (result.success) {
             router.push(`/exerciseset/${result.data}`)
         } else {
@@ -206,7 +204,7 @@ export default function GeneratePage() {
                                                     <SelectValue placeholder="Wybierz liczbę zadań"/>
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    {[...Array(20)].map((_, i) => (
+                                                    {[...Array(10)].map((_, i) => (
                                                         <SelectItem key={i} value={(i + 1).toString()}>
                                                             {i + 1}
                                                         </SelectItem>
