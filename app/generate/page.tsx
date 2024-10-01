@@ -69,6 +69,8 @@ export default function GeneratePage() {
 
         const result = await generateExerciseSet(validatedData)
 
+        console.log(result)
+
         if (result.success) {
             router.push(`/exerciseset/${result.data}`)
         } else {
