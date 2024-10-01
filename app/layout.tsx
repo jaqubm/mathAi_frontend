@@ -27,12 +27,11 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+
           <Navbar/>
 
           <div
-              className="w-full mx-auto rounded-md  h-screen overflow-hidden flex flex-col justify-center items-center">
-
-            <h1 className="md:text-6xl text-4xl font-bold text-center py-6">mathAi</h1>
+              className="w-full min-h-dvh mx-auto rounded-md overflow-hidden flex flex-col justify-center items-center my-5">
 
             {children}
 

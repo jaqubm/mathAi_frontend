@@ -1,14 +1,10 @@
 'use client'
 
 import {useEffect, useState} from "react";
-import {MultiStepLoader} from "@/components/ui/multi-step-loader";
 import {checkExerciseSetOwnership, getExerciseSet} from "@/app/api/exerciseset";
-
-const loadingStates = [
-    { text: "Łączenie z serwerem..." },
-    { text: "Pobieranie danych z serwera..." },
-    { text: "Przygotowywanie twojego zestawu zadań..." },
-]
+import {Spinner} from "@/components/ui/spinner";
+import {Card, CardContent, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
+import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/components/ui/accordion";
 
 export default function ExerciseSetPage({ params }: { params: { id: string } }) {
     const [exerciseSet, setExerciseSet] = useState<any>(null)
@@ -42,18 +38,64 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
             })
     }, [params.id]);
 
-    console.log(isExerciseSetOwner)
+    // console.log(isExerciseSetOwner)
 
     return (
         <>
             {/* Multi-Step Loader */}
-            <MultiStepLoader loadingStates={loadingStates} loading={loading} duration={1000} />
+            {loading && (
+                <Spinner size="large"/>
+            )}
 
             {/* Display data once loading is done */}
             {!loading && exerciseSet && (
-                <div>
-                    <h1 className="text-xl font-bold">Exercise Set ID: {params.id}</h1>
-                    <p>{JSON.stringify(exerciseSet)}</p> {/* Render the exercise set data */}
+                <div className="w-full max-w-5xl px-4">
+                    {/* Basic exerciseSet info */}
+                    <div className="flex flex-col items-center justify-center mb-10 text-center">
+                        <h1 className="text-4xl font-bold mb-2">{exerciseSet.name}</h1>
+
+                        <h3>{exerciseSet.schoolType} - klasa {exerciseSet.grade}</h3>
+                        <h3>{exerciseSet.subject}</h3>
+                    </div>
+
+                    {/* Displaying exercises from exerciseSet */}
+                    <div>
+                        {exerciseSet.exercises.map((exercise: any, index: number) => (
+                            <Card key={exercise.id} className="my-5">
+                                <CardHeader>
+                                    <CardTitle>Zadanie {index + 1}</CardTitle>
+                                </CardHeader>
+
+                                <CardContent>
+                                    {exercise.content}
+                                </CardContent>
+
+                                <CardFooter>
+                                    <Accordion type="multiple" className="w-full">
+                                        <AccordionItem value="Podpowiedź 1">
+                                            <AccordionTrigger>Podpowiedź 1</AccordionTrigger>
+                                            <AccordionContent>{exercise.firstHint}</AccordionContent>
+                                        </AccordionItem>
+
+                                        <AccordionItem value="Podpowiedź 2">
+                                            <AccordionTrigger>Podpowiedź 2</AccordionTrigger>
+                                            <AccordionContent>{exercise.secondHint}</AccordionContent>
+                                        </AccordionItem>
+
+                                        <AccordionItem value="Podpowiedź 3">
+                                            <AccordionTrigger>Podpowiedź 3</AccordionTrigger>
+                                            <AccordionContent>{exercise.thirdHint}</AccordionContent>
+                                        </AccordionItem>
+
+                                        <AccordionItem value="Rozwiązanie">
+                                            <AccordionTrigger>Rozwiązanie</AccordionTrigger>
+                                            <AccordionContent>{exercise.solution}</AccordionContent>
+                                        </AccordionItem>
+                                    </Accordion>
+                                </CardFooter>
+                            </Card>
+                        ))}
+                    </div>
                 </div>
             )}
 
