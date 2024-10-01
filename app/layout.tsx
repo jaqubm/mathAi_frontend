@@ -3,7 +3,7 @@ import {Inter} from "next/font/google";
 import "@/styles/globals.css";
 import React from "react";
 import {ThemeProvider} from "@/components/theme-provider";
-import {Navbar} from "@/components/server-components/navbar/navbar";
+import {Navbar} from "@/components/navbar/navbar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,9 +27,15 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+
           <Navbar/>
 
-          {children}
+          <div
+              className="w-full min-h-dvh mx-auto rounded-md overflow-hidden flex flex-col justify-center items-center my-5">
+
+            {children}
+
+          </div>
 
         </ThemeProvider>
 
