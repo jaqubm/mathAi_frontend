@@ -1,31 +1,34 @@
 'use server'
 
-import {CircleUser} from "lucide-react"
-import React from "react"
+import {CircleUser} from "lucide-react";
+import React from "react";
 
-import {Button} from "@/components/ui/button"
+import {Button} from "@/components/ui/button";
 import {
     DropdownMenu,
     DropdownMenuContent,
+    DropdownMenuItem,
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import {ModeToggle} from "@/components/navbar/mode-toggle"
-import SignIn from "@/components/navbar/sign-in"
-import {auth} from "@/auth"
-import {SignOut} from "@/components/navbar/sign-out"
-import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar"
+} from "@/components/ui/dropdown-menu";
+import {ModeToggle} from "@/components/navbar/mode-toggle";
+import SignIn from "@/components/navbar/sign-in";
+import {auth} from "@/auth";
+import {SignOut} from "@/components/navbar/sign-out";
+import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {
+    DialogAccountContent,
+    DialogAccountDescription,
+    DialogAccountHeader,
+    DialogAccountTitle,
     DialogAccountType,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-} from "@/components/navbar/dialog-account-type"
-import {redirect} from "next/navigation"
-import {FirstTimeSignIn, IsTeacher, UpdateToStudent, UpdateToTeacher,} from "@/app/api/user"
+} from "@/components/navbar/dialog-account-type";
+import {redirect} from "next/navigation";
+import {FirstTimeSignIn, IsTeacher, UpdateToStudent, UpdateToTeacher} from "@/app/api/user";
 import {ClientNavbar} from "@/components/navbar/client-navbar";
+import {DialogTrigger} from "@/components/ui/dialog";
+import {UserExerciseSetsDialog} from "@/components/navbar/user-exercise-sets-dialog";
 
 export async function Navbar() {
     const user = await auth()
@@ -52,57 +55,68 @@ export async function Navbar() {
 
     return (
         <header className="sticky top-0 flex h-16 w-full items-center justify-between gap-4 border-b bg-background px-4 md:px-6">
-
-            <ClientNavbar/>
+            <ClientNavbar />
 
             <div className="flex items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
                 {user ? (
-                    <DialogAccountType open={firstTimeSignIn}>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="secondary" size="icon" className="rounded-full">
-                                    <Avatar>
-                                        <AvatarImage
-                                            src={user.user?.image?.toString()}
-                                            alt={user.user?.name?.toString()}
-                                            className="w-full h-full"
-                                        />
-                                        <AvatarFallback>
-                                            <CircleUser className="h-5 w-5" />
-                                        </AvatarFallback>
-                                    </Avatar>
+                    <>
+                        {/* First-time sign-in dialog */}
+                        <DialogAccountType open={firstTimeSignIn}>
+                            <DialogAccountContent className="sm:max-w-md">
+                                <DialogAccountHeader>
+                                    <DialogAccountTitle>Twoje pierwsze logowanie?</DialogAccountTitle>
+                                    <DialogAccountDescription>
+                                        Wybierz typ konta, jakie ma zostać zastosowane. Pamiętaj, tej decyzji nie można zmienić!
+                                    </DialogAccountDescription>
+                                </DialogAccountHeader>
 
-                                    <span className="sr-only">Menu użytkownika</span>
-                                </Button>
-                            </DropdownMenuTrigger>
+                                <div className="flex items-center justify-center gap-3">
+                                    <form action={onClickUpdateToTeacher}>
+                                        <Button type="submit">Jestem nauczycielem</Button>
+                                    </form>
 
-                            <DropdownMenuContent className="w-fit flex flex-col items-center" align="center">
-                                <DropdownMenuLabel>{user.user?.name}</DropdownMenuLabel>
-                                <DropdownMenuSeparator />
-                                <SignOut />
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                                    <form action={onClickUpdateToStudent}>
+                                        <Button type="submit">Jestem uczniem</Button>
+                                    </form>
+                                </div>
+                            </DialogAccountContent>
+                        </DialogAccountType>
 
-                        <DialogContent className="sm:max-w-md">
-                            <DialogHeader>
-                                <DialogTitle>Twoje pierwsze logowanie?</DialogTitle>
-                                <DialogDescription>
-                                    Wybierz typ konta jakie ma zostać zastosowane. Pamiętaj, tej
-                                    decyzji nie można zmienić!
-                                </DialogDescription>
-                            </DialogHeader>
+                        {/* Users exerciseSets dialog with DropDownMenu */}
+                        <UserExerciseSetsDialog email={user.user?.email ?? ""}>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="secondary" size="icon" className="rounded-full">
+                                        <Avatar>
+                                            <AvatarImage
+                                                src={user.user?.image?.toString()}
+                                                alt={user.user?.name?.toString()}
+                                                className="w-full h-full"
+                                            />
+                                            <AvatarFallback>
+                                                <CircleUser className="h-5 w-5" />
+                                            </AvatarFallback>
+                                        </Avatar>
+                                        <span className="sr-only">Menu użytkownika</span>
+                                    </Button>
+                                </DropdownMenuTrigger>
 
-                            <div className="flex items-center justify-center gap-3">
-                                <form action={onClickUpdateToTeacher}>
-                                    <Button type="submit">Jestem nauczycielem</Button>
-                                </form>
+                                <DropdownMenuContent className="w-fit flex flex-col items-center" align="center">
+                                    <DropdownMenuLabel>{user.user?.name}</DropdownMenuLabel>
 
-                                <form action={onClickUpdateToStudent}>
-                                    <Button type="submit">Jestem uczniem</Button>
-                                </form>
-                            </div>
-                        </DialogContent>
-                    </DialogAccountType>
+                                    <DropdownMenuSeparator />
+
+                                    <DialogTrigger asChild>
+                                        <DropdownMenuItem>Moje Zestawy Zadań</DropdownMenuItem>
+                                    </DialogTrigger>
+
+                                    <DropdownMenuSeparator />
+
+                                    <SignOut />
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </UserExerciseSetsDialog>
+                    </>
                 ) : (
                     <SignIn />
                 )}

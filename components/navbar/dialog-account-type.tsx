@@ -7,13 +7,13 @@ import {cn} from "@/lib/utils"
 
 const DialogAccountType = DialogPrimitive.Root
 
-const DialogTrigger = DialogPrimitive.Trigger
+const DialogAccountTrigger = DialogPrimitive.Trigger
 
-const DialogPortal = DialogPrimitive.Portal
+const DialogAccountPortal = DialogPrimitive.Portal
 
-const DialogClose = DialogPrimitive.Close
+const DialogAccountClose = DialogPrimitive.Close
 
-const DialogOverlay = React.forwardRef<
+const DialogAccountOverlay = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Overlay>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
 >(({ className, ...props }, ref) => (
@@ -26,14 +26,14 @@ const DialogOverlay = React.forwardRef<
     {...props}
   />
 ))
-DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
+DialogAccountOverlay.displayName = DialogPrimitive.Overlay.displayName
 
-const DialogContent = React.forwardRef<
+const DialogAccountContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
 >(({ className, children, ...props }, ref) => (
-  <DialogPortal>
-    <DialogOverlay />
+  <DialogAccountPortal>
+    <DialogAccountOverlay />
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
@@ -44,11 +44,11 @@ const DialogContent = React.forwardRef<
     >
       {children}
     </DialogPrimitive.Content>
-  </DialogPortal>
+  </DialogAccountPortal>
 ))
-DialogContent.displayName = DialogPrimitive.Content.displayName
+DialogAccountContent.displayName = DialogPrimitive.Content.displayName
 
-const DialogHeader = ({
+const DialogAccountHeader = ({
   className,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => (
@@ -60,9 +60,9 @@ const DialogHeader = ({
     {...props}
   />
 )
-DialogHeader.displayName = "DialogHeader"
+DialogAccountHeader.displayName = "DialogHeader"
 
-const DialogFooter = ({
+const DialogAccountFooter = ({
   className,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => (
@@ -74,9 +74,9 @@ const DialogFooter = ({
     {...props}
   />
 )
-DialogFooter.displayName = "DialogFooter"
+DialogAccountFooter.displayName = "DialogFooter"
 
-const DialogTitle = React.forwardRef<
+const DialogAccountTitle = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Title>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Title>
 >(({ className, ...props }, ref) => (
@@ -89,9 +89,9 @@ const DialogTitle = React.forwardRef<
     {...props}
   />
 ))
-DialogTitle.displayName = DialogPrimitive.Title.displayName
+DialogAccountTitle.displayName = DialogPrimitive.Title.displayName
 
-const DialogDescription = React.forwardRef<
+const DialogAccountDescription = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Description>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description>
 >(({ className, ...props }, ref) => (
@@ -101,17 +101,17 @@ const DialogDescription = React.forwardRef<
     {...props}
   />
 ))
-DialogDescription.displayName = DialogPrimitive.Description.displayName
+DialogAccountDescription.displayName = DialogPrimitive.Description.displayName
 
 export {
   DialogAccountType,
-  DialogPortal,
-  DialogOverlay,
-  DialogClose,
-  DialogTrigger,
-  DialogContent,
-  DialogHeader,
-  DialogFooter,
-  DialogTitle,
-  DialogDescription,
+  DialogAccountPortal,
+  DialogAccountOverlay,
+  DialogAccountClose,
+  DialogAccountTrigger,
+  DialogAccountContent,
+  DialogAccountHeader,
+  DialogAccountFooter,
+  DialogAccountTitle,
+  DialogAccountDescription,
 }

@@ -79,3 +79,30 @@ export async function UpdateToStudent(email: string) {
         console.error('Error: ', e)
     }
 }
+
+export async function GetUserExerciseSets(email: string) {
+    if (email === "")
+        return { success: false, error: 'Email is missing!' }
+
+    try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/User/GetExerciseSets/${email}`, {
+            method: "Get",
+        })
+
+        if (response.ok) {
+            const userExerciseSets = await response.json()
+
+            const sortedExerciseSets = userExerciseSets.sort((a: any, b: any) => {
+                return a.name.localeCompare(b.name)
+            })
+
+            return { success: true, data: sortedExerciseSets }
+        } else {
+            const error = await response.text()
+            return { success: false, error: `HTTP error! Status: ${response.status} - ${error}` }
+        }
+    } catch (e) {
+        console.error('Error while trying to get users exercise sets:', e)
+        return { success: false, error: 'Failed to get users exercise sets.' }
+    }
+}

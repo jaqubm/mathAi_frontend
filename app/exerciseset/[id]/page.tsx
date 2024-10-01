@@ -36,7 +36,7 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
             .finally(() => {
                 setLoading(false)
             })
-    }, [params.id]);
+    }, [params.id])
 
     // console.log(isExerciseSetOwner)
 
@@ -59,9 +59,9 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
                     </div>
 
                     {/* Displaying exercises from exerciseSet */}
-                    <div>
+                    <div className="grid gap-5">
                         {exerciseSet.exercises.map((exercise: any, index: number) => (
-                            <Card key={exercise.id} className="my-5">
+                            <Card key={exercise.id}>
                                 <CardHeader>
                                     <CardTitle>Zadanie {index + 1}</CardTitle>
                                 </CardHeader>
