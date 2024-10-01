@@ -35,12 +35,16 @@ export async function Navbar() {
     const isTeacher = await IsTeacher(user?.user?.email ?? "")
 
     const onClickUpdateToTeacher = async () => {
+        'use server'
+
         await UpdateToTeacher(user?.user?.email ?? "")
 
         redirect("/")
     }
 
     const onClickUpdateToStudent = async () => {
+        'use server'
+
         await UpdateToStudent(user?.user?.email ?? "")
 
         redirect("/")
