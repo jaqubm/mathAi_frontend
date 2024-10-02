@@ -5,7 +5,7 @@ export async function FirstTimeSignIn(email: string) {
     try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/User/FirstTimeSignIn/${email}`, {
             method: "Get",
-            signal: AbortSignal.timeout(60000),
+            signal: AbortSignal.timeout(180000),
         })
 
         if (response.ok) {
@@ -27,7 +27,7 @@ export async function IsTeacher(email: string) {
     try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/User/IsTeacher/${email}`, {
             method: "Get",
-            signal: AbortSignal.timeout(60000),
+            signal: AbortSignal.timeout(180000),
         })
 
         if (response.ok) {
@@ -89,7 +89,7 @@ export async function GetUserExerciseSets(email: string) {
     try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/User/GetExerciseSets/${email}`, {
             method: "Get",
-            signal: AbortSignal.timeout(60000),
+            signal: AbortSignal.timeout(180000),
         })
 
         if (response.ok) {

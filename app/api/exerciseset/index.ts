@@ -1,11 +1,9 @@
 'use client'
 
-import {auth} from "@/auth";
-
 export const getExerciseSet = async (exerciseSetId: string) => {
     try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/ExerciseSet/GetExerciseSet/${exerciseSetId}`, {
-            signal: AbortSignal.timeout(60000),
+            signal: AbortSignal.timeout(180000),
         })
 
         if (response.ok) {
