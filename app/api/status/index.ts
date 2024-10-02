@@ -1,4 +1,4 @@
-'use server'
+'use client'
 
 export const getApiStatus = async () => {
     try {
