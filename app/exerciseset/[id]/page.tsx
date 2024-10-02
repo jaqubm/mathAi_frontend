@@ -5,8 +5,11 @@ import {checkExerciseSetOwnership, getExerciseSet} from "@/app/api/exerciseset";
 import {Spinner} from "@/components/ui/spinner";
 import {Card, CardContent, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/components/ui/accordion";
+import {useSession} from "next-auth/react";
 
 export default function ExerciseSetPage({ params }: { params: { id: string } }) {
+    const { data: user } = useSession()
+
     const [exerciseSet, setExerciseSet] = useState<any>(null)
     const [isExerciseSetOwner, setIsExerciseSetOwner] = useState<boolean>(false)
     const [loading, setLoading] = useState(true)
@@ -20,7 +23,7 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
                 if (result.success) {
                     setExerciseSet(result.data)
 
-                    checkExerciseSetOwnership(result.data.userId)
+                    checkExerciseSetOwnership(user?.user?.email ?? "", result.data.userId)
                         .then((isOwner) => {
                             setIsExerciseSetOwner(isOwner)
                     })
@@ -36,7 +39,7 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
             .finally(() => {
                 setLoading(false)
             })
-    }, [params.id])
+    }, [params.id, user?.user?.email])
 
     // console.log(isExerciseSetOwner)
 

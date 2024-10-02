@@ -20,6 +20,7 @@ import {
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import {generateExerciseSetLoadingStates, generateExerciseSetTopics} from "@/app/data";
+import {useSession} from "next-auth/react";
 
 const formSchema = z.object({
     UserId: z.string().nullable().optional(),
@@ -31,6 +32,8 @@ const formSchema = z.object({
 
 export default function GeneratePage() {
     const router = useRouter()
+
+    const { data: user } = useSession()
 
     const [selectedSchoolType, setSelectedSchoolType] = useState("")
     const [selectedGrade, setSelectedGrade] = useState<number | null>(null)
@@ -66,6 +69,10 @@ export default function GeneratePage() {
         setLoading(true)
 
         const validatedData = formSchema.parse(data)
+
+        if (user) {
+            validatedData.UserId = user.user?.email
+        }
 
         const result = await generateExerciseSet(validatedData)
 
