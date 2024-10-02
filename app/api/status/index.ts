@@ -1,22 +1,15 @@
 'use client'
 
+import axios from 'axios';
+
 export const getApiStatus = async () => {
     try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/status`, {
-            cache: "no-cache",
-            signal: AbortSignal.timeout(180000),
+        const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/status`, {
+            timeout: 180000,
         })
 
-        if (!response.ok) {
-            return {
-                apiStatus: "Failed",
-                databaseConnectionStatus: "Failed",
-                openAiApiConnectionStatus: "Failed",
-            }
-        }
-
-        return await response.json()
-    } catch (e) {
+        return data
+    } catch (error) {
         return {
             apiStatus: "Failed",
             databaseConnectionStatus: "Failed",

@@ -1,8 +1,7 @@
-'use server'
+'use client'
 
 import {CircleUser} from "lucide-react";
-import React from "react";
-
+import React, {useEffect, useState} from "react";
 import {Button} from "@/components/ui/button";
 import {
     DropdownMenu,
@@ -13,9 +12,6 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {ModeToggle} from "@/components/navbar/mode-toggle";
-import SignIn from "@/components/navbar/sign-in";
-import {auth} from "@/auth";
-import {SignOut} from "@/components/navbar/sign-out";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {
     DialogAccountContent,
@@ -24,33 +20,58 @@ import {
     DialogAccountTitle,
     DialogAccountType,
 } from "@/components/navbar/dialog-account-type";
-import {redirect} from "next/navigation";
-import {FirstTimeSignIn, IsTeacher, UpdateToStudent, UpdateToTeacher} from "@/app/api/user";
 import {ClientNavbar} from "@/components/navbar/client-navbar";
 import {DialogTrigger} from "@/components/ui/dialog";
 import {UserExerciseSetsDialog} from "@/components/navbar/user-exercise-sets-dialog";
+import {signIn, signOut, useSession} from "next-auth/react";
+import {FirstTimeSignIn, IsTeacher, UpdateToStudent, UpdateToTeacher} from "@/app/api/user";
+import {useRouter} from "next/navigation";
+import {handleServerSignIn, handleServerSignOut} from "@/app/api/auth";
 
-export async function Navbar() {
-    const user = await auth()
+export function Navbar() {
+    const router = useRouter()
 
-    const firstTimeSignIn = await FirstTimeSignIn(user?.user?.email ?? "")
+    let { data: user } = useSession()
 
-    const isTeacher = await IsTeacher(user?.user?.email ?? "")
+    const [firstTimeSignIn, setFirstTimeSignIn] = useState(false)
+    const [isTeacher, setIsTeacher] = useState(false)
 
-    const onClickUpdateToTeacher = async () => {
-        'use server'
+    const email = user?.user?.email ?? "";
 
-        await UpdateToTeacher(user?.user?.email ?? "")
-
-        redirect("/")
+    const handleSignIn = async () => {
+        await handleServerSignIn()
+            .then(() => {
+                signIn()
+            })
     }
 
-    const onClickUpdateToStudent = async () => {
-        'use server'
+    const handleSignOut = async () => {
+        await handleServerSignOut()
+            .then(() => {
+                signOut()
+            })
+    }
 
-        await UpdateToStudent(user?.user?.email ?? "")
+    useEffect(() => {
+        if (!email) return
 
-        redirect("/")
+        FirstTimeSignIn(email).then(setFirstTimeSignIn)
+
+        IsTeacher(email).then(setIsTeacher)
+    }, [email])
+
+    const handleUpdateToTeacher = async () => {
+        if (email) {
+            await UpdateToTeacher(email)
+            router.push("/")
+        }
+    }
+
+    const handleUpdateToStudent = async () => {
+        if (email) {
+            await UpdateToStudent(email)
+            router.push("/")
+        }
     }
 
     return (
@@ -61,29 +82,26 @@ export async function Navbar() {
                 {user ? (
                     <>
                         {/* First-time sign-in dialog */}
-                        <DialogAccountType open={firstTimeSignIn}>
-                            <DialogAccountContent className="sm:max-w-md">
-                                <DialogAccountHeader>
-                                    <DialogAccountTitle>Twoje pierwsze logowanie?</DialogAccountTitle>
-                                    <DialogAccountDescription>
-                                        Wybierz typ konta, jakie ma zostać zastosowane. Pamiętaj, tej decyzji nie można zmienić!
-                                    </DialogAccountDescription>
-                                </DialogAccountHeader>
+                        {firstTimeSignIn && (
+                            <DialogAccountType open={firstTimeSignIn}>
+                                <DialogAccountContent className="sm:max-w-md">
+                                    <DialogAccountHeader>
+                                        <DialogAccountTitle>Twoje pierwsze logowanie?</DialogAccountTitle>
+                                        <DialogAccountDescription>
+                                            Wybierz typ konta, jakie ma zostać zastosowane. Pamiętaj, tej decyzji nie można zmienić!
+                                        </DialogAccountDescription>
+                                    </DialogAccountHeader>
 
-                                <div className="flex items-center justify-center gap-3">
-                                    <form action={onClickUpdateToTeacher}>
-                                        <Button type="submit">Jestem nauczycielem</Button>
-                                    </form>
+                                    <div className="flex items-center justify-center gap-3">
+                                        <Button onClick={handleUpdateToTeacher}>Jestem nauczycielem</Button>
+                                        <Button onClick={handleUpdateToStudent}>Jestem uczniem</Button>
+                                    </div>
+                                </DialogAccountContent>
+                            </DialogAccountType>
+                        )}
 
-                                    <form action={onClickUpdateToStudent}>
-                                        <Button type="submit">Jestem uczniem</Button>
-                                    </form>
-                                </div>
-                            </DialogAccountContent>
-                        </DialogAccountType>
-
-                        {/* Users exerciseSets dialog with DropDownMenu */}
-                        <UserExerciseSetsDialog email={user.user?.email ?? ""}>
+                        {/* Users exercise sets dialog with DropDownMenu */}
+                        <UserExerciseSetsDialog email={email}>
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <Button variant="secondary" size="icon" className="rounded-full">
@@ -112,16 +130,24 @@ export async function Navbar() {
 
                                     <DropdownMenuSeparator />
 
-                                    <SignOut />
+                                    <form action={handleSignOut}>
+                                        <DropdownMenuItem>
+                                            <button type="submit">
+                                                Wyloguj się
+                                            </button>
+                                        </DropdownMenuItem>
+                                    </form>
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         </UserExerciseSetsDialog>
                     </>
                 ) : (
-                    <SignIn />
+                    <form action={handleSignIn}>
+                        <Button variant="outline" type="submit">Zaloguj się z Google</Button>
+                    </form>
                 )}
 
-                <ModeToggle />
+                <ModeToggle/>
             </div>
         </header>
     )
