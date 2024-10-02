@@ -4,6 +4,7 @@ import "@/styles/globals.css";
 import React from "react";
 import {ThemeProvider} from "@/components/theme-provider";
 import {Navbar} from "@/components/navbar/navbar";
+import {SessionProvider} from "next-auth/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,23 +22,27 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
 
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
+        <SessionProvider>
 
-          <Navbar/>
+          <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+          >
 
-          <div
-              className="w-full min-h-dvh mx-auto rounded-md overflow-hidden flex flex-col justify-center items-center my-5">
+            <Navbar/>
 
-            {children}
+            <div
+                className="w-full min-h-dvh mx-auto rounded-md overflow-hidden flex flex-col justify-center items-center my-5">
 
-          </div>
+              {children}
 
-        </ThemeProvider>
+            </div>
+
+          </ThemeProvider>
+
+        </SessionProvider>
 
       </body>
     </html>

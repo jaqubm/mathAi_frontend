@@ -1,21 +1,13 @@
 'use client'
 
-import {auth} from "@/auth";
-
-export const generateExerciseSet = async (data: any) => {
+export const generateExerciseSet = async (exerciseSetGenerator: any) => {
     try {
-        const user = await auth()
-
-        if (user) {
-            data.UserId = user.user?.email
-        }
-
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/ExerciseSet/GenerateExerciseSet`, {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(data),
+            body: JSON.stringify(exerciseSetGenerator),
             signal: AbortSignal.timeout(180000),
         })
 

@@ -21,11 +21,9 @@ export const getExerciseSet = async (exerciseSetId: string) => {
     }
 }
 
-export const checkExerciseSetOwnership = async (exerciseSetOwnerId: string) => {
+export const checkExerciseSetOwnership = async (currentUserId: string, exerciseSetOwnerId: string) => {
     if (!exerciseSetOwnerId)
         return false
 
-    const user = await auth()
-
-    return user?.user?.email === exerciseSetOwnerId
+    return currentUserId === exerciseSetOwnerId
 }
