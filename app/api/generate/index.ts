@@ -1,6 +1,6 @@
 'use client'
 
-import axios from "axios";
+import axios, {AxiosError} from "axios";
 
 export const generateExerciseSet = async (exerciseSetGenerator: any) => {
     try {
@@ -15,7 +15,7 @@ export const generateExerciseSet = async (exerciseSetGenerator: any) => {
 
         return { success: true, data: response.data }
 
-    } catch (error) {
+    } catch (error: AxiosError | any) {
         if (axios.isCancel(error)) {
             return { success: false, error: "Request was canceled." }
         }
