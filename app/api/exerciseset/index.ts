@@ -1,13 +1,11 @@
 'use client'
 
-import axios, {AxiosError} from 'axios';
+import {AxiosError} from 'axios';
+import {axiosInstance} from "@/app/api";
 
 export const getExerciseSet = async (exerciseSetId: string) => {
     try {
-        const response = await axios.get(
-            `${process.env.NEXT_PUBLIC_API_URL}/ExerciseSet/GetExerciseSet/${exerciseSetId}`,
-            { timeout: 180000 }
-        )
+        const response = await axiosInstance.get(`/ExerciseSet/GetExerciseSet/${exerciseSetId}`)
 
         return { success: true, data: response.data }
     } catch (error: any | AxiosError) {

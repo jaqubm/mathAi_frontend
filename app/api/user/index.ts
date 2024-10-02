@@ -1,9 +1,5 @@
 import axios from 'axios';
-
-const axiosInstance = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_URL,
-    timeout: 180000,
-})
+import {axiosInstance} from "@/app/api";
 
 export async function FirstTimeSignIn(email: string) {
     if (!email) return false

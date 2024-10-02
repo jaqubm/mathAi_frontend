@@ -1,11 +1,12 @@
 'use client'
 
 import axios, {AxiosError} from "axios";
+import {axiosInstance} from "@/app/api";
 
 export const generateExerciseSet = async (exerciseSetGenerator: any) => {
     try {
-        const response = await axios.post(
-            `${process.env.NEXT_PUBLIC_API_URL}/ExerciseSet/GenerateExerciseSet`,
+        const response = await axiosInstance.post(
+            '/ExerciseSet/GenerateExerciseSet',
             exerciseSetGenerator,
             {
                 headers: { "Content-Type": "application/json" },

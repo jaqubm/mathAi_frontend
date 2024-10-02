@@ -1,12 +1,10 @@
 'use client'
 
-import axios from 'axios';
+import {axiosInstance} from "@/app/api";
 
 export const getApiStatus = async () => {
     try {
-        const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/status`, {
-            timeout: 180000,
-        })
+        const { data } = await axiosInstance.get('/api/status')
 
         return data
     } catch (error) {
