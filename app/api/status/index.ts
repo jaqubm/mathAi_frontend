@@ -4,7 +4,7 @@ export const getApiStatus = async () => {
     try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/status`, {
             cache: "no-cache",
-            signal: AbortSignal.timeout(60000),
+            signal: AbortSignal.timeout(180000),
         })
 
         if (!response.ok) {

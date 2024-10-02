@@ -9,7 +9,7 @@ export const generateExerciseSet = async (exerciseSetGenerator: any) => {
             exerciseSetGenerator,
             {
                 headers: { "Content-Type": "application/json" },
-                timeout: 180000, // 180 seconds timeout
+                timeout: 300000,
             }
         )
 
