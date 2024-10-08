@@ -79,8 +79,6 @@ export function Navbar() {
         }
     }
 
-    console.log(firstTimeSignIn)
-
     return (
         <header className="sticky top-0 flex h-16 w-full items-center justify-between gap-4 border-b bg-background px-4 md:px-6">
             <ClientNavbar />
