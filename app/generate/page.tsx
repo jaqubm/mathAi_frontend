@@ -1,22 +1,30 @@
 'use client'
 
-import { MultiStepLoader } from "@/components/ui/multi-step-loader"
-import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Button } from "@/components/ui/button"
-import { useRouter } from "next/navigation"
-import React, { useEffect, useState } from "react"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { generateExerciseSet } from "@/app/api/generate"
-import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog"
-import { Card, CardContent, CardHeader, CardFooter, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { generateExerciseSetLoadingStates, generateExerciseSetTopics } from "@/app/data"
-import { useSession } from "next-auth/react"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Label } from "@/components/ui/label"
+import {MultiStepLoader} from "@/components/ui/multi-step-loader"
+import {Form, FormControl, FormField, FormItem, FormLabel} from "@/components/ui/form"
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select"
+import {Button} from "@/components/ui/button"
+import {useRouter} from "next/navigation"
+import React, {useEffect, useState} from "react"
+import {useForm} from "react-hook-form"
+import {z} from "zod"
+import {zodResolver} from "@hookform/resolvers/zod"
+import {generateExerciseSet} from "@/app/api/generate"
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle
+} from "@/components/ui/alert-dialog"
+import {Card, CardContent, CardFooter} from "@/components/ui/card"
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs"
+import {generateExerciseSetLoadingStates, generateExerciseSetTopics} from "@/app/data"
+import {useSession} from "next-auth/react"
+import {RadioGroup, RadioGroupItem} from "@/components/ui/radio-group"
+import {Label} from "@/components/ui/label"
 
 const formSchema = z.object({
     UserId: z.string().nullable().optional(),
