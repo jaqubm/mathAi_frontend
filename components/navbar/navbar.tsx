@@ -23,7 +23,7 @@ import {
 import {ClientNavbar} from "@/components/navbar/client-navbar";
 import {DialogTrigger} from "@/components/ui/dialog";
 import {UserExerciseSetsDialog} from "@/components/navbar/user-exercise-sets-dialog";
-import {signIn, signOut, useSession} from "next-auth/react";
+import {signOut, useSession} from "next-auth/react";
 import {FirstTimeSignIn, IsTeacher, UpdateToStudent, UpdateToTeacher} from "@/app/api/user";
 import {useRouter} from "next/navigation";
 import {handleServerSignIn, handleServerSignOut} from "@/app/api/auth";
