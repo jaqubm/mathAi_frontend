@@ -40,9 +40,6 @@ export function Navbar() {
 
     const handleSignIn = async () => {
         await handleServerSignIn()
-            .then(() => {
-                signIn()
-            })
     }
 
     const handleSignOut = async () => {
@@ -63,16 +60,26 @@ export function Navbar() {
     const handleUpdateToTeacher = async () => {
         if (email) {
             await UpdateToTeacher(email)
-            router.push("/")
+
+            FirstTimeSignIn(email).then(setFirstTimeSignIn)
+            IsTeacher(email).then(setIsTeacher)
+
+            router.push('/')
         }
     }
 
     const handleUpdateToStudent = async () => {
         if (email) {
             await UpdateToStudent(email)
-            router.push("/")
+
+            FirstTimeSignIn(email).then(setFirstTimeSignIn)
+            IsTeacher(email).then(setIsTeacher)
+
+            router.push('/')
         }
     }
+
+    console.log(firstTimeSignIn)
 
     return (
         <header className="sticky top-0 flex h-16 w-full items-center justify-between gap-4 border-b bg-background px-4 md:px-6">
