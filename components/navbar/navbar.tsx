@@ -23,7 +23,7 @@ import {
 import {ClientNavbar} from "@/components/navbar/client-navbar";
 import {DialogTrigger} from "@/components/ui/dialog";
 import {UserExerciseSetsDialog} from "@/components/navbar/user-exercise-sets-dialog";
-import {signIn, signOut, useSession} from "next-auth/react";
+import {signOut, useSession} from "next-auth/react";
 import {FirstTimeSignIn, IsTeacher, UpdateToStudent, UpdateToTeacher} from "@/app/api/user";
 import {useRouter} from "next/navigation";
 import {handleServerSignIn, handleServerSignOut} from "@/app/api/auth";
@@ -40,9 +40,6 @@ export function Navbar() {
 
     const handleSignIn = async () => {
         await handleServerSignIn()
-            .then(() => {
-                signIn()
-            })
     }
 
     const handleSignOut = async () => {
@@ -63,14 +60,22 @@ export function Navbar() {
     const handleUpdateToTeacher = async () => {
         if (email) {
             await UpdateToTeacher(email)
-            router.push("/")
+
+            FirstTimeSignIn(email).then(setFirstTimeSignIn)
+            IsTeacher(email).then(setIsTeacher)
+
+            router.push('/')
         }
     }
 
     const handleUpdateToStudent = async () => {
         if (email) {
             await UpdateToStudent(email)
-            router.push("/")
+
+            FirstTimeSignIn(email).then(setFirstTimeSignIn)
+            IsTeacher(email).then(setIsTeacher)
+
+            router.push('/')
         }
     }
 

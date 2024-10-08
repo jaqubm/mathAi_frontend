@@ -1,4 +1,3 @@
-import axios from 'axios';
 import {axiosInstance} from "@/app/api";
 
 export async function FirstTimeSignIn(email: string) {
@@ -6,7 +5,7 @@ export async function FirstTimeSignIn(email: string) {
 
     try {
         const { data } = await axiosInstance.get(`/User/FirstTimeSignIn/${email}`)
-        return data === "true"
+        return data === true
     } catch (error) {
         console.error('Error:', error)
         return false
@@ -18,7 +17,7 @@ export async function IsTeacher(email: string) {
 
     try {
         const { data } = await axiosInstance.get(`/User/IsTeacher/${email}`)
-        return data === "true"
+        return data === true
     } catch (error) {
         console.error('Error:', error)
         return false
