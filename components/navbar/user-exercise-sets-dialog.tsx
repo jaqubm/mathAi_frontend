@@ -6,6 +6,7 @@ import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} fro
 import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import {useRouter} from "next/navigation";
+import {Spinner} from "@/components/ui/spinner";
 
 export function UserExerciseSetsDialog({ email, children }: { email: string, children: ReactNode }) {
     const [exerciseSets, setExerciseSets] = useState<any[]>([])
@@ -56,7 +57,7 @@ export function UserExerciseSetsDialog({ email, children }: { email: string, chi
                 </DialogHeader>
 
                 <div>
-                    {loading && <p>Loading...</p>}
+                    {loading && <Spinner size="large"/>}
                     {error && <p className="text-red-500">Error: {error}</p>}
                     {!loading && !error && exerciseSets.length === 0 && (
                         <p>Brak zestawów zadań.</p>

@@ -60,6 +60,8 @@ export default function GeneratePage() {
         },
     })
 
+    form.setValue("SchoolType", selectedSchoolType)
+
     useEffect(() => {
         if (selectedSchoolType && selectedGrade !== null && selectedSubject && selectedNumberOfExercises !== null) {
             setIsAllSelected(true)
@@ -133,31 +135,57 @@ export default function GeneratePage() {
 
                             {/* Card for Grade, Subject, Number of Exercises Selection */}
                             <TabsContent value={selectedSchoolType}>
-                                <Card className="mx-2">
+                                <Card className="mx-2 sm:w-[640px]">
                                     <CardContent className="p-4 space-y-4">
-                                        <FormField
-                                            control={form.control}
-                                            name="Grade"
-                                            render={() => (
-                                                <FormItem>
-                                                    <FormLabel>Klasa</FormLabel>
-                                                    <FormControl>
-                                                        <Select onValueChange={handleGradeChange} disabled={!selectedSchoolType}>
-                                                            <SelectTrigger className="w-full">
-                                                                <SelectValue placeholder="Wybierz klasę" />
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                {Object.keys(generateExerciseSetTopics[selectedSchoolType] || {}).map((grade) => (
-                                                                    <SelectItem key={grade} value={grade}>
-                                                                        {grade}
-                                                                    </SelectItem>
-                                                                ))}
-                                                            </SelectContent>
-                                                        </Select>
-                                                    </FormControl>
-                                                </FormItem>
-                                            )}
-                                        />
+                                        <div className="w-full flex gap-4">
+                                            <FormField
+                                                control={form.control}
+                                                name="Grade"
+                                                render={() => (
+                                                    <FormItem className="flex-1">
+                                                        <FormLabel>Klasa</FormLabel>
+                                                        <FormControl>
+                                                            <Select onValueChange={handleGradeChange} disabled={!selectedSchoolType}>
+                                                                <SelectTrigger className="w-full">
+                                                                    <SelectValue placeholder="Wybierz klasę" />
+                                                                </SelectTrigger>
+                                                                <SelectContent>
+                                                                    {Object.keys(generateExerciseSetTopics[selectedSchoolType] || {}).map((grade) => (
+                                                                        <SelectItem key={grade} value={grade}>
+                                                                            {grade}
+                                                                        </SelectItem>
+                                                                    ))}
+                                                                </SelectContent>
+                                                            </Select>
+                                                        </FormControl>
+                                                    </FormItem>
+                                                )}
+                                            />
+
+                                            <FormField
+                                                control={form.control}
+                                                name="NumberOfExercises"
+                                                render={() => (
+                                                    <FormItem className="flex-1">
+                                                        <FormLabel>Liczba zadań</FormLabel>
+                                                        <FormControl>
+                                                            <Select onValueChange={handleNumberOfExercisesChange}>
+                                                                <SelectTrigger className="w-full">
+                                                                    <SelectValue placeholder="Wybierz liczbę zadań" />
+                                                                </SelectTrigger>
+                                                                <SelectContent>
+                                                                    {[...Array(15)].map((_, i) => (
+                                                                        <SelectItem key={i} value={(i + 1).toString()}>
+                                                                            {i + 1}
+                                                                        </SelectItem>
+                                                                    ))}
+                                                                </SelectContent>
+                                                            </Select>
+                                                        </FormControl>
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        </div>
 
                                         {/* Conditionally render Subject only if grade is selected */}
                                         {selectedGrade !== null && (
@@ -179,30 +207,6 @@ export default function GeneratePage() {
                                                 )}
                                             />
                                         )}
-
-                                        <FormField
-                                            control={form.control}
-                                            name="NumberOfExercises"
-                                            render={() => (
-                                                <FormItem>
-                                                    <FormLabel>Liczba zadań</FormLabel>
-                                                    <FormControl>
-                                                        <Select onValueChange={handleNumberOfExercisesChange}>
-                                                            <SelectTrigger className="w-full">
-                                                                <SelectValue placeholder="Wybierz liczbę zadań" />
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                {[...Array(15)].map((_, i) => (
-                                                                    <SelectItem key={i} value={(i + 1).toString()}>
-                                                                        {i + 1}
-                                                                    </SelectItem>
-                                                                ))}
-                                                            </SelectContent>
-                                                        </Select>
-                                                    </FormControl>
-                                                </FormItem>
-                                            )}
-                                        />
                                     </CardContent>
                                     <CardFooter className="flex justify-end">
                                         <Button type="submit" disabled={!isAllSelected}>Generuj</Button>
