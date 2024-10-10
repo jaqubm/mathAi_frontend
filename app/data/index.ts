@@ -1,3 +1,5 @@
+// noinspection JSNonASCIINames
+
 export const generateExerciseSetLoadingStates = [
     { text: "Przygotowywanie danych..." },
     { text: "Komunikowanie się z serwerem..." },
