@@ -1,11 +1,22 @@
 'use client'
 
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {checkExerciseSetOwnership, getExerciseSet} from "@/app/api/exerciseset";
 import {Spinner} from "@/components/ui/spinner";
 import {Card, CardContent, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/components/ui/accordion";
 import {useSession} from "next-auth/react";
+import {Button} from "@/components/ui/button";
+import {generateAdditionalExercise} from "@/app/api/generate";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle
+} from "@/components/ui/alert-dialog";
 
 export default function ExerciseSetPage({ params }: { params: { id: string } }) {
     const { data: user } = useSession()
@@ -14,6 +25,12 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
     const [isExerciseSetOwner, setIsExerciseSetOwner] = useState<boolean>(false)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+
+    const [showAlert, setShowAlert] = useState(false)
+    const [alertMessage, setAlertMessage] = useState("")
+
+    const [isAddingExercise, setIsAddingExercise] = useState(false)
+    const [refreshKey, setRefreshKey] = useState(0)
 
     useEffect(() => {
         setLoading(true)
@@ -39,9 +56,28 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
             .finally(() => {
                 setLoading(false)
             })
-    }, [params.id, user?.user?.email])
+    }, [params.id, user?.user?.email, refreshKey])
 
-    // console.log(isExerciseSetOwner)
+    const handleAddExercise = async () => {
+        if (!isExerciseSetOwner) {
+            setAlertMessage("You are not allowed to do this!")
+            setShowAlert(true)
+            return
+        }
+
+        setIsAddingExercise(true)
+
+        const result = await generateAdditionalExercise(user?.user?.email ?? "", params.id)
+
+        if (result.success) {
+            setRefreshKey((prevKey) => prevKey + 1)
+        } else {
+            setAlertMessage(result.error || "Failed to generate the exercise set.")
+            setShowAlert(true)
+        }
+
+        setIsAddingExercise(false)
+    }
 
     return (
         <>
@@ -98,7 +134,21 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
                                 </CardFooter>
                             </Card>
                         ))}
+
+                        {isAddingExercise ? <Spinner size="medium" /> : null}
                     </div>
+
+                    {/* Display "Dodaj Zadanie" button if user is the owner */}
+                    {isExerciseSetOwner && (
+                        <div className="flex justify-center my-6">
+                            <Button
+                                onClick={handleAddExercise}
+                                disabled={isAddingExercise}
+                            >
+                                Dodaj Zadanie
+                            </Button>
+                        </div>
+                    )}
                 </div>
             )}
 
@@ -108,6 +158,20 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
                     <p>Error: {error}</p>
                 </div>
             )}
+
+            {/* AlertDialog for error */}
+            <AlertDialog open={showAlert} onOpenChange={setShowAlert}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Błąd Generowania!</AlertDialogTitle>
+                        <AlertDialogDescription>Wystąpił błąd podczas generowania twojego zestawu zadań!</AlertDialogDescription>
+                        <AlertDialogDescription>Error message: {alertMessage}</AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogAction onClick={() => setShowAlert(false)}>OK</AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </>
     );
 }

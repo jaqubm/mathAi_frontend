@@ -1,3 +1,5 @@
+// noinspection JSNonASCIINames
+
 export const generateExerciseSetLoadingStates = [
     { text: "Przygotowywanie danych..." },
     { text: "Komunikowanie się z serwerem..." },
@@ -64,7 +66,36 @@ export const generateExerciseSetTopics: { [key: string]: { [key: string]: string
     },
     "Liceum": {
         "1": [
-            "Test"
+            "Liczby rzeczywiste: działania na liczbach rzeczywistych, logarytmowanie",
+            "Algebra: wyrażenia algebraiczne, wzory skróconego mnożenia",
+            "Funkcje: definicje, wykresy funkcji liniowych i kwadratowych",
+            "Równania i nierówności: równania liniowe, kwadratowe, z parametrami",
+            "Planimetria: trójkąty, okręgi, kąty",
+            "Geometria analityczna: równania prostych i okręgów",
+            "Trygonometria: podstawowe funkcje trygonometryczne, twierdzenia sinusów i cosinusów"
         ],
+        "2": [
+            "Ciągi: arytmetyczne, geometryczne, granice ciągów",
+            "Funkcje: wykresy i własności funkcji wykładniczych i logarytmicznych",
+            "Równania i nierówności: nierówności kwadratowe, równania wielomianowe",
+            "Geometria analityczna: równania prostych, obliczenia z wektorami",
+            "Trygonometria: równania i nierówności trygonometryczne, przekształcenia wykresów funkcji trygonometrycznych",
+            "Stereometria: graniastosłupy, ostrosłupy, bryły obrotowe"
+        ],
+        "3": [
+            "Analiza matematyczna: pochodne, badanie przebiegu funkcji",
+            "Rachunek różniczkowy: zadania optymalizacyjne",
+            "Funkcje: funkcje trygonometryczne, złożone, odwrotne",
+            "Równania różniczkowe: podstawowe pojęcia i zastosowania",
+            "Kombinatoryka: permutacje, kombinacje, wariacje",
+            "Rachunek prawdopodobieństwa: prawdopodobieństwo klasyczne, wzór Bayesa"
+        ],
+        "4": [
+            "Powtórzenie: liczby rzeczywiste, algebra, funkcje",
+            "Analiza funkcji: asymptoty, granice jednostronne, ciągłość funkcji",
+            "Rachunek różniczkowy: zastosowania pochodnych w optymalizacji",
+            "Statystyka i prawdopodobieństwo: średnia, wariancja, odchylenie standardowe",
+            "Egzamin maturalny: przygotowanie do zadań egzaminacyjnych"
+        ]
     },
 }
