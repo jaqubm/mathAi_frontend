@@ -49,8 +49,7 @@ export async function GetUserExerciseSets(email: string) {
 
     try {
         const { data } = await axiosInstance.get(`/User/GetExerciseSets/${email}`)
-        const sortedExerciseSets = data.sort((a: any, b: any) => a.name.localeCompare(b.name))
-        return { success: true, data: sortedExerciseSets }
+        return { success: true, data: data }
     } catch (error) {
         console.error('Error while trying to get users exercise sets:', error)
         return { success: false, error: 'Failed to get users exercise sets.' }
