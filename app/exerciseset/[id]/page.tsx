@@ -17,8 +17,10 @@ import {
     AlertDialogHeader,
     AlertDialogTitle
 } from "@/components/ui/alert-dialog";
+import { useRouter } from "next/navigation"; // Import useRouter
 
 export default function ExerciseSetPage({ params }: { params: { id: string } }) {
+    const router = useRouter(); // Initialize router
     const { data: user } = useSession()
 
     const [exerciseSet, setExerciseSet] = useState<any>(null)
@@ -43,7 +45,7 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
                     checkExerciseSetOwnership(user?.user?.email ?? "", result.data.userId)
                         .then((isOwner) => {
                             setIsExerciseSetOwner(isOwner)
-                    })
+                        })
                 } else {
                     // @ts-ignore
                     setError(result.error)
@@ -77,6 +79,10 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
         }
 
         setIsAddingExercise(false)
+    }
+
+    const handleEditExerciseSetPageRedirect = () => {
+        router.push(`/exerciseset/${params.id}/edit`)
     }
 
     return (
@@ -138,14 +144,20 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
                         {isAddingExercise ? <Spinner size="medium" /> : null}
                     </div>
 
-                    {/* Display "Dodaj Zadanie" button if user is the owner */}
+                    {/* Display "Dodaj Zadanie" and "Edytuj Zestaw" buttons if user is the owner */}
                     {isExerciseSetOwner && (
-                        <div className="flex justify-center my-6">
+                        <div className="flex justify-center my-6 space-x-4">
                             <Button
                                 onClick={handleAddExercise}
                                 disabled={isAddingExercise}
                             >
                                 Dodaj Zadanie
+                            </Button>
+                            <Button
+                                onClick={handleEditExerciseSetPageRedirect}
+                                disabled={isAddingExercise}
+                            >
+                                Edytuj Zestaw
                             </Button>
                         </div>
                     )}

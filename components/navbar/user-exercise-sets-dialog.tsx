@@ -38,9 +38,14 @@ export function UserExerciseSetsDialog({ email, children }: { email: string, chi
             });
     }, [email, open])
 
-    const handleNavigate = (exerciseSetId: string) => {
+    const handleExerciseSetPageRedirect = (exerciseSetId: string) => {
         setOpen(false)
         router.push(`/exerciseset/${exerciseSetId}`)
+    }
+
+    const handleEditExerciseSetPageRedirect = (exerciseSetId: string) => {
+        setOpen(false)
+        router.push(`/exerciseset/${exerciseSetId}/edit`)
     }
 
     return (
@@ -75,9 +80,12 @@ export function UserExerciseSetsDialog({ email, children }: { email: string, chi
                                         <h3>{exerciseSet.subject}</h3>
                                     </CardContent>
 
-                                    <CardFooter>
-                                        <Button variant="outline" onClick={() => handleNavigate(exerciseSet.id)}>
+                                    <CardFooter className="gap-x-4">
+                                        <Button variant="outline" onClick={() => handleExerciseSetPageRedirect(exerciseSet.id)}>
                                             Przejdź
+                                        </Button>
+                                        <Button variant="outline" onClick={() => handleEditExerciseSetPageRedirect(exerciseSet.id)}>
+                                            Edytuj
                                         </Button>
                                     </CardFooter>
                                 </Card>
