@@ -24,11 +24,17 @@ import {ClientNavbar} from "@/components/navbar/client-navbar";
 import {DialogTrigger} from "@/components/ui/dialog";
 import {UserExerciseSetsDialog} from "@/components/navbar/user-exercise-sets-dialog";
 import {signOut, useSession} from "next-auth/react";
-import {FirstTimeSignIn, IsTeacher, UpdateToStudent, UpdateToTeacher} from "@/app/api/user";
+import {getIsFirstTimeSignIn, getIsTeacher, updateToStudent, updateToTeacher} from "@/app/api/user";
 import {useRouter} from "next/navigation";
 import {handleServerSignIn, handleServerSignOut} from "@/app/api/auth";
+import {wakeUpDatabase} from "@/app/api/status";
 
 export function Navbar() {
+    // Wake up DB first thing
+    useEffect(() => {
+        wakeUpDatabase().then(r => r)
+    }, [])
+
     const router = useRouter()
 
     let { data: user } = useSession()
@@ -52,17 +58,17 @@ export function Navbar() {
     useEffect(() => {
         if (!email) return
 
-        FirstTimeSignIn(email).then(setFirstTimeSignIn)
+        getIsFirstTimeSignIn(email).then(setFirstTimeSignIn)
 
-        IsTeacher(email).then(setIsTeacher)
+        getIsTeacher(email).then(setIsTeacher)
     }, [email])
 
     const handleUpdateToTeacher = async () => {
         if (email) {
-            await UpdateToTeacher(email)
+            await updateToTeacher(email)
 
-            FirstTimeSignIn(email).then(setFirstTimeSignIn)
-            IsTeacher(email).then(setIsTeacher)
+            getIsFirstTimeSignIn(email).then(setFirstTimeSignIn)
+            getIsTeacher(email).then(setIsTeacher)
 
             router.push('/')
         }
@@ -70,10 +76,10 @@ export function Navbar() {
 
     const handleUpdateToStudent = async () => {
         if (email) {
-            await UpdateToStudent(email)
+            await updateToStudent(email)
 
-            FirstTimeSignIn(email).then(setFirstTimeSignIn)
-            IsTeacher(email).then(setIsTeacher)
+            getIsFirstTimeSignIn(email).then(setFirstTimeSignIn)
+            getIsTeacher(email).then(setIsTeacher)
 
             router.push('/')
         }

@@ -1,6 +1,6 @@
 import {axiosInstance} from "@/app/api";
 
-export async function FirstTimeSignIn(email: string) {
+export async function getIsFirstTimeSignIn(email: string) {
     if (!email) return false
 
     try {
@@ -12,7 +12,7 @@ export async function FirstTimeSignIn(email: string) {
     }
 }
 
-export async function IsTeacher(email: string) {
+export async function getIsTeacher(email: string) {
     if (!email) return false
 
     try {
@@ -24,7 +24,7 @@ export async function IsTeacher(email: string) {
     }
 }
 
-export async function UpdateToTeacher(email: string) {
+export async function updateToTeacher(email: string) {
     if (!email) return
 
     try {
@@ -34,7 +34,7 @@ export async function UpdateToTeacher(email: string) {
     }
 }
 
-export async function UpdateToStudent(email: string) {
+export async function updateToStudent(email: string) {
     if (!email) return
 
     try {
@@ -44,7 +44,7 @@ export async function UpdateToStudent(email: string) {
     }
 }
 
-export async function GetUserExerciseSets(email: string) {
+export async function getUserExerciseSets(email: string) {
     if (!email) return { success: false, error: 'Email is missing!' }
 
     try {

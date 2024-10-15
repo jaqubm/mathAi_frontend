@@ -17,10 +17,10 @@ import {
     AlertDialogHeader,
     AlertDialogTitle
 } from "@/components/ui/alert-dialog";
-import { useRouter } from "next/navigation"; // Import useRouter
+import { useRouter } from "next/navigation";
 
 export default function ExerciseSetPage({ params }: { params: { id: string } }) {
-    const router = useRouter(); // Initialize router
+    const router = useRouter()
     const { data: user } = useSession()
 
     const [exerciseSet, setExerciseSet] = useState<any>(null)
@@ -82,6 +82,7 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
     }
 
     const handleEditExerciseSetPageRedirect = () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' })
         router.push(`/exerciseset/${params.id}/edit`)
     }
 

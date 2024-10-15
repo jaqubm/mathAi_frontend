@@ -1,6 +1,16 @@
 'use client'
 
-import {axiosInstance} from "@/app/api";
+import {axiosInstance} from "@/app/api"
+
+export const wakeUpDatabase = async () => {
+    try {
+        const { data } = await axiosInstance.get(`api/WakeUpDatabase`)
+
+        return data
+    } catch (error) {
+        return false
+    }
+}
 
 export const getApiStatus = async () => {
     try {
