@@ -1,7 +1,7 @@
 'use client'
 
 import {ReactNode, useEffect, useState} from "react";
-import {GetUserExerciseSets} from "@/app/api/user";
+import {getUserExerciseSets} from "@/app/api/user";
 import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
@@ -20,7 +20,7 @@ export function UserExerciseSetsDialog({ email, children }: { email: string, chi
 
         setLoading(true);
 
-        GetUserExerciseSets(email)
+        getUserExerciseSets(email)
             .then((result) => {
                 if (result.success) {
                     setExerciseSets(result.data)

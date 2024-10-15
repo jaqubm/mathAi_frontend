@@ -7,7 +7,7 @@ import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
 import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from '@/components/ui/accordion';
 import {useSession} from 'next-auth/react';
 import {Button} from '@/components/ui/button';
-import {Textarea} from '@/components/ui/textarea'; // Import Textarea component
+import {Textarea} from '@/components/ui/textarea';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -61,6 +61,7 @@ export default function EditExerciseSetPage({ params }: { params: { id: string }
         const result = await updateExerciseSet(user?.user?.email ?? "", exerciseSet)
 
         if (result.success) {
+            window.scrollTo({ top: 0, behavior: 'smooth' })
             router.push(`/exerciseset/${exerciseSet.id}`)
         } else {
             setAlertMessage(result.error || 'Failed to save the exercise set.')
@@ -100,13 +101,13 @@ export default function EditExerciseSetPage({ params }: { params: { id: string }
                                                     value={exercise.content}
                                                     onChange={(e) => handleInputChange(e, index, 'content')}
                                                     rows={3} // Specify a reasonable default size
-                                                    className="resize-none w-full"
+                                                    className="resize-none w-full mt-4"
                                                 />
                                             </div>
                                             <Accordion type="multiple" className="w-full">
                                                 <AccordionItem value="Podpowiedź 1">
                                                     <AccordionTrigger>Podpowiedź 1</AccordionTrigger>
-                                                    <AccordionContent>
+                                                    <AccordionContent className="m-1">
                                                         <Textarea
                                                             value={exercise.firstHint}
                                                             onChange={(e) => handleInputChange(e, index, 'firstHint')}
@@ -117,7 +118,7 @@ export default function EditExerciseSetPage({ params }: { params: { id: string }
                                                 </AccordionItem>
                                                 <AccordionItem value="Podpowiedź 2">
                                                     <AccordionTrigger>Podpowiedź 2</AccordionTrigger>
-                                                    <AccordionContent>
+                                                    <AccordionContent className="m-1">
                                                         <Textarea
                                                             value={exercise.secondHint}
                                                             onChange={(e) => handleInputChange(e, index, 'secondHint')}
@@ -128,7 +129,7 @@ export default function EditExerciseSetPage({ params }: { params: { id: string }
                                                 </AccordionItem>
                                                 <AccordionItem value="Podpowiedź 3">
                                                     <AccordionTrigger>Podpowiedź 3</AccordionTrigger>
-                                                    <AccordionContent>
+                                                    <AccordionContent className="m-1">
                                                         <Textarea
                                                             value={exercise.thirdHint}
                                                             onChange={(e) => handleInputChange(e, index, 'thirdHint')}
@@ -139,7 +140,7 @@ export default function EditExerciseSetPage({ params }: { params: { id: string }
                                                 </AccordionItem>
                                                 <AccordionItem value="Rozwiązanie">
                                                     <AccordionTrigger>Rozwiązanie</AccordionTrigger>
-                                                    <AccordionContent>
+                                                    <AccordionContent className="m-1">
                                                         <Textarea
                                                             value={exercise.solution}
                                                             onChange={(e) => handleInputChange(e, index, 'solution')}

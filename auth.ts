@@ -1,6 +1,5 @@
 import NextAuth from "next-auth"
 import Google from "next-auth/providers/google"
-import {axiosInstance} from "@/app/api";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
     providers: [Google],
@@ -8,20 +7,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         async signIn({ account }) {
             if (account) {
                 try {
-                    const response = await axiosInstance.post(
-                        `${process.env.NEXT_PUBLIC_API_URL}/User/SignIn`,
-                        JSON.stringify(account.id_token),
-                        {
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                        }
-                    )
+                    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/User/SignIn`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(account.id_token),
+                    })
 
-                    if (response.status === 200) {
+                    if (response.ok) {
                         return true
                     } else {
-                        console.error('Error: ', response.data || 'Unknown error')
+                        const errorMessage = await response.text()
+                        console.error('Error: ', errorMessage)
                     }
                 } catch (e) {
                     console.error('Error: ', e)
