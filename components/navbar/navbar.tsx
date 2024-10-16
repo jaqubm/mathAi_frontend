@@ -30,19 +30,37 @@ import {handleServerSignIn, handleServerSignOut} from "@/app/api/auth";
 import {wakeUpDatabase} from "@/app/api/status";
 
 export function Navbar() {
-    // Wake up DB first thing
-    useEffect(() => {
-        wakeUpDatabase().then(r => r)
-    }, [])
-
     const router = useRouter()
 
     let { data: user } = useSession()
+
+    const [databaseWokeUp, setDatabaseWokeUp] = useState<boolean>(false)
 
     const [firstTimeSignIn, setFirstTimeSignIn] = useState(false)
     const [isTeacher, setIsTeacher] = useState(false)
 
     const email = user?.user?.email ?? "";
+
+    useEffect(() => {
+        const wakeUpDatabaseAndSetState = async () => {
+            const response = await wakeUpDatabase()
+            setDatabaseWokeUp(response)
+        }
+
+        wakeUpDatabaseAndSetState()
+
+        const intervalId = setInterval(wakeUpDatabaseAndSetState, 60000)
+
+        return () => clearInterval(intervalId)
+    }, [])
+
+    useEffect(() => {
+        if (!email) return
+
+        getIsFirstTimeSignIn(email).then(setFirstTimeSignIn)
+
+        getIsTeacher(email).then(setIsTeacher)
+    }, [email])
 
     const handleSignIn = async () => {
         await handleServerSignIn()
@@ -54,14 +72,6 @@ export function Navbar() {
                 signOut()
             })
     }
-
-    useEffect(() => {
-        if (!email) return
-
-        getIsFirstTimeSignIn(email).then(setFirstTimeSignIn)
-
-        getIsTeacher(email).then(setIsTeacher)
-    }, [email])
 
     const handleUpdateToTeacher = async () => {
         if (email) {
@@ -154,7 +164,7 @@ export function Navbar() {
                     </>
                 ) : (
                     <form action={handleSignIn}>
-                        <Button variant="outline" type="submit">Zaloguj się z Google</Button>
+                        <Button variant="outline" type="submit" disabled={!databaseWokeUp}>Zaloguj się z Google</Button>
                     </form>
                 )}
 
