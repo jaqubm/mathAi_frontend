@@ -28,6 +28,7 @@ import {getIsFirstTimeSignIn, getIsTeacher, updateToStudent, updateToTeacher} fr
 import {useRouter} from "next/navigation";
 import {handleServerSignIn, handleServerSignOut} from "@/app/api/auth";
 import {wakeUpDatabase} from "@/app/api/status";
+import {Spinner} from "@/components/ui/spinner";
 
 export function Navbar() {
     const router = useRouter()
@@ -164,7 +165,14 @@ export function Navbar() {
                     </>
                 ) : (
                     <form action={handleSignIn}>
-                        <Button variant="outline" type="submit" disabled={!databaseWokeUp}>Zaloguj się z Google</Button>
+                        <Button variant="outline" type="submit" disabled={!databaseWokeUp}>
+                            {!databaseWokeUp ?
+                                <>
+                                    <Spinner size="small" className="mr-4"/>
+                                    Oczekiwanie na Bazę Danych
+                                </>
+                                : "Zaloguj się z Google"}
+                        </Button>
                     </form>
                 )}
 
