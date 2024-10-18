@@ -72,7 +72,7 @@ export default function EditExerciseSetPage({ params }: { params: { id: string }
     }
 
     return (
-        <>
+        <div className="my-6">
             {/* Loading spinner */}
             {loading && <Spinner size="large" />}
 
@@ -179,6 +179,6 @@ export default function EditExerciseSetPage({ params }: { params: { id: string }
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
-        </>
+        </div>
     )
 }
