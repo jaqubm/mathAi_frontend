@@ -72,6 +72,7 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
         const result = await generateAdditionalExercise(user?.user?.email ?? "", params.id)
 
         if (result.success) {
+            window.scrollTo({ top: 0, behavior: 'smooth' })
             setRefreshKey((prevKey) => prevKey + 1)
         } else {
             setAlertMessage(result.error || "Failed to generate the exercise set.")
