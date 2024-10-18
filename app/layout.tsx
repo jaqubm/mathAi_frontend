@@ -34,7 +34,7 @@ export default function RootLayout({
             <Navbar/>
 
             <div
-                className="w-full min-h-dvh mx-auto rounded-md overflow-hidden flex flex-col justify-center items-center my-5">
+                className="w-full h-[calc(100dvh-4rem)] mx-auto rounded-md overflow-hidden flex flex-col justify-center items-center">
 
               {children}
 
