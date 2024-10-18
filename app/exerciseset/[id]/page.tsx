@@ -87,7 +87,7 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
     }
 
     return (
-        <div className="my-6">
+        <>
             {/* Multi-Step Loader */}
             {loading && (
                 <Spinner size="large"/>
@@ -95,7 +95,7 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
 
             {/* Display data once loading is done */}
             {!loading && exerciseSet && (
-                <div className="w-full max-w-5xl px-4">
+                <div className="w-full max-w-5xl px-4 my-6">
                     {/* Basic exerciseSet info */}
                     <div className="flex flex-col items-center justify-center mb-10 text-center">
                         <h1 className="text-4xl font-bold mb-2">{exerciseSet.name}</h1>
@@ -177,7 +177,7 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
                 <AlertDialogContent>
                     <AlertDialogHeader>
                         <AlertDialogTitle>Błąd Generowania!</AlertDialogTitle>
-                        <AlertDialogDescription>Wystąpił błąd podczas generowania twojego zestawu zadań!</AlertDialogDescription>
+                        <AlertDialogDescription>Wystąpił błąd podczas generowania dodatkowego zadania!</AlertDialogDescription>
                         <AlertDialogDescription>Error message: {alertMessage}</AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
@@ -185,6 +185,6 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
-        </div>
+        </>
     );
 }

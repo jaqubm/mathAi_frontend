@@ -49,7 +49,7 @@ export const generateAdditionalExercise = async (email: string, exerciseSetId: s
 
         const errorMessage = error.response
             ? `HTTP error! Status: ${error.response.status} - ${error.response.statusText}`
-            : "Failed to generate exercise set.";
+            : "Failed to generate additional exercise.";
 
         return { success: false, error: errorMessage };
     }

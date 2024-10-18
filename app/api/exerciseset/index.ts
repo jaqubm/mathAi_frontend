@@ -40,7 +40,7 @@ export const updateExerciseSet = async (email: string, exerciseSet: any) => {
     } catch (error: any | AxiosError) {
         const errorMessage = error.response?.status
             ? `HTTP error! Status: ${error.response.status}`
-            : 'Failed to get exercise set.'
+            : 'Failed to save exercise set.'
 
         return { success: false, error: errorMessage }
     }
