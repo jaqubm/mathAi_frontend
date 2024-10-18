@@ -87,7 +87,7 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
     }
 
     return (
-        <>
+        <div className="my-6">
             {/* Multi-Step Loader */}
             {loading && (
                 <Spinner size="large"/>
@@ -147,7 +147,7 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
 
                     {/* Display "Dodaj Zadanie" and "Edytuj Zestaw" buttons if user is the owner */}
                     {isExerciseSetOwner && (
-                        <div className="flex justify-center my-6 space-x-4">
+                        <div className="flex justify-center mt-6 space-x-4">
                             <Button
                                 onClick={handleAddExercise}
                                 disabled={isAddingExercise}
@@ -185,6 +185,6 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
-        </>
+        </div>
     );
 }
