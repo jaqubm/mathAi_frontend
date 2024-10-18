@@ -25,6 +25,8 @@ export default function EditExerciseSetPage({ params }: { params: { id: string }
 
     const [exerciseSet, setExerciseSet] = useState<any>(null)
     const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
+
     const [isSaving, setIsSaving] = useState(false)
     const [showAlert, setShowAlert] = useState(false)
     const [alertMessage, setAlertMessage] = useState('')
@@ -72,12 +74,12 @@ export default function EditExerciseSetPage({ params }: { params: { id: string }
     }
 
     return (
-        <div className="my-6">
+        <>
             {/* Loading spinner */}
             {loading && <Spinner size="large" />}
 
             {!loading && exerciseSet && (
-                <div className="w-full max-w-5xl px-4">
+                <div className="w-full max-w-5xl px-4 my-6">
                     {/* Basic exercise set info */}
                     <div className="flex flex-col items-center justify-center mb-10 text-center">
                         <h1 className="text-4xl font-bold mb-2">{exerciseSet.name}</h1>
@@ -166,11 +168,18 @@ export default function EditExerciseSetPage({ params }: { params: { id: string }
                 </div>
             )}
 
+            {/* Display an error message if there was an error */}
+            {!loading && error && (
+                <div className="text-red-500">
+                    <p>Error: {error}</p>
+                </div>
+            )}
+
             {/* Error alert dialog */}
             <AlertDialog open={showAlert} onOpenChange={setShowAlert}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Błąd Zapisania!</AlertDialogTitle>
+                        <AlertDialogTitle>Błąd Zapisywania!</AlertDialogTitle>
                         <AlertDialogDescription>Wystąpił błąd podczas zapisywania twojego zestawu zadań!</AlertDialogDescription>
                         <AlertDialogDescription>Error message: {alertMessage}</AlertDialogDescription>
                     </AlertDialogHeader>
@@ -179,6 +188,6 @@ export default function EditExerciseSetPage({ params }: { params: { id: string }
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
-        </div>
+        </>
     )
 }
