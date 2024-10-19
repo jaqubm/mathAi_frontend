@@ -169,7 +169,7 @@ export function Navbar() {
                             {!databaseWokeUp ?
                                 <>
                                     <Spinner size="small" className="mr-4"/>
-                                    Oczekiwanie na Bazę Danych
+                                    Ładowanie..
                                 </>
                                 : "Zaloguj się z Google"}
                         </Button>
