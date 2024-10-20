@@ -6,7 +6,7 @@ import {axiosInstance} from "@/app/api";
 export const generateExerciseSet = async (exerciseSetGenerator: any) => {
     try {
         const response = await axiosInstance.post(
-            '/ExerciseSet/GenerateExerciseSet',
+            '/ExerciseSet/Generate',
             exerciseSetGenerator,
             {
                 headers: { "Content-Type": "application/json" },

@@ -5,7 +5,7 @@ import {axiosInstance} from "@/app/api";
 
 export const getExerciseSet = async (exerciseSetId: string) => {
     try {
-        const response = await axiosInstance.get(`/ExerciseSet/GetExerciseSet/${exerciseSetId}`)
+        const response = await axiosInstance.get(`/ExerciseSet/Get/${exerciseSetId}`)
 
         return { success: true, data: response.data }
     } catch (error: any | AxiosError) {
@@ -29,7 +29,7 @@ export const updateExerciseSet = async (email: string, exerciseSet: any) => {
         exerciseSet.userId = email
 
         const response = await axiosInstance.put(
-            `/ExerciseSet/UpdateExerciseSet`,
+            `/ExerciseSet/Update`,
             exerciseSet,
             {
                 headers: { "Content-Type": "application/json" },
