@@ -9,7 +9,7 @@ import React, {useEffect, useState} from "react"
 import {useForm} from "react-hook-form"
 import {z} from "zod"
 import {zodResolver} from "@hookform/resolvers/zod"
-import {generateExerciseSet} from "@/app/api/generate"
+import {generateExerciseSet} from "@/app/api/exerciseset"
 import {
     AlertDialog,
     AlertDialogAction,

@@ -4,7 +4,7 @@ import {axiosInstance} from "@/app/api"
 
 export const wakeUpDatabase = async () => {
     try {
-        const { data } = await axiosInstance.get(`api/WakeUpDatabase`)
+        const { data } = await axiosInstance.get(`Api/WakeUpDatabase`)
 
         return data
     } catch (error) {
@@ -14,7 +14,7 @@ export const wakeUpDatabase = async () => {
 
 export const getApiStatus = async () => {
     try {
-        const { data } = await axiosInstance.get('/api/status')
+        const { data } = await axiosInstance.get('/Api/Status')
 
         return data
     } catch (error) {

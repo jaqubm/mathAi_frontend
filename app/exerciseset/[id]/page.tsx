@@ -1,13 +1,12 @@
 'use client'
 
 import React, {useEffect, useState} from "react";
-import {checkExerciseSetOwnership, getExerciseSet} from "@/app/api/exerciseset";
+import {checkExerciseSetOwnership, generateAdditionalExercise, getExerciseSet} from "@/app/api/exerciseset";
 import {Spinner} from "@/components/ui/spinner";
 import {Card, CardContent, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/components/ui/accordion";
 import {useSession} from "next-auth/react";
 import {Button} from "@/components/ui/button";
-import {generateAdditionalExercise} from "@/app/api/generate";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -17,7 +16,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle
 } from "@/components/ui/alert-dialog";
-import { useRouter } from "next/navigation";
+import {useRouter} from "next/navigation";
 
 export default function ExerciseSetPage({ params }: { params: { id: string } }) {
     const router = useRouter()
