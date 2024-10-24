@@ -1,15 +1,15 @@
 'use client'
 
 import {ReactNode, useEffect, useState} from "react";
-import {getUserExerciseSets} from "@/app/api/user";
+import {getUserClasses} from "@/app/api/user";
 import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import {useRouter} from "next/navigation";
 import {Spinner} from "@/components/ui/spinner";
 
-export function UserExerciseSetsDialog({ email, open, onClose, children }: { email: string, open: boolean, onClose: () => void, children: ReactNode }) {
-    const [exerciseSets, setExerciseSets] = useState<any[]>([])
+export function UserClassesDialog({ email, open, onClose, children }: { email: string, open: boolean, onClose: () => void, children: ReactNode }) {
+    const [classes, setClasses] = useState<any[]>([])
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const router = useRouter()
@@ -19,10 +19,10 @@ export function UserExerciseSetsDialog({ email, open, onClose, children }: { ema
 
         setLoading(true);
 
-        getUserExerciseSets(email)
+        getUserClasses(email)
             .then((result) => {
                 if (result.success) {
-                    setExerciseSets(result.data)
+                    setClasses(result.data)
                 } else {
                     // @ts-ignore
                     setError(result.error)
@@ -37,14 +37,14 @@ export function UserExerciseSetsDialog({ email, open, onClose, children }: { ema
             });
     }, [email, open])
 
-    const handleExerciseSetPageRedirect = (exerciseSetId: string) => {
+    const handleClassPageRedirect = (classId: string) => {
         onClose()
-        router.push(`/exerciseset/${exerciseSetId}`)
+        router.push(`/class/${classId}`)
     }
 
-    const handleEditExerciseSetPageRedirect = (exerciseSetId: string) => {
+    const handleEditClassPageRedirect = (classId: string) => {
         onClose()
-        router.push(`/exerciseset/${exerciseSetId}/edit`)
+        router.push(`/class/${classId}/edit`)
     }
 
     return (
@@ -63,27 +63,26 @@ export function UserExerciseSetsDialog({ email, open, onClose, children }: { ema
                 <div>
                     {loading && <Spinner size="large"/>}
                     {error && <p className="text-red-500">Error: {error}</p>}
-                    {!loading && !error && exerciseSets.length === 0 && (
-                        <p>Brak zestawów zadań.</p>
+                    {!loading && !error && classes.length === 0 && (
+                        <p>Brak klas.</p>
                     )}
-                    {!loading && exerciseSets.length > 0 && (
+                    {!loading && classes.length > 0 && (
                         <div className="grid gap-4">
-                            {exerciseSets.map((exerciseSet) => (
-                                <Card key={exerciseSet.id}>
+                            {classes.map((singleClass) => (
+                                <Card key={singleClass.id}>
                                     <CardHeader>
-                                        <CardTitle>{exerciseSet.name}</CardTitle>
+                                        <CardTitle>{singleClass.name}</CardTitle>
                                     </CardHeader>
 
                                     <CardContent>
-                                        <h3>{exerciseSet.schoolType} - klasa {exerciseSet.grade}</h3>
-                                        <h3>{exerciseSet.subject}</h3>
+                                        <h3>Właściciel: {singleClass.ownerId}</h3>
                                     </CardContent>
 
                                     <CardFooter className="gap-x-4">
-                                        <Button variant="outline" onClick={() => handleExerciseSetPageRedirect(exerciseSet.id)}>
+                                        <Button variant="outline" disabled onClick={() => handleClassPageRedirect(singleClass.id)}>
                                             Przejdź
                                         </Button>
-                                        <Button variant="outline" onClick={() => handleEditExerciseSetPageRedirect(exerciseSet.id)}>
+                                        <Button variant="outline" disabled onClick={() => handleEditClassPageRedirect(singleClass.id)}>
                                             Edytuj
                                         </Button>
                                     </CardFooter>

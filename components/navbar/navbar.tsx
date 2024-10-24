@@ -20,7 +20,7 @@ import {
     DialogAccountTitle,
     DialogAccountType,
 } from "@/components/navbar/dialog-account-type";
-import {ClientNavbar} from "@/components/navbar/client-navbar";
+import {LinkNavbar} from "@/components/navbar/link-navbar";
 import {DialogTrigger} from "@/components/ui/dialog";
 import {UserExerciseSetsDialog} from "@/components/navbar/user-exercise-sets-dialog";
 import {signOut, useSession} from "next-auth/react";
@@ -29,6 +29,7 @@ import {useRouter} from "next/navigation";
 import {handleServerSignIn, handleServerSignOut} from "@/app/api/auth";
 import {wakeUpDatabase} from "@/app/api/status";
 import {Spinner} from "@/components/ui/spinner";
+import {UserClassesDialog} from "@/components/navbar/user-classes-dialog";
 
 export function Navbar() {
     const router = useRouter()
@@ -39,6 +40,8 @@ export function Navbar() {
 
     const [firstTimeSignIn, setFirstTimeSignIn] = useState(false)
     const [isTeacher, setIsTeacher] = useState(false)
+
+    const [openDialog, setOpenDialog] = useState<string | null>(null)
 
     const email = user?.user?.email ?? "";
 
@@ -96,9 +99,17 @@ export function Navbar() {
         }
     }
 
+    const handleDialogOpen = (dialogType: string) => {
+        setOpenDialog(dialogType)
+    }
+
+    const handleDialogClose = () => {
+        setOpenDialog(null)
+    }
+
     return (
         <header className="sticky top-0 flex h-16 w-full items-center justify-between gap-4 border-b bg-background px-4 md:px-6">
-            <ClientNavbar />
+            <LinkNavbar />
 
             <div className="flex items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
                 {user ? (
@@ -123,44 +134,50 @@ export function Navbar() {
                         )}
 
                         {/* Users exercise sets dialog with DropDownMenu */}
-                        <UserExerciseSetsDialog email={email}>
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button variant="secondary" size="icon" className="rounded-full">
-                                        <Avatar>
-                                            <AvatarImage
-                                                src={user.user?.image?.toString()}
-                                                alt={user.user?.name?.toString()}
-                                                className="w-full h-full"
-                                            />
-                                            <AvatarFallback>
-                                                <CircleUser className="h-5 w-5" />
-                                            </AvatarFallback>
-                                        </Avatar>
-                                        <span className="sr-only">Menu użytkownika</span>
-                                    </Button>
-                                </DropdownMenuTrigger>
+                        <UserExerciseSetsDialog email={email} open={openDialog === 'exerciseSets'} onClose={handleDialogClose} >
+                            <UserClassesDialog email={email} open={openDialog === 'classes'} onClose={handleDialogClose} >
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button variant="secondary" size="icon" className="rounded-full">
+                                            <Avatar>
+                                                <AvatarImage
+                                                    src={user.user?.image?.toString()}
+                                                    alt={user.user?.name?.toString()}
+                                                    className="w-full h-full"
+                                                />
+                                                <AvatarFallback>
+                                                    <CircleUser className="h-5 w-5" />
+                                                </AvatarFallback>
+                                            </Avatar>
+                                            <span className="sr-only">Menu użytkownika</span>
+                                        </Button>
+                                    </DropdownMenuTrigger>
 
-                                <DropdownMenuContent className="w-fit flex flex-col items-center" align="center">
-                                    <DropdownMenuLabel>{user.user?.name}</DropdownMenuLabel>
+                                    <DropdownMenuContent className="w-fit flex flex-col items-center" align="center">
+                                        <DropdownMenuLabel>{user.user?.name}</DropdownMenuLabel>
 
-                                    <DropdownMenuSeparator />
+                                        <DropdownMenuSeparator />
 
-                                    <DialogTrigger asChild>
-                                        <DropdownMenuItem>Moje Zestawy Zadań</DropdownMenuItem>
-                                    </DialogTrigger>
-
-                                    <DropdownMenuSeparator />
-
-                                    <form action={handleSignOut}>
-                                        <DropdownMenuItem>
-                                            <button type="submit">
-                                                Wyloguj się
-                                            </button>
+                                        <DropdownMenuItem onClick={() => handleDialogOpen('exerciseSets')}>
+                                            Moje Zestawy Zadań
                                         </DropdownMenuItem>
-                                    </form>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
+
+                                        <DropdownMenuItem onClick={() => handleDialogOpen('classes')}>
+                                            Moje Klasy
+                                        </DropdownMenuItem>
+
+                                        <DropdownMenuSeparator />
+
+                                        <form action={handleSignOut}>
+                                            <DropdownMenuItem>
+                                                <button type="submit">
+                                                    Wyloguj się
+                                                </button>
+                                            </DropdownMenuItem>
+                                        </form>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            </UserClassesDialog>
                         </UserExerciseSetsDialog>
                     </>
                 ) : (

@@ -55,3 +55,15 @@ export async function getUserExerciseSets(email: string) {
         return { success: false, error: 'Failed to get users exercise sets.' }
     }
 }
+
+export async function getUserClasses(email: string) {
+    if (!email) return { success: false, error: 'Email is missing!' }
+
+    try {
+        const { data } = await axiosInstance.get(`/User/GetClasses/${email}`)
+        return { success: true, data: data }
+    } catch (error) {
+        console.error('Error while trying to get users classes:', error)
+        return { success: false, error: 'Failed to get users classes.' }
+    }
+}

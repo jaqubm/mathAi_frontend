@@ -6,7 +6,7 @@ import {Menu} from 'lucide-react'
 import {Button} from '@/components/ui/button'
 import {Sheet, SheetContent, SheetTrigger} from '@/components/ui/sheet'
 
-export function ClientNavbar() {
+export function LinkNavbar() {
     const [isOpen, setIsOpen] = useState(false)
 
     const handleLinkClick = () => {
