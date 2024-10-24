@@ -6,7 +6,7 @@ import {Menu} from 'lucide-react'
 import {Button} from '@/components/ui/button'
 import {Sheet, SheetContent, SheetTrigger} from '@/components/ui/sheet'
 
-export function LinkNavbar() {
+export function LinkNavbar({isTeacher}: {isTeacher: boolean}) {
     const [isOpen, setIsOpen] = useState(false)
 
     const handleLinkClick = () => {
@@ -15,24 +15,19 @@ export function LinkNavbar() {
 
     return (
         <>
-            <nav
-                className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
-                <Link
-                    href="/"
-                    className="text-muted-foreground transition-colors hover:text-foreground"
-                >
+            <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
+                <Link href="/" className="text-muted-foreground transition-colors hover:text-foreground">
                     Strona Główna
                 </Link>
-                <Link
-                    href="/generate"
-                    className="text-muted-foreground transition-colors hover:text-foreground"
-                >
+                <Link href="/generate" className="text-muted-foreground transition-colors hover:text-foreground">
                     Generuj Zestaw Zadań
                 </Link>
-                <Link
-                    href="/status"
-                    className="text-muted-foreground transition-colors hover:text-foreground"
-                >
+                {isTeacher && (
+                    <Link href="/class/create" className="text-muted-foreground transition-colors hover:text-foreground">
+                        Stwórz Klasę
+                    </Link>
+                )}
+                <Link href="/status" className="text-muted-foreground transition-colors hover:text-foreground">
                     Status
                 </Link>
             </nav>
@@ -58,6 +53,11 @@ export function LinkNavbar() {
                         <Link href="/generate" className="text-muted-foreground hover:text-foreground" onClick={handleLinkClick}>
                             Generuj Zestaw Zadań
                         </Link>
+                        {isTeacher && (
+                            <Link href="/class/create" className="text-muted-foreground hover:text-foreground" onClick={handleLinkClick}>
+                                Stwórz Klasę
+                            </Link>
+                        )}
                         <Link href="/status" className="text-muted-foreground hover:text-foreground" onClick={handleLinkClick}>
                             Status
                         </Link>

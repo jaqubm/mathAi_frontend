@@ -1,5 +1,17 @@
 import {axiosInstance} from "@/app/api";
 
+export async function getUserExist(email: string) {
+    if (!email) return false
+
+    try {
+        const { data } = await axiosInstance.get(`/User/Exist/${email}`)
+        return data === true
+    } catch (error) {
+        console.error('Error:', error)
+        return false
+    }
+}
+
 export async function getIsFirstTimeSignIn(email: string) {
     if (!email) return false
 
