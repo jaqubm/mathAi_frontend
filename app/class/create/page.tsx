@@ -20,7 +20,7 @@ import { createClass } from "@/app/api/class"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
-import { X } from "lucide-react"
+import { X, Plus } from "lucide-react" // Plus icon import
 import { getIsTeacher, getUserExist } from "@/app/api/user"
 import { Spinner } from "@/components/ui/spinner"
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
@@ -51,6 +51,8 @@ export default function CreatePage() {
             classStudents: [],
         },
     })
+
+    form.setValue("ownerId", user?.user?.email || "")
 
     const { setValue, watch } = form
     const students = watch("classStudents")
@@ -100,7 +102,6 @@ export default function CreatePage() {
         }
     }
 
-    // Calculate height dynamically based on number of students, max height for 3 students
     const maxStudentsVisible = 3
     const studentHeight = 60
     const scrollAreaHeight = Math.min(students.length, maxStudentsVisible) * studentHeight
@@ -130,26 +131,40 @@ export default function CreatePage() {
                                     )}
                                 />
 
-                                {/* Add Student Field */}
+                                {/* Add Student Field with + Button inside Input */}
                                 <FormItem className="mt-4">
-                                    <FormLabel>Dodaj Studenta (ID)</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            value={studentId}
-                                            onChange={(e) => setStudentId(e.target.value)}
-                                            placeholder="Wpisz ID studenta"
-                                        />
-                                    </FormControl>
+                                    <FormLabel>Dodaj Studenta (Email)</FormLabel>
+                                    <div className="relative">
+                                        <FormControl>
+                                            <Input
+                                                value={studentId}
+                                                onChange={(e) => setStudentId(e.target.value)}
+                                                placeholder="Wpisz Email studenta"
+                                                className="pr-10" // Padding for icon
+                                            />
+                                        </FormControl>
+                                        <Button
+                                            onClick={handleAddStudent}
+                                            type="button"
+                                            size="icon"
+                                            variant="ghost"
+                                            className="absolute inset-y-0 right-1 my-auto text-green-600"
+                                            disabled={checkingStudent}
+                                        >
+                                            {checkingStudent ? (
+                                                <Spinner size="small" />
+                                            ) : (
+                                                <Plus className="w-5 h-5" />
+                                            )}
+                                        </Button>
+                                    </div>
                                     {studentError && <p className="text-red-500 mt-1">{studentError}</p>}
-                                    <Button onClick={handleAddStudent} type="button" className="mt-2" disabled={checkingStudent}>
-                                        {checkingStudent ? <Spinner size="small" /> : "Dodaj Studenta"}
-                                    </Button>
                                 </FormItem>
 
                                 {/* Display the list of added students */}
                                 {students.length > 0 && (
                                     <div className="mt-4">
-                                        <h4 className="font-semibold">Dodani Studenci:</h4>
+                                        <FormLabel>Lista Dodanych Studentów:</FormLabel>
                                         <ScrollArea className="mt-2 border rounded-lg p-2" style={{ height: `${scrollAreaHeight}px` }}>
                                             <ul className="px-2">
                                                 {students.map((student, index) => (
