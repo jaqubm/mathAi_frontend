@@ -7,7 +7,7 @@ import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
 import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from '@/components/ui/accordion';
 import {useSession} from 'next-auth/react';
 import {Button} from '@/components/ui/button';
-import {Textarea} from '@/components/ui/textarea';
+import {X} from 'lucide-react';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -58,6 +58,13 @@ export default function EditExerciseSetPage({ params }: { params: { id: string }
         setExerciseSet({ ...exerciseSet, exercises: updatedExercises })
     }
 
+    const handleDeleteExercise = (index: number) => {
+        const updatedExercises = exerciseSet.exercises.filter((_: any, i: number) => {
+            return i !== index;
+        });
+        setExerciseSet({ ...exerciseSet, exercises: updatedExercises });
+    }
+
     const handleSave = async () => {
         setIsSaving(true)
 
@@ -76,26 +83,34 @@ export default function EditExerciseSetPage({ params }: { params: { id: string }
 
     return (
         <>
-            {/* Loading spinner */}
             {loading && <Spinner size="large" />}
 
             {!loading && exerciseSet && (
                 <div className="w-full max-w-5xl px-4 my-6">
-                    {/* Basic exercise set info */}
                     <div className="flex flex-col items-center justify-center mb-10 text-center">
                         <h1 className="text-4xl font-bold mb-2">{exerciseSet.name}</h1>
                         <h3>{exerciseSet.schoolType} - klasa {exerciseSet.grade}</h3>
                         <h3>{exerciseSet.subject}</h3>
                     </div>
 
-                    {/* Form for editing exercises */}
                     <form onSubmit={(e) => { e.preventDefault(); handleSave(); }}>
                         <div className="grid gap-5">
                             {exerciseSet.exercises.map((exercise: any, index: number) => (
-                                <Card key={exercise.id}>
+                                <Card key={exercise.id} className="relative">
+                                    {/* Delete button positioned absolutely to the top-right of the Card */}
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => handleDeleteExercise(index)}
+                                        className="absolute top-4 right-4 text-red-500"
+                                    >
+                                        <X className="h-5 w-5" />
+                                    </Button>
+
                                     <CardHeader>
                                         <CardTitle>Zadanie {index + 1}</CardTitle>
                                     </CardHeader>
+
                                     <CardContent>
                                         <div className="space-y-4">
                                             <div>
@@ -103,7 +118,7 @@ export default function EditExerciseSetPage({ params }: { params: { id: string }
                                                 <AutosizeTextarea
                                                     value={exercise.content}
                                                     onChange={(e) => handleInputChange(e, index, 'content')}
-                                                    rows={3} // Specify a reasonable default size
+                                                    rows={3}
                                                     className="resize-none w-full mt-4"
                                                 />
                                             </div>
@@ -159,7 +174,6 @@ export default function EditExerciseSetPage({ params }: { params: { id: string }
                             ))}
                         </div>
 
-                        {/* Save button */}
                         <div className="flex justify-center mt-6">
                             <Button type="submit" disabled={isSaving}>
                                 {isSaving ? <Spinner size="small" /> : 'Zapisz'}
@@ -169,14 +183,12 @@ export default function EditExerciseSetPage({ params }: { params: { id: string }
                 </div>
             )}
 
-            {/* Display an error message if there was an error */}
             {!loading && error && (
                 <div className="text-red-500">
                     <p>Error: {error}</p>
                 </div>
             )}
 
-            {/* Error alert dialog */}
             <AlertDialog open={showAlert} onOpenChange={setShowAlert}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
