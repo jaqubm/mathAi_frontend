@@ -5,6 +5,7 @@ import React from "react";
 import {ThemeProvider} from "@/components/theme-provider";
 import {Navbar} from "@/components/navbar/navbar";
 import {SessionProvider} from "next-auth/react";
+import {Toaster} from "@/components/ui/toaster"
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -39,6 +40,8 @@ export default function RootLayout({
               {children}
 
             </div>
+
+            <Toaster />
 
           </ThemeProvider>
 

@@ -2,18 +2,20 @@
 
 import {ReactNode, useEffect, useState} from "react";
 import {getUserExerciseSets} from "@/app/api/user";
+import {deleteExerciseSet} from "@/app/api/exerciseset";
 import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import {useRouter} from "next/navigation";
 import {Spinner} from "@/components/ui/spinner";
-import {deleteExerciseSet} from "@/app/api/exerciseset";
+import { useToast } from "@/hooks/use-toast";
+import { ToastAction } from "@/components/ui/toast";
 
 export function UserExerciseSetsDialog({ email, open, onClose, children }: { email: string, open: boolean, onClose: () => void, children: ReactNode }) {
     const [exerciseSets, setExerciseSets] = useState<any[]>([])
     const [loading, setLoading] = useState(false)
-    const [error, setError] = useState<string | null>(null)
     const router = useRouter()
+    const { toast } = useToast()
 
     useEffect(() => {
         if (!open) return;
@@ -25,13 +27,20 @@ export function UserExerciseSetsDialog({ email, open, onClose, children }: { ema
                 if (result.success) {
                     setExerciseSets(result.data)
                 } else {
-                    // @ts-ignore
-                    setError(result.error)
+                    toast({
+                        title: "Błąd ładowania zestawów",
+                        description: result.error || "Wystąpił błąd podczas ładowania zestawów.",
+                        action: <ToastAction altText="Zamknij">OK</ToastAction>
+                    });
                 }
             })
             .catch((e) => {
-                setError('An unexpected error occurred')
-                console.error(e)
+                toast({
+                    title: "Nieoczekiwany błąd",
+                    description: "Wystąpił nieoczekiwany błąd podczas ładowania zestawów.",
+                    action: <ToastAction altText="Zamknij">OK</ToastAction>
+                });
+                console.error(e);
             })
             .finally(() => {
                 setLoading(false)
@@ -53,21 +62,32 @@ export function UserExerciseSetsDialog({ email, open, onClose, children }: { ema
         if (!confirmed) return;
 
         try {
-            const result = await deleteExerciseSet(email, exerciseSetId); // Call delete function from the API
+            const result = await deleteExerciseSet(email, exerciseSetId);
             if (result.success) {
                 setExerciseSets((prev) => prev.filter((set) => set.id !== exerciseSetId));
+                toast({
+                    title: "Zestaw zadań usunięty",
+                    description: "Zestaw zadań został pomyślnie usunięty.",
+                });
             } else {
-                setError("Failed to delete the exercise set");
+                toast({
+                    title: "Błąd usuwania",
+                    description: "Nie udało się usunąć zestawu zadań.",
+                    action: <ToastAction altText="Zamknij">OK</ToastAction>
+                });
             }
         } catch (e) {
             console.error("Error deleting exercise set:", e);
-            setError("Wystąpił niespodziewany błąd podczs próby usuwania twojego zestawu zadań!");
+            toast({
+                title: "Błąd usuwania",
+                description: "Wystąpił niespodziewany błąd podczs próby usuwania zestawu zadań!",
+                action: <ToastAction altText="Zamknij">OK</ToastAction>
+            });
         }
     };
 
     return (
         <Dialog open={open} onOpenChange={onClose}>
-
             {children}
 
             <DialogContent className="sm:max-w-[640px] max-h-[90%] max-w-[95%] overflow-y-scroll">
@@ -80,8 +100,7 @@ export function UserExerciseSetsDialog({ email, open, onClose, children }: { ema
 
                 <div>
                     {loading && <Spinner size="large"/>}
-                    {error && <p className="text-red-500 mb-4">Error: {error}</p>}
-                    {!loading && !error && exerciseSets.length === 0 && (
+                    {!loading && exerciseSets.length === 0 && (
                         <p>Brak zestawów zadań.</p>
                     )}
                     {!loading && exerciseSets.length > 0 && (
@@ -113,7 +132,6 @@ export function UserExerciseSetsDialog({ email, open, onClose, children }: { ema
                         </div>
                     )}
                 </div>
-
             </DialogContent>
         </Dialog>
     )
