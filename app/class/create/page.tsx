@@ -20,7 +20,7 @@ import { createClass } from "@/app/api/class"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
-import { X, Plus } from "lucide-react" // Plus icon import
+import { X, Plus } from "lucide-react"
 import { getIsTeacher, getUserExist } from "@/app/api/user"
 import { Spinner } from "@/components/ui/spinner"
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
