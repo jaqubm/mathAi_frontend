@@ -25,6 +25,8 @@ import { getIsTeacher, getUserExist } from "@/app/api/user"
 import { Spinner } from "@/components/ui/spinner"
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { useToast } from "@/hooks/use-toast"
+import { ToastAction } from "@/components/ui/toast"
 
 const formSchema = z.object({
     name: z.string().min(1, "Name is required").max(255, "Name can have a maximum of 255 characters"),
@@ -35,13 +37,13 @@ const formSchema = z.object({
 export default function CreatePage() {
     const router = useRouter()
     const { data: user } = useSession()
+    const { toast } = useToast()
 
     const [loading, setLoading] = useState(false)
     const [checkingStudent, setCheckingStudent] = useState(false)
     const [showAlert, setShowAlert] = useState(false)
     const [alertMessage, setAlertMessage] = useState("")
     const [studentId, setStudentId] = useState("")
-    const [studentError, setStudentError] = useState("")
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -58,12 +60,15 @@ export default function CreatePage() {
     const students = watch("classStudents")
 
     const handleAddStudent = async () => {
-        setStudentError("")
         setCheckingStudent(true)
 
         if (studentId.trim()) {
             if (students.includes(studentId)) {
-                setStudentError(`Student: ${studentId} jest już na liście.`)
+                toast({
+                    title: "Student już istnieje",
+                    description: `Student ${studentId} jest już na liście.`,
+                    action: <ToastAction altText="Zamknij">OK</ToastAction>
+                });
                 setCheckingStudent(false)
                 return
             }
@@ -75,9 +80,17 @@ export default function CreatePage() {
                 setValue("classStudents", [...students, studentId])
                 setStudentId("")
             } else if (isTeacher) {
-                setStudentError(`Konto: ${studentId} jest kontem nauczyciela.`)
+                toast({
+                    title: "Konto nauczyciela",
+                    description: `Konto ${studentId} jest kontem nauczyciela.`,
+                    action: <ToastAction altText="Zamknij">OK</ToastAction>
+                });
             } else {
-                setStudentError(`Student: ${studentId} nie został odnaleziony.`)
+                toast({
+                    title: "Student nie znaleziony",
+                    description: `Student ${studentId} nie został odnaleziony.`,
+                    action: <ToastAction altText="Zamknij">OK</ToastAction>
+                });
             }
         }
         setCheckingStudent(false)
@@ -140,7 +153,7 @@ export default function CreatePage() {
                                                 value={studentId}
                                                 onChange={(e) => setStudentId(e.target.value)}
                                                 placeholder="Wpisz Email studenta"
-                                                className="pr-10" // Padding for icon
+                                                className="pr-10"
                                             />
                                         </FormControl>
                                         <Button
@@ -158,7 +171,6 @@ export default function CreatePage() {
                                             )}
                                         </Button>
                                     </div>
-                                    {studentError && <p className="text-red-500 mt-1">{studentError}</p>}
                                 </FormItem>
 
                                 {/* Display the list of added students */}
