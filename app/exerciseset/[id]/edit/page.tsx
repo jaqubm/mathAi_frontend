@@ -18,6 +18,7 @@ import {
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import {useRouter} from 'next/navigation';
+import {AutosizeTextarea} from "@/components/ui/autosize-textarea";
 
 export default function EditExerciseSetPage({ params }: { params: { id: string } }) {
     const router = useRouter()
@@ -99,7 +100,7 @@ export default function EditExerciseSetPage({ params }: { params: { id: string }
                                         <div className="space-y-4">
                                             <div>
                                                 <label>Treść zadania</label>
-                                                <Textarea
+                                                <AutosizeTextarea
                                                     value={exercise.content}
                                                     onChange={(e) => handleInputChange(e, index, 'content')}
                                                     rows={3} // Specify a reasonable default size
@@ -110,7 +111,7 @@ export default function EditExerciseSetPage({ params }: { params: { id: string }
                                                 <AccordionItem value="Podpowiedź 1">
                                                     <AccordionTrigger>Podpowiedź 1</AccordionTrigger>
                                                     <AccordionContent className="m-1">
-                                                        <Textarea
+                                                        <AutosizeTextarea
                                                             value={exercise.firstHint}
                                                             onChange={(e) => handleInputChange(e, index, 'firstHint')}
                                                             rows={2}
@@ -121,7 +122,7 @@ export default function EditExerciseSetPage({ params }: { params: { id: string }
                                                 <AccordionItem value="Podpowiedź 2">
                                                     <AccordionTrigger>Podpowiedź 2</AccordionTrigger>
                                                     <AccordionContent className="m-1">
-                                                        <Textarea
+                                                        <AutosizeTextarea
                                                             value={exercise.secondHint}
                                                             onChange={(e) => handleInputChange(e, index, 'secondHint')}
                                                             rows={2}
@@ -132,7 +133,7 @@ export default function EditExerciseSetPage({ params }: { params: { id: string }
                                                 <AccordionItem value="Podpowiedź 3">
                                                     <AccordionTrigger>Podpowiedź 3</AccordionTrigger>
                                                     <AccordionContent className="m-1">
-                                                        <Textarea
+                                                        <AutosizeTextarea
                                                             value={exercise.thirdHint}
                                                             onChange={(e) => handleInputChange(e, index, 'thirdHint')}
                                                             rows={2}
@@ -143,7 +144,7 @@ export default function EditExerciseSetPage({ params }: { params: { id: string }
                                                 <AccordionItem value="Rozwiązanie">
                                                     <AccordionTrigger>Rozwiązanie</AccordionTrigger>
                                                     <AccordionContent className="m-1">
-                                                        <Textarea
+                                                        <AutosizeTextarea
                                                             value={exercise.solution}
                                                             onChange={(e) => handleInputChange(e, index, 'solution')}
                                                             rows={3}
