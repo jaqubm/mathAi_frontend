@@ -100,11 +100,16 @@ export default function CreatePage() {
         }
     }
 
+    // Calculate height dynamically based on number of students, max height for 3 students
+    const maxStudentsVisible = 3
+    const studentHeight = 60
+    const scrollAreaHeight = Math.min(students.length, maxStudentsVisible) * studentHeight
+
     return (
         <>
-            <div className="w-full max-w-7xl mx-auto my-10 flex justify-center">
+            <div className="w-full max-w-7xl mx-auto my-10 flex justify-center items-center">
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="w-full max-w-md">
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="w-full max-w-md mx-2">
                         <Card>
                             <CardHeader>
                                 <CardTitle>Utwórz Nową Klasę</CardTitle>
@@ -145,8 +150,8 @@ export default function CreatePage() {
                                 {students.length > 0 && (
                                     <div className="mt-4">
                                         <h4 className="font-semibold">Dodani Studenci:</h4>
-                                        <ScrollArea className="h-32 mt-2 border rounded-lg p-2">
-                                            <ul className="p-2">
+                                        <ScrollArea className="mt-2 border rounded-lg p-2" style={{ height: `${scrollAreaHeight}px` }}>
+                                            <ul className="px-2">
                                                 {students.map((student, index) => (
                                                     <div key={index} className="flex flex-col">
                                                         <div className="flex items-center justify-between">
