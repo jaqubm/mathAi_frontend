@@ -7,6 +7,7 @@ import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import {useRouter} from "next/navigation";
 import {Spinner} from "@/components/ui/spinner";
+import {deleteExerciseSet} from "@/app/api/exerciseset";
 
 export function UserExerciseSetsDialog({ email, open, onClose, children }: { email: string, open: boolean, onClose: () => void, children: ReactNode }) {
     const [exerciseSets, setExerciseSets] = useState<any[]>([])
@@ -47,6 +48,23 @@ export function UserExerciseSetsDialog({ email, open, onClose, children }: { ema
         router.push(`/exerciseset/${exerciseSetId}/edit`)
     }
 
+    const handleDeleteExerciseSet = async (exerciseSetId: string) => {
+        const confirmed = window.confirm("Czy na pewno chcesz usunąć ten zestaw zadań?");
+        if (!confirmed) return;
+
+        try {
+            const result = await deleteExerciseSet(email, exerciseSetId); // Call delete function from the API
+            if (result.success) {
+                setExerciseSets((prev) => prev.filter((set) => set.id !== exerciseSetId));
+            } else {
+                setError("Failed to delete the exercise set");
+            }
+        } catch (e) {
+            console.error("Error deleting exercise set:", e);
+            setError("Wystąpił niespodziewany błąd podczs próby usuwania twojego zestawu zadań!");
+        }
+    };
+
     return (
         <Dialog open={open} onOpenChange={onClose}>
 
@@ -62,7 +80,7 @@ export function UserExerciseSetsDialog({ email, open, onClose, children }: { ema
 
                 <div>
                     {loading && <Spinner size="large"/>}
-                    {error && <p className="text-red-500">Error: {error}</p>}
+                    {error && <p className="text-red-500 mb-4">Error: {error}</p>}
                     {!loading && !error && exerciseSets.length === 0 && (
                         <p>Brak zestawów zadań.</p>
                     )}
@@ -85,6 +103,9 @@ export function UserExerciseSetsDialog({ email, open, onClose, children }: { ema
                                         </Button>
                                         <Button variant="outline" onClick={() => handleEditExerciseSetPageRedirect(exerciseSet.id)}>
                                             Edytuj
+                                        </Button>
+                                        <Button variant="destructive" onClick={() => handleDeleteExerciseSet(exerciseSet.id)}>
+                                            Usuń
                                         </Button>
                                     </CardFooter>
                                 </Card>

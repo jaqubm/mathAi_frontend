@@ -97,3 +97,7 @@ export const updateExerciseSet = async (email: string, exerciseSet: any) => {
         return { success: false, error: errorMessage }
     }
 }
+
+export const deleteExerciseSet = async (email: string, exerciseSetId: string) => {
+    console.log("To be implemented")
+}
