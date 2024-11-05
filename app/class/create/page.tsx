@@ -34,7 +34,7 @@ const formSchema = z.object({
     classStudents: z.array(z.string().min(1, "Student ID must be a non-empty string"))
 })
 
-export default function CreatePage() {
+export default function CreateClassPage() {
     const router = useRouter()
     const { data: user } = useSession()
     const { toast } = useToast()
@@ -79,6 +79,11 @@ export default function CreatePage() {
             if (studentExists && !isTeacher) {
                 setValue("classStudents", [...students, studentId])
                 setStudentId("")
+                toast({
+                    title: "Student został pomyślnie dodany",
+                    description: `Student ${studentId} został pomyślnie dodany.`,
+                    action: <ToastAction altText="Zamknij">OK</ToastAction>
+                });
             } else if (isTeacher) {
                 toast({
                     title: "Konto nauczyciela",

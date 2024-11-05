@@ -25,3 +25,22 @@ export const createClass = async (classDto: any) => {
         return { success: false, error: errorMessage };
     }
 }
+
+export const getClass = async (classId: string) => {
+    try {
+        const response = await axiosInstance.get(`/Class/Get/${classId}`);
+
+        return { success: true, data: response.data }
+
+    } catch (error: AxiosError | any) {
+        if (axios.isCancel(error)) {
+            return { success: false, error: "Request was canceled." }
+        }
+
+        const errorMessage = error.response
+            ? `HTTP error! Status: ${error.response.status} - ${error.response.statusText}`
+            : "Failed to get class.";
+
+        return { success: false, error: errorMessage };
+    }
+}

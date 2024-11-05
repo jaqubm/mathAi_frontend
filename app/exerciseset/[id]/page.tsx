@@ -88,7 +88,6 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
 
     return (
         <>
-            {/* Multi-Step Loader */}
             {loading && (
                 <Spinner size="large"/>
             )}
