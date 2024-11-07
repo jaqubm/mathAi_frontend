@@ -30,7 +30,7 @@ import {Spinner} from "@/components/ui/spinner";
 import {UserClassesDialog} from "@/components/navbar/user-classes-dialog";
 
 export function Navbar() {
-    let { data: session } = useSession()
+    const { data: session } = useSession()
     const [userDb, setUserDb] = useState<User>()
     const [refresh, setRefresh] = useState(false)
 

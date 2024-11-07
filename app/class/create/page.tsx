@@ -1,11 +1,11 @@
 'use client'
 
-import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form"
-import { useRouter } from "next/navigation"
-import React, { useState } from "react"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { zodResolver } from "@hookform/resolvers/zod"
+import {Form, FormControl, FormField, FormItem, FormLabel} from "@/components/ui/form"
+import {useRouter} from "next/navigation"
+import React, {useEffect, useState} from "react"
+import {useForm} from "react-hook-form"
+import {z} from "zod"
+import {zodResolver} from "@hookform/resolvers/zod"
 import {
     AlertDialog,
     AlertDialogAction,
@@ -15,85 +15,73 @@ import {
     AlertDialogHeader,
     AlertDialogTitle
 } from "@/components/ui/alert-dialog"
-import { useSession } from "next-auth/react"
-import { createClass } from "@/app/api/class"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
-import { X, Plus } from "lucide-react"
-import { getIsTeacher, getUserExist } from "@/app/api/user"
-import { Spinner } from "@/components/ui/spinner"
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { useToast } from "@/hooks/use-toast"
-import { ToastAction } from "@/components/ui/toast"
+import {useSession} from "next-auth/react"
+import {Class, createClass} from "@/app/api/class"
+import {Input} from "@/components/ui/input"
+import {Button} from "@/components/ui/button"
+import {Separator} from "@/components/ui/separator"
+import {Plus, X} from "lucide-react"
+import {getUser, getUserExistsAndIsStudent, User} from "@/app/api/user"
+import {Spinner} from "@/components/ui/spinner"
+import {Card, CardContent, CardFooter, CardHeader, CardTitle} from "@/components/ui/card"
+import {ScrollArea} from "@/components/ui/scroll-area"
+import {useToast} from "@/hooks/use-toast"
+import {ToastAction} from "@/components/ui/toast"
 
 const formSchema = z.object({
     name: z.string().min(1, "Name is required").max(255, "Name can have a maximum of 255 characters"),
-    ownerId: z.string().min(1, "Owner ID is required"),
-    classStudents: z.array(z.string().min(1, "Student ID must be a non-empty string"))
+    studentEmailList: z.array(z.string().min(1, "Student Email must be a non-empty string"))
 })
 
 export default function CreateClassPage() {
     const router = useRouter()
-    const { data: user } = useSession()
     const { toast } = useToast()
 
     const [loading, setLoading] = useState(false)
     const [checkingStudent, setCheckingStudent] = useState(false)
     const [showAlert, setShowAlert] = useState(false)
     const [alertMessage, setAlertMessage] = useState("")
-    const [studentId, setStudentId] = useState("")
+    const [studentEmail, setStudentEmail] = useState("")
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             name: "Moja Klasa",
-            ownerId: user?.user?.email || "",
-            classStudents: [],
+            studentEmailList: [],
         },
     })
 
-    form.setValue("ownerId", user?.user?.email || "")
-
     const { setValue, watch } = form
-    const students = watch("classStudents")
+    const students = watch("studentEmailList")
 
     const handleAddStudent = async () => {
         setCheckingStudent(true)
 
-        if (studentId.trim()) {
-            if (students.includes(studentId)) {
+        if (studentEmail.trim()) {
+            if (students.includes(studentEmail)) {
                 toast({
                     title: "Student już istnieje",
-                    description: `Student ${studentId} jest już na liście.`,
+                    description: `Student ${studentEmail} jest już na liście.`,
                     action: <ToastAction altText="Zamknij">OK</ToastAction>
                 });
                 setCheckingStudent(false)
                 return
             }
 
-            const studentExists = await getUserExist(studentId)
-            const isTeacher = await getIsTeacher(studentId)
+            const userExistsAndIsStudent = await getUserExistsAndIsStudent(studentEmail)
 
-            if (studentExists && !isTeacher) {
-                setValue("classStudents", [...students, studentId])
-                setStudentId("")
+            if (userExistsAndIsStudent) {
+                setValue("studentEmailList", [...students, studentEmail])
+                setStudentEmail("")
                 toast({
                     title: "Student został pomyślnie dodany",
-                    description: `Student ${studentId} został pomyślnie dodany.`,
-                    action: <ToastAction altText="Zamknij">OK</ToastAction>
-                });
-            } else if (isTeacher) {
-                toast({
-                    title: "Konto nauczyciela",
-                    description: `Konto ${studentId} jest kontem nauczyciela.`,
+                    description: `Student ${studentEmail} został pomyślnie dodany.`,
                     action: <ToastAction altText="Zamknij">OK</ToastAction>
                 });
             } else {
                 toast({
-                    title: "Student nie znaleziony",
-                    description: `Student ${studentId} nie został odnaleziony.`,
+                    title: "Błąd",
+                    description: `Konto ${studentEmail} nie zostało odnalezione lub jest kontem nauczyciela.`,
                     action: <ToastAction altText="Zamknij">OK</ToastAction>
                 });
             }
@@ -103,13 +91,13 @@ export default function CreateClassPage() {
 
     const handleRemoveStudent = (index: number) => {
         const updatedStudents = students.filter((_, i) => i !== index)
-        setValue("classStudents", updatedStudents)
+        setValue("studentEmailList", updatedStudents)
     }
 
     async function onSubmit(data: z.infer<typeof formSchema>) {
         setLoading(true)
 
-        const result = await createClass(data)
+        const result = await createClass(data as Class)
 
         if (result.success) {
             router.push(`/class/${result.data}`)
@@ -155,8 +143,8 @@ export default function CreateClassPage() {
                                     <div className="relative">
                                         <FormControl>
                                             <Input
-                                                value={studentId}
-                                                onChange={(e) => setStudentId(e.target.value)}
+                                                value={studentEmail}
+                                                onChange={(e) => setStudentEmail(e.target.value)}
                                                 placeholder="Wpisz Email studenta"
                                                 className="pr-10"
                                             />

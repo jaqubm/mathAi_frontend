@@ -1,15 +1,14 @@
 import {axiosInstance} from "@/app/api";
 import axios, {AxiosError} from "axios";
 
-export const createClass = async (classDto: any) => {
+export interface Class {
+    name: string
+    studentEmailList: [string]
+}
+
+export const createClass = async (cClass: Class) => {
     try {
-        const response = await axiosInstance.post(
-            '/Class/Create',
-            classDto,
-            {
-                headers: { "Content-Type": "application/json" },
-            }
-        )
+        const response = await axiosInstance.post('/Class/Create', cClass)
 
         return { success: true, data: response.data }
 

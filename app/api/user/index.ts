@@ -31,11 +31,11 @@ export async function getUser() {
     }
 }
 
-export async function getUserExist(email: string) {
+export async function getUserExistsAndIsStudent(email: string) {
     if (!email) return false
 
     try {
-        const { data } = await axiosInstance.get(`/User/Exist/${email}`)
+        const { data } = await axiosInstance.get(`/User/GetExistsAndIsStudent/${email}`)
         return data as boolean
     } catch (error) {
         console.error('Error:', error)
