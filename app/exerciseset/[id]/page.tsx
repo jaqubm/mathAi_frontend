@@ -1,7 +1,7 @@
 'use client'
 
 import React, {useEffect, useState} from "react";
-import {checkExerciseSetOwnership, generateAdditionalExercise, getExerciseSet} from "@/app/api/exerciseset";
+import {ExerciseSet, generateAdditionalExercise, getExerciseSet} from "@/app/api/exerciseset";
 import {Spinner} from "@/components/ui/spinner";
 import {Card, CardContent, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/components/ui/accordion";
@@ -22,7 +22,7 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
     const router = useRouter()
     const { data: user } = useSession()
 
-    const [exerciseSet, setExerciseSet] = useState<any>(null)
+    const [exerciseSet, setExerciseSet] = useState<ExerciseSet>()
     const [isExerciseSetOwner, setIsExerciseSetOwner] = useState<boolean>(false)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -41,10 +41,10 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
                 if (result.success) {
                     setExerciseSet(result.data)
 
-                    checkExerciseSetOwnership(user?.user?.email ?? "", result.data.userId)
+                    /*checkExerciseSetOwnership(user?.user?.email ?? "", result.data.userId)
                         .then((isOwner) => {
                             setIsExerciseSetOwner(isOwner)
-                        })
+                        })*/
                 } else {
                     // @ts-ignore
                     setError(result.error)
@@ -68,7 +68,7 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
 
         setIsAddingExercise(true)
 
-        const result = await generateAdditionalExercise(user?.user?.email ?? "", params.id)
+        const result = await generateAdditionalExercise(params.id)
 
         if (result.success) {
             window.scrollTo({ top: 0, behavior: 'smooth' })

@@ -22,12 +22,10 @@ import {
 import {Card, CardContent, CardFooter} from "@/components/ui/card"
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs"
 import {generateExerciseSetLoadingStates, generateExerciseSetTopics} from "@/app/data"
-import {useSession} from "next-auth/react"
 import {RadioGroup, RadioGroupItem} from "@/components/ui/radio-group"
 import {Label} from "@/components/ui/label"
 
 const formSchema = z.object({
-    userId: z.string().nullable().optional(),
     schoolType: z.string().min(1),
     grade: z.number().int(),
     subject: z.string().min(1),
@@ -36,7 +34,6 @@ const formSchema = z.object({
 
 export default function GeneratePage() {
     const router = useRouter()
-    const { data: user } = useSession()
 
     const [selectedSchoolType, setSelectedSchoolType] = useState("Szkoła Podstawowa")
     const [selectedGrade, setSelectedGrade] = useState<number | null>(null)
@@ -52,7 +49,6 @@ export default function GeneratePage() {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            userId: "",
             schoolType: "",
             grade: 0,
             subject: "",
@@ -74,10 +70,6 @@ export default function GeneratePage() {
         setLoading(true)
 
         const validatedData = formSchema.parse(data)
-
-        if (user) {
-            validatedData.userId = user.user?.email
-        }
 
         const result = await generateExerciseSet(validatedData)
 

@@ -1,17 +1,18 @@
 'use client'
 
 import {ReactNode, useEffect, useState} from "react";
-import {getUserClasses} from "@/app/api/user";
+import {Class, getUserClassList} from "@/app/api/user";
 import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import {useRouter} from "next/navigation";
 import {Spinner} from "@/components/ui/spinner";
 
-export function UserClassesDialog({ email, open, onClose, children }: { email: string, open: boolean, onClose: () => void, children: ReactNode }) {
-    const [classes, setClasses] = useState<any[]>([])
+export function UserClassesDialog({ open, onClose, children }: { open: boolean, onClose: () => void, children: ReactNode }) {
+    const [classList, setClassList] = useState<[Class]>()
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
+
     const router = useRouter()
 
     useEffect(() => {
@@ -19,10 +20,10 @@ export function UserClassesDialog({ email, open, onClose, children }: { email: s
 
         setLoading(true);
 
-        getUserClasses(email)
+        getUserClassList()
             .then((result) => {
                 if (result.success) {
-                    setClasses(result.data)
+                    setClassList(result.data)
                 } else {
                     // @ts-ignore
                     setError(result.error)
@@ -35,7 +36,7 @@ export function UserClassesDialog({ email, open, onClose, children }: { email: s
             .finally(() => {
                 setLoading(false)
             });
-    }, [email, open])
+    }, [open])
 
     const handleClassPageRedirect = (classId: string) => {
         onClose()
@@ -63,19 +64,19 @@ export function UserClassesDialog({ email, open, onClose, children }: { email: s
                 <div>
                     {loading && <Spinner size="large"/>}
                     {error && <p className="text-red-500">Error: {error}</p>}
-                    {!loading && !error && classes.length === 0 && (
-                        <p>Brak klas.</p>
+                    {!loading && !error && classList && classList.length < 1 && (
+                        <p>Twoja lista klas jest pusta!</p>
                     )}
-                    {!loading && classes.length > 0 && (
+                    {!loading && classList && (
                         <div className="grid gap-4">
-                            {classes.map((singleClass) => (
+                            {classList.map((singleClass) => (
                                 <Card key={singleClass.id}>
                                     <CardHeader>
                                         <CardTitle>{singleClass.name}</CardTitle>
                                     </CardHeader>
 
                                     <CardContent>
-                                        <h3>Właściciel: {singleClass.ownerId}</h3>
+                                        <h3>Właściciel: {singleClass.owner.name}</h3>
                                     </CardContent>
 
                                     <CardFooter className="gap-x-4">

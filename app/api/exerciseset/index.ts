@@ -2,16 +2,39 @@
 
 import axios, {AxiosError} from 'axios';
 import {axiosInstance} from "@/app/api";
+import {getSession, useSession} from "next-auth/react";
 
-export const generateExerciseSet = async (exerciseSetGenerator: any) => {
+export interface ExerciseSetSettings {
+    schoolType: string
+    grade: number
+    subject: string
+    numberOfExercises: number
+}
+
+export interface Exercise {
+    id: string
+    content: string
+    firstHints: string
+    secondHint: string
+    thirdHint: string
+    solution: string
+}
+
+export interface ExerciseSet {
+    name: string
+    schoolType: string
+    grade: number
+    subject: string
+    userId: string
+    exercises: [Exercise]
+}
+
+export const generateExerciseSet = async (exerciseSetSettings: ExerciseSetSettings) => {
     try {
         const response = await axiosInstance.post(
             '/ExerciseSet/Generate',
-            exerciseSetGenerator,
-            {
-                headers: { "Content-Type": "application/json" },
-                timeout: 300000,
-            }
+            exerciseSetSettings,
+            { timeout: 300000 }
         )
 
         return { success: true, data: response.data }
@@ -24,32 +47,6 @@ export const generateExerciseSet = async (exerciseSetGenerator: any) => {
         const errorMessage = error.response
             ? `HTTP error! Status: ${error.response.status} - ${error.response.statusText}`
             : "Failed to generate exercise set.";
-
-        return { success: false, error: errorMessage };
-    }
-}
-
-export const generateAdditionalExercise = async (email: string, exerciseSetId: string) => {
-    try {
-        const response = await axiosInstance.put(
-            `/ExerciseSet/GenerateAdditionalExercise/${exerciseSetId}`,
-            email,
-            {
-                headers: { "Content-Type": "application/json" },
-                timeout: 300000,
-            }
-        )
-
-        return { success: true, data: response.data }
-
-    } catch (error: AxiosError | any) {
-        if (axios.isCancel(error)) {
-            return { success: false, error: "Request was canceled." }
-        }
-
-        const errorMessage = error.response
-            ? `HTTP error! Status: ${error.response.status} - ${error.response.statusText}`
-            : "Failed to generate additional exercise.";
 
         return { success: false, error: errorMessage };
     }
@@ -69,24 +66,9 @@ export const getExerciseSet = async (exerciseSetId: string) => {
     }
 }
 
-export const checkExerciseSetOwnership = async (currentUserId: string, exerciseSetOwnerId: string) => {
-    if (!exerciseSetOwnerId)
-        return false
-
-    return currentUserId === exerciseSetOwnerId
-}
-
-export const updateExerciseSet = async (email: string, exerciseSet: any) => {
+export const updateExerciseSet = async (exerciseSet: ExerciseSet) => {
     try {
-        exerciseSet.userId = email
-
-        const response = await axiosInstance.put(
-            `/ExerciseSet/Update`,
-            exerciseSet,
-            {
-                headers: { "Content-Type": "application/json" },
-                timeout: 300000,
-            })
+        const response = await axiosInstance.put(`/ExerciseSet/Update`, exerciseSet)
 
         return { success: true, data: response.data }
     } catch (error: any | AxiosError) {
@@ -98,6 +80,25 @@ export const updateExerciseSet = async (email: string, exerciseSet: any) => {
     }
 }
 
-export const deleteExerciseSet = async (email: string, exerciseSetId: string) => {
+export const generateAdditionalExercise = async (exerciseSetId: string) => {
+    try {
+        const response = await axiosInstance.put(`/ExerciseSet/GenerateAdditionalExercise/${exerciseSetId}`, { timeout: 300000 })
+
+        return { success: true, data: response.data }
+
+    } catch (error: AxiosError | any) {
+        if (axios.isCancel(error)) {
+            return { success: false, error: "Request was canceled." }
+        }
+
+        const errorMessage = error.response
+            ? `HTTP error! Status: ${error.response.status} - ${error.response.statusText}`
+            : "Failed to generate additional exercise.";
+
+        return { success: false, error: errorMessage };
+    }
+}
+
+export const deleteExerciseSet = async (exerciseSetId: string) => {
     console.log("To be implemented")
 }

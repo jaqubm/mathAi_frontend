@@ -7,10 +7,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         async signIn({ account }) {
             if (account) {
                 try {
-                    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/User/SignIn`, {
+                    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/Auth/SignIn`, {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
+                            "Authorization": `Bearer ${account.id_token}`,
                         },
                         body: JSON.stringify(account.id_token),
                     })
@@ -27,6 +28,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             }
 
             return false
+        },
+        async jwt({ token, account }) {
+            if (account) {
+                token.idToken = account.id_token
+            }
+            return token
+        },
+        async session({ session, token }) {
+            session.idToken = token.idToken as string
+            return session
         },
     }
 })

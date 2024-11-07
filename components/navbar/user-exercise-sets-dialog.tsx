@@ -1,19 +1,21 @@
 'use client'
 
 import {ReactNode, useEffect, useState} from "react";
-import {getUserExerciseSets} from "@/app/api/user";
+import {ExerciseSet, getUserExerciseSetList} from "@/app/api/user";
 import {deleteExerciseSet} from "@/app/api/exerciseset";
 import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import {useRouter} from "next/navigation";
 import {Spinner} from "@/components/ui/spinner";
-import { useToast } from "@/hooks/use-toast";
-import { ToastAction } from "@/components/ui/toast";
+import {useToast} from "@/hooks/use-toast";
+import {ToastAction} from "@/components/ui/toast";
 
-export function UserExerciseSetsDialog({ email, open, onClose, children }: { email: string, open: boolean, onClose: () => void, children: ReactNode }) {
-    const [exerciseSets, setExerciseSets] = useState<any[]>([])
+export function UserExerciseSetsDialog({ open, onClose, children }: { open: boolean, onClose: () => void, children: ReactNode }) {
+    const [exerciseSetList, setExerciseSetList] = useState<[ExerciseSet]>()
     const [loading, setLoading] = useState(false)
+    const [error, setError] = useState<string | null>(null)
+
     const router = useRouter()
     const { toast } = useToast()
 
@@ -22,30 +24,23 @@ export function UserExerciseSetsDialog({ email, open, onClose, children }: { ema
 
         setLoading(true);
 
-        getUserExerciseSets(email)
+        getUserExerciseSetList()
             .then((result) => {
                 if (result.success) {
-                    setExerciseSets(result.data)
+                    setExerciseSetList(result.data)
                 } else {
-                    toast({
-                        title: "Błąd ładowania zestawów",
-                        description: result.error || "Wystąpił błąd podczas ładowania zestawów.",
-                        action: <ToastAction altText="Zamknij">OK</ToastAction>
-                    });
+                    // @ts-ignore
+                    setError(result.error)
                 }
             })
             .catch((e) => {
-                toast({
-                    title: "Nieoczekiwany błąd",
-                    description: "Wystąpił nieoczekiwany błąd podczas ładowania zestawów.",
-                    action: <ToastAction altText="Zamknij">OK</ToastAction>
-                });
-                console.error(e);
+                setError('An unexpected error occurred')
+                console.error(e)
             })
             .finally(() => {
                 setLoading(false)
             });
-    }, [email, open])
+    }, [open, toast])
 
     const handleExerciseSetPageRedirect = (exerciseSetId: string) => {
         onClose()
@@ -62,8 +57,8 @@ export function UserExerciseSetsDialog({ email, open, onClose, children }: { ema
         if (!confirmed) return;
 
         try {
-            const result = await deleteExerciseSet(email, exerciseSetId);
-            if (result.success) {
+            const result = await deleteExerciseSet(exerciseSetId);
+            /*if (result.success) {
                 setExerciseSets((prev) => prev.filter((set) => set.id !== exerciseSetId));
                 toast({
                     title: "Zestaw zadań usunięty",
@@ -75,7 +70,7 @@ export function UserExerciseSetsDialog({ email, open, onClose, children }: { ema
                     description: "Nie udało się usunąć zestawu zadań.",
                     action: <ToastAction altText="Zamknij">OK</ToastAction>
                 });
-            }
+            }*/
         } catch (e) {
             console.error("Error deleting exercise set:", e);
             toast({
@@ -100,12 +95,13 @@ export function UserExerciseSetsDialog({ email, open, onClose, children }: { ema
 
                 <div>
                     {loading && <Spinner size="large"/>}
-                    {!loading && exerciseSets.length === 0 && (
-                        <p>Brak zestawów zadań.</p>
+                    {error && <p className="text-red-500">Error: {error}</p>}
+                    {!loading && !error && exerciseSetList && exerciseSetList.length < 1 && (
+                        <p>Twoja lista zestawów zadań jest pusta!</p>
                     )}
-                    {!loading && exerciseSets.length > 0 && (
+                    {!loading && !error && exerciseSetList && (
                         <div className="grid gap-4">
-                            {exerciseSets.map((exerciseSet) => (
+                            {exerciseSetList.map((exerciseSet) => (
                                 <Card key={exerciseSet.id}>
                                     <CardHeader>
                                         <CardTitle>{exerciseSet.name}</CardTitle>
