@@ -36,7 +36,7 @@ export async function getUserExist(email: string) {
 
     try {
         const { data } = await axiosInstance.get(`/User/Exist/${email}`)
-        return data === true
+        return data as boolean
     } catch (error) {
         console.error('Error:', error)
         return false

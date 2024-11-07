@@ -1,7 +1,7 @@
 'use client'
 
 import React, {useEffect, useState} from "react";
-import {ExerciseSet, generateAdditionalExercise, getExerciseSet} from "@/app/api/exerciseset";
+import {ExerciseSet, generateAdditionalExercise, getCanEditExerciseSet, getExerciseSet} from "@/app/api/exerciseset";
 import {Spinner} from "@/components/ui/spinner";
 import {Card, CardContent, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/components/ui/accordion";
@@ -20,7 +20,7 @@ import {useRouter} from "next/navigation";
 
 export default function ExerciseSetPage({ params }: { params: { id: string } }) {
     const router = useRouter()
-    const { data: user } = useSession()
+    const { data: session } = useSession()
 
     const [exerciseSet, setExerciseSet] = useState<ExerciseSet>()
     const [isExerciseSetOwner, setIsExerciseSetOwner] = useState<boolean>(false)
@@ -40,11 +40,6 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
             .then((result) => {
                 if (result.success) {
                     setExerciseSet(result.data)
-
-                    /*checkExerciseSetOwnership(user?.user?.email ?? "", result.data.userId)
-                        .then((isOwner) => {
-                            setIsExerciseSetOwner(isOwner)
-                        })*/
                 } else {
                     // @ts-ignore
                     setError(result.error)
@@ -57,7 +52,25 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
             .finally(() => {
                 setLoading(false)
             })
-    }, [params.id, user?.user?.email, refreshKey])
+    }, [params.id, session, refreshKey])
+
+    useEffect(() => {
+        if (session) {
+            getCanEditExerciseSet(params.id)
+                .then((result) => {
+                    if (result.success) {
+                        setIsExerciseSetOwner(result.data as boolean)
+                    } else {
+                        // @ts-ignore
+                        setError(result.error)
+                    }
+                })
+        }
+        else {
+            setIsExerciseSetOwner(false)
+        }
+
+    }, [params.id, session]);
 
     const handleAddExercise = async () => {
         if (!isExerciseSetOwner) {

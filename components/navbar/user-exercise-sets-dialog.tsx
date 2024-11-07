@@ -53,8 +53,8 @@ export function UserExerciseSetsDialog({ open, onClose, children }: { open: bool
     }
 
     const handleDeleteExerciseSet = async (exerciseSetId: string) => {
-        const confirmed = window.confirm("Czy na pewno chcesz usunąć ten zestaw zadań?");
-        if (!confirmed) return;
+        const confirmed = window.confirm("Czy na pewno chcesz usunąć ten zestaw zadań?")
+        if (!confirmed) return
 
         try {
             const result = await deleteExerciseSet(exerciseSetId);
@@ -77,9 +77,9 @@ export function UserExerciseSetsDialog({ open, onClose, children }: { open: bool
                 title: "Błąd usuwania",
                 description: "Wystąpił niespodziewany błąd podczs próby usuwania zestawu zadań!",
                 action: <ToastAction altText="Zamknij">OK</ToastAction>
-            });
+            })
         }
-    };
+    }
 
     return (
         <Dialog open={open} onOpenChange={onClose}>

@@ -2,7 +2,6 @@
 
 import axios, {AxiosError} from 'axios';
 import {axiosInstance} from "@/app/api";
-import {getSession, useSession} from "next-auth/react";
 
 export interface ExerciseSetSettings {
     schoolType: string
@@ -37,7 +36,7 @@ export const generateExerciseSet = async (exerciseSetSettings: ExerciseSetSettin
             { timeout: 300000 }
         )
 
-        return { success: true, data: response.data }
+        return { success: true, data: response.data as string }
 
     } catch (error: AxiosError | any) {
         if (axios.isCancel(error)) {
@@ -52,11 +51,13 @@ export const generateExerciseSet = async (exerciseSetSettings: ExerciseSetSettin
     }
 }
 
+// TODO: Copy Exercise Set Here
+
 export const getExerciseSet = async (exerciseSetId: string) => {
     try {
         const response = await axiosInstance.get(`/ExerciseSet/Get/${exerciseSetId}`)
 
-        return { success: true, data: response.data }
+        return { success: true, data: response.data as ExerciseSet }
     } catch (error: any | AxiosError) {
         const errorMessage = error.response?.status
             ? `HTTP error! Status: ${error.response.status}`
@@ -66,11 +67,25 @@ export const getExerciseSet = async (exerciseSetId: string) => {
     }
 }
 
-export const updateExerciseSet = async (exerciseSet: ExerciseSet) => {
+export const getCanEditExerciseSet = async (exerciseSetId: string) => {
     try {
-        const response = await axiosInstance.put(`/ExerciseSet/Update`, exerciseSet)
+        const response = await axiosInstance.get(`/ExerciseSet/CanEdit/${exerciseSetId}`)
 
-        return { success: true, data: response.data }
+        return { success: true, data: response.data as boolean }
+    } catch (error: any | AxiosError) {
+        const errorMessage = error.response?.status
+            ? `HTTP error! Status: ${error.response.status}`
+            : 'Failed to get exercise set.'
+
+        return { success: false, error: errorMessage }
+    }
+}
+
+export const updateExerciseSet = async (exerciseSetId: string, exerciseSet: ExerciseSet) => {
+    try {
+        const response = await axiosInstance.put(`/ExerciseSet/Update/${exerciseSetId}`, exerciseSet)
+
+        return { success: true, data: response.data as string }
     } catch (error: any | AxiosError) {
         const errorMessage = error.response?.status
             ? `HTTP error! Status: ${error.response.status}`
@@ -84,7 +99,7 @@ export const generateAdditionalExercise = async (exerciseSetId: string) => {
     try {
         const response = await axiosInstance.put(`/ExerciseSet/GenerateAdditionalExercise/${exerciseSetId}`, { timeout: 300000 })
 
-        return { success: true, data: response.data }
+        return { success: true, data: response.data as string }
 
     } catch (error: AxiosError | any) {
         if (axios.isCancel(error)) {

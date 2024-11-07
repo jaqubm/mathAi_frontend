@@ -1,7 +1,7 @@
 'use client'
 
 import React, {useEffect, useState} from 'react';
-import {getExerciseSet, updateExerciseSet} from '@/app/api/exerciseset';
+import {getCanEditExerciseSet, getExerciseSet, updateExerciseSet} from '@/app/api/exerciseset';
 import {Spinner} from '@/components/ui/spinner';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
 import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from '@/components/ui/accordion';
@@ -19,12 +19,15 @@ import {
 } from '@/components/ui/alert-dialog';
 import {useRouter} from 'next/navigation';
 import {AutosizeTextarea} from "@/components/ui/autosize-textarea";
+import {ToastAction} from "@/components/ui/toast";
+import {toast} from "@/hooks/use-toast";
 
 export default function EditExerciseSetPage({ params }: { params: { id: string } }) {
     const router = useRouter()
-    const { data: user } = useSession()
+    const { data: session } = useSession()
 
     const [exerciseSet, setExerciseSet] = useState<any>(null)
+    const [isExerciseSetOwner, setIsExerciseSetOwner] = useState<boolean>(true)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
 
@@ -50,7 +53,23 @@ export default function EditExerciseSetPage({ params }: { params: { id: string }
             .finally(() => {
                 setLoading(false)
             });
-    }, [params.id, user?.user?.email])
+    }, [params.id])
+
+    useEffect(() => {
+        if (session) {
+            getCanEditExerciseSet(params.id)
+                .then((result) => {
+                    if (result.success) {
+                        setIsExerciseSetOwner(result.data as boolean)
+                    } else {
+                        setIsExerciseSetOwner(false)
+                    }
+                })
+        }
+        else if (!session && exerciseSet) {
+            setIsExerciseSetOwner(false)
+        }
+    }, [params.id, session, exerciseSet]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>, index: number, field: string) => {
         const updatedExercises = [...exerciseSet.exercises]
@@ -68,17 +87,26 @@ export default function EditExerciseSetPage({ params }: { params: { id: string }
     const handleSave = async () => {
         setIsSaving(true)
 
-        const result = await updateExerciseSet(user?.user?.email ?? "", exerciseSet)
+        const result = await updateExerciseSet(params.id, exerciseSet)
 
         if (result.success) {
             window.scrollTo({ top: 0, behavior: 'smooth' })
-            router.push(`/exerciseset/${exerciseSet.id}`)
+            router.push(`/exerciseset/${params.id}`)
         } else {
             setAlertMessage(result.error || 'Failed to save the exercise set.')
             setShowAlert(true)
         }
 
         setIsSaving(false)
+    }
+
+    if (!isExerciseSetOwner) {
+        router.push(`/exerciseset/${params.id}`)
+        toast({
+            title: "Nieautoryzowana akcja",
+            description: "Tylko właściciel zestawu zadań może go edytować!",
+            action: <ToastAction altText="Zamknij">OK</ToastAction>
+        })
     }
 
     return (
