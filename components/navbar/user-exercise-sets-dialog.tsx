@@ -1,7 +1,7 @@
 'use client'
 
 import {ReactNode, useEffect, useState} from "react";
-import {ExerciseSetList, getUserExerciseSetList} from "@/app/api/user";
+import {getUserExerciseSetList} from "@/app/api/user";
 import {deleteExerciseSet} from "@/app/api/exerciseset";
 import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
@@ -10,6 +10,7 @@ import {useRouter} from "next/navigation";
 import {Spinner} from "@/components/ui/spinner";
 import {useToast} from "@/hooks/use-toast";
 import {ToastAction} from "@/components/ui/toast";
+import {ExerciseSetList} from "@/app/api/types";
 
 export function UserExerciseSetsDialog({ open, onClose, children }: { open: boolean, onClose: () => void, children: ReactNode }) {
     const [exerciseSetList, setExerciseSetList] = useState<[ExerciseSetList]>()

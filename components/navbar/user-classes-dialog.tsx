@@ -1,12 +1,13 @@
 'use client'
 
 import {ReactNode, useEffect, useState} from "react";
-import {ClassList, getUserClassList} from "@/app/api/user";
+import {getUserClassList} from "@/app/api/user";
 import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import {useRouter} from "next/navigation";
 import {Spinner} from "@/components/ui/spinner";
+import {ClassList} from "@/app/api/types";
 
 export function UserClassesDialog({ open, onClose, children }: { open: boolean, onClose: () => void, children: ReactNode }) {
     const [classList, setClassList] = useState<[ClassList]>()
