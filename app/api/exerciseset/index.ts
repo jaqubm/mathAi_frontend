@@ -24,7 +24,7 @@ export interface ExerciseSet {
     schoolType: string
     grade: number
     subject: string
-    userId: string
+    isOwner: boolean
     exercises: [Exercise]
 }
 
@@ -58,20 +58,6 @@ export const getExerciseSet = async (exerciseSetId: string) => {
         const response = await axiosInstance.get(`/ExerciseSet/Get/${exerciseSetId}`)
 
         return { success: true, data: response.data as ExerciseSet }
-    } catch (error: any | AxiosError) {
-        const errorMessage = error.response?.status
-            ? `HTTP error! Status: ${error.response.status}`
-            : 'Failed to get exercise set.'
-
-        return { success: false, error: errorMessage }
-    }
-}
-
-export const getCanEditExerciseSet = async (exerciseSetId: string) => {
-    try {
-        const response = await axiosInstance.get(`/ExerciseSet/CanEdit/${exerciseSetId}`)
-
-        return { success: true, data: response.data as boolean }
     } catch (error: any | AxiosError) {
         const errorMessage = error.response?.status
             ? `HTTP error! Status: ${error.response.status}`

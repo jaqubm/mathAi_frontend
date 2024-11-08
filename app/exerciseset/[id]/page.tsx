@@ -1,7 +1,7 @@
 'use client'
 
 import React, {useEffect, useState} from "react";
-import {ExerciseSet, generateAdditionalExercise, getCanEditExerciseSet, getExerciseSet} from "@/app/api/exerciseset";
+import {ExerciseSet, generateAdditionalExercise, getExerciseSet} from "@/app/api/exerciseset";
 import {Spinner} from "@/components/ui/spinner";
 import {Card, CardContent, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/components/ui/accordion";
@@ -23,7 +23,6 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
     const { data: session } = useSession()
 
     const [exerciseSet, setExerciseSet] = useState<ExerciseSet>()
-    const [isExerciseSetOwner, setIsExerciseSetOwner] = useState<boolean>(false)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
 
@@ -54,26 +53,8 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
             })
     }, [params.id, session, refreshKey])
 
-    useEffect(() => {
-        if (session) {
-            getCanEditExerciseSet(params.id)
-                .then((result) => {
-                    if (result.success) {
-                        setIsExerciseSetOwner(result.data as boolean)
-                    } else {
-                        // @ts-ignore
-                        setError(result.error)
-                    }
-                })
-        }
-        else {
-            setIsExerciseSetOwner(false)
-        }
-
-    }, [params.id, session]);
-
     const handleAddExercise = async () => {
-        if (!isExerciseSetOwner) {
+        if (!exerciseSet?.isOwner) {
             setAlertMessage("You are not allowed to do this!")
             setShowAlert(true)
             return
@@ -158,7 +139,7 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
                     </div>
 
                     {/* Display "Dodaj Zadanie" and "Edytuj Zestaw" buttons if user is the owner */}
-                    {isExerciseSetOwner && (
+                    {exerciseSet.isOwner && (
                         <div className="flex justify-center mt-6 space-x-4">
                             <Button
                                 onClick={handleAddExercise}

@@ -1,7 +1,7 @@
 'use client'
 
 import React, {useEffect, useState} from 'react';
-import {getCanEditExerciseSet, getExerciseSet, updateExerciseSet} from '@/app/api/exerciseset';
+import {Exercise, ExerciseSet, getExerciseSet, updateExerciseSet} from '@/app/api/exerciseset';
 import {Spinner} from '@/components/ui/spinner';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
 import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from '@/components/ui/accordion';
@@ -26,8 +26,7 @@ export default function EditExerciseSetPage({ params }: { params: { id: string }
     const router = useRouter()
     const { data: session } = useSession()
 
-    const [exerciseSet, setExerciseSet] = useState<any>(null)
-    const [isExerciseSetOwner, setIsExerciseSetOwner] = useState<boolean>(true)
+    const [exerciseSet, setExerciseSet] = useState<ExerciseSet>()
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
 
@@ -55,52 +54,43 @@ export default function EditExerciseSetPage({ params }: { params: { id: string }
             });
     }, [params.id])
 
-    useEffect(() => {
-        if (session) {
-            getCanEditExerciseSet(params.id)
-                .then((result) => {
-                    if (result.success) {
-                        setIsExerciseSetOwner(result.data as boolean)
-                    } else {
-                        setIsExerciseSetOwner(false)
-                    }
-                })
-        }
-        else if (!session && exerciseSet) {
-            setIsExerciseSetOwner(false)
-        }
-    }, [params.id, session, exerciseSet]);
-
     const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>, index: number, field: string) => {
-        const updatedExercises = [...exerciseSet.exercises]
-        updatedExercises[index][field] = e.target.value
-        setExerciseSet({ ...exerciseSet, exercises: updatedExercises })
+        if (exerciseSet) {
+            const updatedExercises = [...exerciseSet.exercises] as [Exercise]
+            // @ts-ignore
+            updatedExercises[index][field] = e.target.value as string
+            setExerciseSet({ ...exerciseSet, exercises: updatedExercises })
+        }
     }
 
     const handleDeleteExercise = (index: number) => {
-        const updatedExercises = exerciseSet.exercises.filter((_: any, i: number) => {
-            return i !== index;
-        });
-        setExerciseSet({ ...exerciseSet, exercises: updatedExercises });
+        if (exerciseSet) {
+            const updatedExercises = exerciseSet.exercises.filter((_: any, i: number) => {
+                return i !== index;
+            }) as [Exercise];
+            setExerciseSet({ ...exerciseSet, exercises: updatedExercises });
+        }
     }
 
     const handleSave = async () => {
-        setIsSaving(true)
+        if (exerciseSet) {
+            setIsSaving(true)
 
-        const result = await updateExerciseSet(params.id, exerciseSet)
+            const result = await updateExerciseSet(params.id, exerciseSet)
 
-        if (result.success) {
-            window.scrollTo({ top: 0, behavior: 'smooth' })
-            router.push(`/exerciseset/${params.id}`)
-        } else {
-            setAlertMessage(result.error || 'Failed to save the exercise set.')
-            setShowAlert(true)
+            if (result.success) {
+                window.scrollTo({ top: 0, behavior: 'smooth' })
+                router.push(`/exerciseset/${params.id}`)
+            } else {
+                setAlertMessage(result.error || 'Failed to save the exercise set.')
+                setShowAlert(true)
+            }
+
+            setIsSaving(false)
         }
-
-        setIsSaving(false)
     }
 
-    if (!isExerciseSetOwner) {
+    if (exerciseSet && !exerciseSet.isOwner) {
         router.push(`/exerciseset/${params.id}`)
         toast({
             title: "Nieautoryzowana akcja",
@@ -128,7 +118,7 @@ export default function EditExerciseSetPage({ params }: { params: { id: string }
                                     {/* Delete button positioned absolutely to the top-right of the Card */}
                                     <Button
                                         variant="ghost"
-                                        size="sm"
+                                        size="icon"
                                         onClick={() => handleDeleteExercise(index)}
                                         className="absolute top-4 right-4 text-red-500"
                                     >
