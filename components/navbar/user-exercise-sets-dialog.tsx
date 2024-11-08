@@ -1,29 +1,34 @@
 'use client'
 
-import {ReactNode, useEffect, useState} from "react";
-import {getUserExerciseSetList} from "@/app/api/user";
-import {deleteExerciseSet} from "@/app/api/exerciseset";
-import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog";
-import {Button} from "@/components/ui/button";
-import {Card, CardContent, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
-import {useRouter} from "next/navigation";
-import {Spinner} from "@/components/ui/spinner";
-import {useToast} from "@/hooks/use-toast";
-import {ToastAction} from "@/components/ui/toast";
-import {ExerciseSetList} from "@/app/api/types";
+import { ReactNode, useEffect, useState } from "react"
+import { getUserExerciseSetList } from "@/app/api/user"
+import { deleteExerciseSet } from "@/app/api/exerciseset"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import {usePathname, useRouter} from "next/navigation"
+import { Spinner } from "@/components/ui/spinner"
+import { useToast } from "@/hooks/use-toast"
+import { ToastAction } from "@/components/ui/toast"
+import { ExerciseSetList } from "@/app/api/types"
+import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter } from "@/components/ui/alert-dialog"
 
 export function UserExerciseSetsDialog({ open, onClose, children }: { open: boolean, onClose: () => void, children: ReactNode }) {
-    const [exerciseSetList, setExerciseSetList] = useState<[ExerciseSetList]>()
+    const [exerciseSetList, setExerciseSetList] = useState<ExerciseSetList[] | undefined>()
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
 
+    const [selectedExerciseSetId, setSelectedExerciseSetId] = useState<string | null>(null)
+    const [isAlertDialogOpen, setAlertDialogOpen] = useState(false)
+
     const router = useRouter()
+    const pathname = usePathname()
     const { toast } = useToast()
 
     useEffect(() => {
-        if (!open) return;
+        if (!open) return
 
-        setLoading(true);
+        setLoading(true)
 
         getUserExerciseSetList()
             .then((result) => {
@@ -40,7 +45,7 @@ export function UserExerciseSetsDialog({ open, onClose, children }: { open: bool
             })
             .finally(() => {
                 setLoading(false)
-            });
+            })
     }, [open, toast])
 
     const handleExerciseSetPageRedirect = (exerciseSetId: string) => {
@@ -53,33 +58,41 @@ export function UserExerciseSetsDialog({ open, onClose, children }: { open: bool
         router.push(`/exerciseset/${exerciseSetId}/edit`)
     }
 
-    const handleDeleteExerciseSet = async (exerciseSetId: string) => {
-        const confirmed = window.confirm("Czy na pewno chcesz usunąć ten zestaw zadań?")
-        if (!confirmed) return
+    const handleDeleteExerciseSet = async () => {
+        if (!selectedExerciseSetId) return
 
         try {
-            const result = await deleteExerciseSet(exerciseSetId);
-            /*if (result.success) {
-                setExerciseSets((prev) => prev.filter((set) => set.id !== exerciseSetId));
+            const result = await deleteExerciseSet(selectedExerciseSetId)
+            if (result.success) {
+                if (pathname === `/exerciseset/${selectedExerciseSetId}`) {
+                    router.push("/")
+                }
+
+                setExerciseSetList((prev) =>
+                    prev ? prev.filter((exerciseSet) => exerciseSet.id !== selectedExerciseSetId) : []
+                )
+
                 toast({
                     title: "Zestaw zadań usunięty",
                     description: "Zestaw zadań został pomyślnie usunięty.",
-                });
+                })
             } else {
                 toast({
                     title: "Błąd usuwania",
                     description: "Nie udało się usunąć zestawu zadań.",
                     action: <ToastAction altText="Zamknij">OK</ToastAction>
-                });
-            }*/
+                })
+            }
         } catch (e) {
-            console.error("Error deleting exercise set:", e);
+            console.error("Error deleting exercise set:", e)
             toast({
                 title: "Błąd usuwania",
                 description: "Wystąpił niespodziewany błąd podczs próby usuwania zestawu zadań!",
                 action: <ToastAction altText="Zamknij">OK</ToastAction>
             })
         }
+        setSelectedExerciseSetId(null)
+        setAlertDialogOpen(false) // Close AlertDialog after deletion
     }
 
     return (
@@ -95,7 +108,7 @@ export function UserExerciseSetsDialog({ open, onClose, children }: { open: bool
                 </DialogHeader>
 
                 <div>
-                    {loading && <Spinner size="large"/>}
+                    {loading && <Spinner size="large" />}
                     {error && <p className="text-red-500">Error: {error}</p>}
                     {!loading && !error && exerciseSetList && exerciseSetList.length < 1 && (
                         <p>Twoja lista zestawów zadań jest pusta!</p>
@@ -113,16 +126,41 @@ export function UserExerciseSetsDialog({ open, onClose, children }: { open: bool
                                         <h3>{exerciseSet.subject}</h3>
                                     </CardContent>
 
-                                    <CardFooter className="gap-x-4">
+                                    <CardFooter className="gap-x-2">
                                         <Button variant="outline" onClick={() => handleExerciseSetPageRedirect(exerciseSet.id)}>
                                             Przejdź
                                         </Button>
                                         <Button variant="outline" onClick={() => handleEditExerciseSetPageRedirect(exerciseSet.id)}>
                                             Edytuj
                                         </Button>
-                                        <Button variant="destructive" onClick={() => handleDeleteExerciseSet(exerciseSet.id)}>
-                                            Usuń
-                                        </Button>
+
+                                        {/* Delete confirmation with AlertDialog */}
+                                        <AlertDialog open={isAlertDialogOpen} onOpenChange={setAlertDialogOpen}>
+                                            <AlertDialogTrigger asChild>
+                                                <Button variant="destructive" onClick={() => {
+                                                        setSelectedExerciseSetId(exerciseSet.id)
+                                                        setAlertDialogOpen(true)
+                                                    }}>
+                                                    Usuń
+                                                </Button>
+                                            </AlertDialogTrigger>
+                                            <AlertDialogContent>
+                                                <AlertDialogHeader>
+                                                    <AlertDialogTitle>Potwierdź usunięcie</AlertDialogTitle>
+                                                    <AlertDialogDescription>
+                                                        Czy na pewno chcesz usunąć ten zestaw zadań? Tej akcji nie można cofnąć.
+                                                    </AlertDialogDescription>
+                                                </AlertDialogHeader>
+                                                <AlertDialogFooter>
+                                                    <Button variant="outline" onClick={() => setAlertDialogOpen(false)}>
+                                                        Anuluj
+                                                    </Button>
+                                                    <Button variant="destructive" onClick={handleDeleteExerciseSet}>
+                                                        Usuń
+                                                    </Button>
+                                                </AlertDialogFooter>
+                                            </AlertDialogContent>
+                                        </AlertDialog>
                                     </CardFooter>
                                 </Card>
                             ))}

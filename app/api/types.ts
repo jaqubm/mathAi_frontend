@@ -20,7 +20,7 @@ export interface ExerciseSet {
     grade: number
     subject: string
     isOwner: boolean
-    exercises: [Exercise]
+    exercises: Exercise[]
 }
 
 export interface ExerciseSetSettings {
@@ -40,7 +40,7 @@ export interface ExerciseSetList {
 
 export interface ClassCreator {
     name: string
-    studentEmailList: [string]
+    studentEmailList: string[]
 }
 
 export interface ClassList {

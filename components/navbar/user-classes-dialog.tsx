@@ -10,7 +10,7 @@ import {Spinner} from "@/components/ui/spinner";
 import {ClassList} from "@/app/api/types";
 
 export function UserClassesDialog({ open, onClose, children }: { open: boolean, onClose: () => void, children: ReactNode }) {
-    const [classList, setClassList] = useState<[ClassList]>()
+    const [classList, setClassList] = useState<ClassList[]>()
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
 
@@ -80,7 +80,7 @@ export function UserClassesDialog({ open, onClose, children }: { open: boolean, 
                                         <h3>Właściciel: {singleClass.owner.name}</h3>
                                     </CardContent>
 
-                                    <CardFooter className="gap-x-4">
+                                    <CardFooter className="gap-x-2">
                                         <Button variant="outline" disabled onClick={() => handleClassPageRedirect(singleClass.id)}>
                                             Przejdź
                                         </Button>

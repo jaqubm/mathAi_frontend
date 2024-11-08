@@ -34,7 +34,7 @@ export async function updateUserAccountType(isTeacher: boolean) {
 export async function getUserExerciseSetList() {
     try {
         const { data } = await axiosInstance.get(`/User/GetExerciseSetList`)
-        return { success: true, data: data as [ExerciseSetList] }
+        return { success: true, data: data as ExerciseSetList[] }
     } catch (error) {
         console.error('Error while trying to get users exercise sets:', error)
         return { success: false, error: 'Failed to get users exercise sets.' }
@@ -44,7 +44,7 @@ export async function getUserExerciseSetList() {
 export async function getUserClassList() {
     try {
         const { data } = await axiosInstance.get(`/User/GetClassList`)
-        return { success: true, data: data as [ClassList] }
+        return { success: true, data: data as ClassList[] }
     } catch (error) {
         console.error('Error while trying to get users classes:', error)
         return { success: false, error: 'Failed to get users classes.' }
