@@ -1,7 +1,7 @@
 'use client'
 
 import React, {useEffect, useState} from 'react';
-import {Exercise, ExerciseSet, getExerciseSet, updateExerciseSet} from '@/app/api/exerciseset';
+import {getExerciseSet, updateExerciseSet} from '@/app/api/exerciseset';
 import {Spinner} from '@/components/ui/spinner';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
 import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from '@/components/ui/accordion';
@@ -21,6 +21,7 @@ import {useRouter} from 'next/navigation';
 import {AutosizeTextarea} from "@/components/ui/autosize-textarea";
 import {ToastAction} from "@/components/ui/toast";
 import {toast} from "@/hooks/use-toast";
+import {Exercise, ExerciseSet} from "@/app/api/types";
 
 export default function EditExerciseSetPage({ params }: { params: { id: string } }) {
     const router = useRouter()

@@ -2,7 +2,7 @@
 
 import {Form, FormControl, FormField, FormItem, FormLabel} from "@/components/ui/form"
 import {useRouter} from "next/navigation"
-import React, {useEffect, useState} from "react"
+import React, {useState} from "react"
 import {useForm} from "react-hook-form"
 import {z} from "zod"
 import {zodResolver} from "@hookform/resolvers/zod"
@@ -15,18 +15,18 @@ import {
     AlertDialogHeader,
     AlertDialogTitle
 } from "@/components/ui/alert-dialog"
-import {useSession} from "next-auth/react"
-import {Class, createClass} from "@/app/api/class"
+import {createClass} from "@/app/api/class"
 import {Input} from "@/components/ui/input"
 import {Button} from "@/components/ui/button"
 import {Separator} from "@/components/ui/separator"
 import {Plus, X} from "lucide-react"
-import {getUser, getUserExistsAndIsStudent, User} from "@/app/api/user"
+import {getUserExistsAndIsStudent} from "@/app/api/user"
 import {Spinner} from "@/components/ui/spinner"
 import {Card, CardContent, CardFooter, CardHeader, CardTitle} from "@/components/ui/card"
 import {ScrollArea} from "@/components/ui/scroll-area"
 import {useToast} from "@/hooks/use-toast"
 import {ToastAction} from "@/components/ui/toast"
+import {ClassCreator} from "@/app/api/types";
 
 const formSchema = z.object({
     name: z.string().min(1, "Name is required").max(255, "Name can have a maximum of 255 characters"),
@@ -97,7 +97,7 @@ export default function CreateClassPage() {
     async function onSubmit(data: z.infer<typeof formSchema>) {
         setLoading(true)
 
-        const result = await createClass(data as Class)
+        const result = await createClass(data as ClassCreator)
 
         if (result.success) {
             router.push(`/class/${result.data}`)

@@ -2,31 +2,7 @@
 
 import axios, {AxiosError} from 'axios';
 import {axiosInstance} from "@/app/api";
-
-export interface ExerciseSetSettings {
-    schoolType: string
-    grade: number
-    subject: string
-    numberOfExercises: number
-}
-
-export interface Exercise {
-    id: string
-    content: string
-    firstHints: string
-    secondHint: string
-    thirdHint: string
-    solution: string
-}
-
-export interface ExerciseSet {
-    name: string
-    schoolType: string
-    grade: number
-    subject: string
-    isOwner: boolean
-    exercises: [Exercise]
-}
+import {ExerciseSet, ExerciseSetSettings} from "@/app/api/types";
 
 export const generateExerciseSet = async (exerciseSetSettings: ExerciseSetSettings) => {
     try {

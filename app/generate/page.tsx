@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import {Card, CardContent, CardFooter} from "@/components/ui/card"
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs"
-import {generateExerciseSetLoadingStates, generateExerciseSetTopics} from "@/app/data"
+import {generateExerciseSetLoadingStates, generateExerciseSetTopics} from "@/data"
 import {RadioGroup, RadioGroupItem} from "@/components/ui/radio-group"
 import {Label} from "@/components/ui/label"
 

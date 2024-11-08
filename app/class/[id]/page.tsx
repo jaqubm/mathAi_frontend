@@ -4,7 +4,6 @@ import {Spinner} from "@/components/ui/spinner";
 import React, {useEffect, useState} from "react";
 import {useRouter} from "next/navigation";
 import {useSession} from "next-auth/react";
-import {checkExerciseSetOwnership} from "@/app/api/exerciseset";
 import {getClass} from "@/app/api/class";
 
 export default function ClassPage({ params }: { params: { id: string } }) {
@@ -16,7 +15,7 @@ export default function ClassPage({ params }: { params: { id: string } }) {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
 
-    useEffect(() => {
+    /*useEffect(() => {
         setLoading(true)
 
         getClass(params.id)
@@ -40,7 +39,7 @@ export default function ClassPage({ params }: { params: { id: string } }) {
             .finally(() => {
                 setLoading(false)
             })
-    }, [params.id, user?.user?.email])
+    }, [params.id, user?.user?.email])*/
 
     console.log(cClass)
 

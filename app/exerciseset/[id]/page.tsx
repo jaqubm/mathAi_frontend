@@ -1,7 +1,7 @@
 'use client'
 
 import React, {useEffect, useState} from "react";
-import {ExerciseSet, generateAdditionalExercise, getExerciseSet} from "@/app/api/exerciseset";
+import {generateAdditionalExercise, getExerciseSet} from "@/app/api/exerciseset";
 import {Spinner} from "@/components/ui/spinner";
 import {Card, CardContent, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/components/ui/accordion";
@@ -17,6 +17,7 @@ import {
     AlertDialogTitle
 } from "@/components/ui/alert-dialog";
 import {useRouter} from "next/navigation";
+import {ExerciseSet} from "@/app/api/types";
 
 export default function ExerciseSetPage({ params }: { params: { id: string } }) {
     const router = useRouter()

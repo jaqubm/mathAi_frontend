@@ -1,7 +1,7 @@
 'use client'
 
 import {ReactNode, useEffect, useState} from "react";
-import {ExerciseSet, getUserExerciseSetList} from "@/app/api/user";
+import {ExerciseSetList, getUserExerciseSetList} from "@/app/api/user";
 import {deleteExerciseSet} from "@/app/api/exerciseset";
 import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
@@ -12,7 +12,7 @@ import {useToast} from "@/hooks/use-toast";
 import {ToastAction} from "@/components/ui/toast";
 
 export function UserExerciseSetsDialog({ open, onClose, children }: { open: boolean, onClose: () => void, children: ReactNode }) {
-    const [exerciseSetList, setExerciseSetList] = useState<[ExerciseSet]>()
+    const [exerciseSetList, setExerciseSetList] = useState<[ExerciseSetList]>()
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
 

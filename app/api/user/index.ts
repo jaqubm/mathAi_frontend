@@ -1,25 +1,5 @@
 import {axiosInstance} from "@/app/api";
-
-export interface User {
-    email: string
-    name: string
-    isTeacher: boolean
-    firstTimeSignIn: boolean
-}
-
-export interface ExerciseSet {
-    id: string
-    name: string
-    schoolType: string
-    grade: string
-    subject: string
-}
-
-export interface Class {
-    id: string
-    name: string
-    owner: User
-}
+import {ClassList, ExerciseSetList, User} from "@/app/api/types";
 
 export async function getUser() {
     try {
@@ -54,7 +34,7 @@ export async function updateUserAccountType(isTeacher: boolean) {
 export async function getUserExerciseSetList() {
     try {
         const { data } = await axiosInstance.get(`/User/GetExerciseSetList`)
-        return { success: true, data: data as [ExerciseSet] }
+        return { success: true, data: data as [ExerciseSetList] }
     } catch (error) {
         console.error('Error while trying to get users exercise sets:', error)
         return { success: false, error: 'Failed to get users exercise sets.' }
@@ -64,7 +44,7 @@ export async function getUserExerciseSetList() {
 export async function getUserClassList() {
     try {
         const { data } = await axiosInstance.get(`/User/GetClassList`)
-        return { success: true, data: data as [Class] }
+        return { success: true, data: data as [ClassList] }
     } catch (error) {
         console.error('Error while trying to get users classes:', error)
         return { success: false, error: 'Failed to get users classes.' }
