@@ -23,11 +23,12 @@ import {
 import {LinkNavbar} from "@/components/navbar/link-navbar";
 import {UserExerciseSetsDialog} from "@/components/navbar/user-exercise-sets-dialog";
 import {signOut, useSession} from "next-auth/react";
-import {getUser, updateUserAccountType, User} from "@/app/api/user";
+import {getUser, updateUserAccountType} from "@/app/api/user";
 import {handleServerSignIn, handleServerSignOut} from "@/app/api/auth";
 import {wakeUpDatabase} from "@/app/api/status";
 import {Spinner} from "@/components/ui/spinner";
 import {UserClassesDialog} from "@/components/navbar/user-classes-dialog";
+import {User} from "@/app/api/types";
 
 export function Navbar() {
     const { data: session } = useSession()

@@ -25,7 +25,6 @@ import {Exercise, ExerciseSet} from "@/app/api/types";
 
 export default function EditExerciseSetPage({ params }: { params: { id: string } }) {
     const router = useRouter()
-    const { data: session } = useSession()
 
     const [exerciseSet, setExerciseSet] = useState<ExerciseSet>()
     const [loading, setLoading] = useState(true)

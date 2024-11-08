@@ -11,7 +11,6 @@ export default function ClassPage({ params }: { params: { id: string } }) {
     const { data: user } = useSession()
 
     const [cClass, setClass] = useState<any>(null)
-    const [isClassOwner, setIsClassOwner] = useState<boolean>(false)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
 
