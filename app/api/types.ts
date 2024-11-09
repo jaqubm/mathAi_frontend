@@ -38,6 +38,10 @@ export interface ExerciseSetList {
     subject: string
 }
 
+export interface Class {
+
+}
+
 export interface ClassCreator {
     name: string
     studentEmailList: string[]

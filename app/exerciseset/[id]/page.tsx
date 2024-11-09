@@ -98,46 +98,55 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
                         <h3>{exerciseSet.subject}</h3>
                     </div>
 
+                    {/* Handling situation when exercises list in exerciseSet is empty */}
+                    {exerciseSet.exercises.length === 0 && (
+                        <div className="flex flex-col items-center justify-center mb-10 text-center font-bold gap-5">
+                            {isAddingExercise ? <Spinner size="medium"/> : "Ten zestaw zadań jest pusty!"}
+                        </div>
+                    )}
+
                     {/* Displaying exercises from exerciseSet */}
-                    <div className="grid gap-5">
-                        {exerciseSet.exercises.map((exercise: any, index: number) => (
-                            <Card key={exercise.id}>
-                                <CardHeader>
-                                    <CardTitle>Zadanie {index + 1}</CardTitle>
-                                </CardHeader>
+                    {exerciseSet.exercises.length > 0 && (
+                        <div className="grid gap-5">
+                            {exerciseSet.exercises.map((exercise: any, index: number) => (
+                                <Card key={exercise.id}>
+                                    <CardHeader>
+                                        <CardTitle>Zadanie {index + 1}</CardTitle>
+                                    </CardHeader>
 
-                                <CardContent>
-                                    {exercise.content}
-                                </CardContent>
+                                    <CardContent>
+                                        {exercise.content}
+                                    </CardContent>
 
-                                <CardFooter>
-                                    <Accordion type="multiple" className="w-full">
-                                        <AccordionItem value="Podpowiedź 1">
-                                            <AccordionTrigger>Podpowiedź 1</AccordionTrigger>
-                                            <AccordionContent>{exercise.firstHint}</AccordionContent>
-                                        </AccordionItem>
+                                    <CardFooter>
+                                        <Accordion type="multiple" className="w-full">
+                                            <AccordionItem value="Podpowiedź 1">
+                                                <AccordionTrigger>Podpowiedź 1</AccordionTrigger>
+                                                <AccordionContent>{exercise.firstHint}</AccordionContent>
+                                            </AccordionItem>
 
-                                        <AccordionItem value="Podpowiedź 2">
-                                            <AccordionTrigger>Podpowiedź 2</AccordionTrigger>
-                                            <AccordionContent>{exercise.secondHint}</AccordionContent>
-                                        </AccordionItem>
+                                            <AccordionItem value="Podpowiedź 2">
+                                                <AccordionTrigger>Podpowiedź 2</AccordionTrigger>
+                                                <AccordionContent>{exercise.secondHint}</AccordionContent>
+                                            </AccordionItem>
 
-                                        <AccordionItem value="Podpowiedź 3">
-                                            <AccordionTrigger>Podpowiedź 3</AccordionTrigger>
-                                            <AccordionContent>{exercise.thirdHint}</AccordionContent>
-                                        </AccordionItem>
+                                            <AccordionItem value="Podpowiedź 3">
+                                                <AccordionTrigger>Podpowiedź 3</AccordionTrigger>
+                                                <AccordionContent>{exercise.thirdHint}</AccordionContent>
+                                            </AccordionItem>
 
-                                        <AccordionItem value="Rozwiązanie">
-                                            <AccordionTrigger>Rozwiązanie</AccordionTrigger>
-                                            <AccordionContent>{exercise.solution}</AccordionContent>
-                                        </AccordionItem>
-                                    </Accordion>
-                                </CardFooter>
-                            </Card>
-                        ))}
+                                            <AccordionItem value="Rozwiązanie">
+                                                <AccordionTrigger>Rozwiązanie</AccordionTrigger>
+                                                <AccordionContent>{exercise.solution}</AccordionContent>
+                                            </AccordionItem>
+                                        </Accordion>
+                                    </CardFooter>
+                                </Card>
+                            ))}
 
-                        {isAddingExercise ? <Spinner size="medium" /> : null}
-                    </div>
+                            {isAddingExercise ? <Spinner size="medium"/> : null}
+                        </div>
+                    )}
 
                     {/* Display "Dodaj Zadanie" and "Edytuj Zestaw" buttons if user is the owner */}
                     {exerciseSet.isOwner && (
@@ -171,7 +180,8 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
                 <AlertDialogContent>
                     <AlertDialogHeader>
                         <AlertDialogTitle>Błąd Generowania!</AlertDialogTitle>
-                        <AlertDialogDescription>Wystąpił błąd podczas generowania dodatkowego zadania!</AlertDialogDescription>
+                        <AlertDialogDescription>Wystąpił błąd podczas generowania dodatkowego
+                            zadania!</AlertDialogDescription>
                         <AlertDialogDescription>Error message: {alertMessage}</AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>

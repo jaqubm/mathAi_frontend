@@ -5,12 +5,13 @@ import React, {useEffect, useState} from "react";
 import {useRouter} from "next/navigation";
 import {useSession} from "next-auth/react";
 import {getClass} from "@/app/api/class";
+import {Class} from "@/app/api/types";
 
 export default function ClassPage({ params }: { params: { id: string } }) {
     const router = useRouter()
     const { data: user } = useSession()
 
-    const [cClass, setClass] = useState<any>(null)
+    const [cClass, setClass] = useState<Class>()
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
 
