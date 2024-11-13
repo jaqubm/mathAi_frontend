@@ -8,7 +8,15 @@ export interface User {
 export interface Exercise {
     id: string
     content: string
-    firstHints: string
+    firstHint: string
+    secondHint: string
+    thirdHint: string
+    solution: string
+}
+
+export interface ExerciseUpdate {
+    content: string
+    firstHint: string
     secondHint: string
     thirdHint: string
     solution: string

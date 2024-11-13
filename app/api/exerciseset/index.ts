@@ -46,7 +46,24 @@ export const generateAdditionalExercise = async (exerciseSetId: string) => {
     }
 }
 
-// TODO: Copy Exercise Set Here
+export const copyExerciseSet = async (exerciseSetId: string) => {
+    try {
+        const response = await axiosInstance.put(`/ExerciseSet/Copy/${exerciseSetId}`, { timeout: 300000 })
+
+        return { success: true, data: response.data as string }
+
+    } catch (error: AxiosError | any) {
+        if (axios.isCancel(error)) {
+            return { success: false, error: "Request was canceled." }
+        }
+
+        const errorMessage = error.response
+            ? `HTTP error! Status: ${error.response.status} - ${error.response.statusText}`
+            : "Failed to copy exercise set.";
+
+        return { success: false, error: errorMessage };
+    }
+}
 
 export const getExerciseSet = async (exerciseSetId: string) => {
     try {
@@ -62,15 +79,15 @@ export const getExerciseSet = async (exerciseSetId: string) => {
     }
 }
 
-export const updateExerciseSet = async (exerciseSetId: string, exerciseSet: ExerciseSet) => {
+export const updateExerciseSetName = async (exerciseSetId: string, exerciseSetName: string) => {
     try {
-        const response = await axiosInstance.put(`/ExerciseSet/Update/${exerciseSetId}`, exerciseSet)
+        const response = await axiosInstance.put(`/ExerciseSet/UpdateName/${exerciseSetId}`, exerciseSetName)
 
         return { success: true, data: response.data as string }
     } catch (error: any | AxiosError) {
         const errorMessage = error.response?.status
             ? `HTTP error! Status: ${error.response.status}`
-            : 'Failed to save exercise set.'
+            : 'Failed to update exercise set name.'
 
         return { success: false, error: errorMessage }
     }
