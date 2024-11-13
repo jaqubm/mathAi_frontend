@@ -48,7 +48,7 @@ export const generateAdditionalExercise = async (exerciseSetId: string) => {
 
 export const copyExerciseSet = async (exerciseSetId: string) => {
     try {
-        const response = await axiosInstance.put(`/ExerciseSet/Copy/${exerciseSetId}`, { timeout: 300000 })
+        const response = await axiosInstance.post(`/ExerciseSet/Copy/${exerciseSetId}`, { timeout: 300000 })
 
         return { success: true, data: response.data as string }
 

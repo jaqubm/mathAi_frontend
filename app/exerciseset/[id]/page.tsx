@@ -1,30 +1,24 @@
 'use client'
 
-import React, {useEffect, useState} from "react"
-import {generateAdditionalExercise, getExerciseSet} from "@/app/api/exerciseset"
-import {deleteExercise, updateExercise} from "@/app/api/exercise"
-import {updateExerciseSetName} from "@/app/api/exerciseSet"
-import {Spinner} from "@/components/ui/spinner"
-import {Card, CardContent, CardFooter, CardHeader, CardTitle} from "@/components/ui/card"
-import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/components/ui/accordion"
-import {useSession} from "next-auth/react"
-import {Button} from "@/components/ui/button"
-import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog"
-import {
-    AlertDialog,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle
-} from "@/components/ui/alert-dialog"
-import {useRouter} from "next/navigation"
-import {Exercise, ExerciseSet, ExerciseUpdate} from "@/app/api/types"
-import {AutosizeTextarea} from "@/components/ui/autosize-textarea"
-import {toast} from "@/hooks/use-toast"
-import {Edit2, X} from "lucide-react"
-import {Input} from "@/components/ui/input";
-import {Label} from "@/components/ui/label"; // Importing icons
+import React, { useEffect, useState } from "react"
+import { generateAdditionalExercise, getExerciseSet, copyExerciseSet } from "@/app/api/exerciseset"
+import { deleteExercise, updateExercise } from "@/app/api/exercise"
+import { updateExerciseSetName } from "@/app/api/exerciseset"
+import { Spinner } from "@/components/ui/spinner"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import { useSession } from "next-auth/react"
+import { Button } from "@/components/ui/button"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog"
+import { useRouter } from "next/navigation"
+import { Exercise, ExerciseSet, ExerciseUpdate } from "@/app/api/types"
+import { AutosizeTextarea } from "@/components/ui/autosize-textarea"
+import { toast } from "@/hooks/use-toast"
+import { Edit2, X } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import {ToastAction} from "@/components/ui/toast";
 
 export default function ExerciseSetPage({ params }: { params: { id: string } }) {
     const router = useRouter()
@@ -35,6 +29,7 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
     const [error, setError] = useState<string | null>(null)
 
     const [isAddingExercise, setIsAddingExercise] = useState(false)
+    const [isCopyingExerciseSet, setIsCopyingExerciseSet] = useState(false)
     const [refreshKey, setRefreshKey] = useState(0)
     const [editingExercise, setEditingExercise] = useState<Exercise | null>(null)
     const [deletingExerciseId, setDeletingExerciseId] = useState<string | null>(null)
@@ -53,8 +48,8 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
                 }
             })
             .catch((error) => {
-                console.error('Error fetching exercise set:', error)
-                setError('An unexpected error occurred')
+                console.error("Error fetching exercise set:", error)
+                setError("An unexpected error occurred")
             })
             .finally(() => {
                 setLoading(false)
@@ -99,7 +94,8 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
             } else {
                 toast({
                     title: "Zadanie nie zostało zaktualizowane",
-                    description: result.error
+                    description: result.error,
+                    action: <ToastAction altText="Zamknij">OK</ToastAction>
                 })
             }
         }
@@ -120,7 +116,8 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
             } else {
                 toast({
                     title: "Nazwa zestawu zadań nie została zaktualizowana",
-                    description: result.error
+                    description: result.error,
+                    action: <ToastAction altText="Zamknij">OK</ToastAction>
                 })
             }
         }
@@ -141,8 +138,33 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
         } else {
             toast({
                 title: "Błąd usuwania zadania",
-                description: result.error
+                description: result.error,
+                action: <ToastAction altText="Zamknij">OK</ToastAction>
             })
+        }
+    }
+
+    const handleCopyExerciseSet = async () => {
+        if (exerciseSet) {
+            setIsCopyingExerciseSet(true)
+
+            const result = await copyExerciseSet(params.id)
+
+            setIsCopyingExerciseSet(false)
+
+            if (result.success) {
+                toast({
+                    title: "Zestaw zadań został skopiowany",
+                    description: "Pomyślnie utworzono kopię zestawu zadań."
+                })
+                router.push(`/exerciseset/${result.data}`)
+            } else {
+                toast({
+                    title: "Błąd kopiowania zestawu zadań",
+                    description: result.error,
+                    action: <ToastAction altText="Zamknij">OK</ToastAction>
+                })
+            }
         }
     }
 
@@ -153,17 +175,20 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
             {!loading && exerciseSet && (
                 <div className="w-full max-w-5xl px-4 my-6">
                     <div className="flex flex-col items-center justify-center mb-10 text-center">
-                        <div className="flex items-center space-x-2">
-                            <h1 className="text-4xl font-bold mb-2 truncate">{exerciseSet.name}</h1>
-                            {exerciseSet.isOwner && (
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    onClick={() => setEditingExerciseSetName(exerciseSet.name)}
-                                >
-                                    <Edit2 className="w-5 h-5"/>
-                                </Button>
-                            )}
+                        <div className="flex justify-center items-center space-x-2">
+                            <h1 className="text-4xl font-bold mb-2 break-all">
+                                {exerciseSet.name}
+                                {exerciseSet.isOwner && (
+                                    <Button
+                                        className="ml-2"
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={() => setEditingExerciseSetName(exerciseSet.name)}
+                                    >
+                                        <Edit2 className="w-5 h-5"/>
+                                    </Button>
+                                )}
+                            </h1>
                         </div>
                         <h3>{exerciseSet.schoolType} - klasa {exerciseSet.grade}</h3>
                         <h3>{exerciseSet.subject}</h3>
@@ -177,7 +202,7 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
 
                     {exerciseSet.exercises.length > 0 && (
                         <div className="grid gap-5">
-                        {exerciseSet.exercises.map((exercise, index) => (
+                            {exerciseSet.exercises.map((exercise, index) => (
                                 <Card key={exercise.id} className="relative">
                                     <CardHeader>
                                         <CardTitle>Zadanie {index + 1}</CardTitle>
@@ -230,9 +255,17 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
                         </div>
                     )}
 
+                    {(isAddingExercise || isCopyingExerciseSet) && <Spinner size="medium" className="mt-6" />}
+
                     {exerciseSet.isOwner && (
                         <div className="flex justify-center mt-6 space-x-4">
                             <Button onClick={handleAddExercise} disabled={isAddingExercise}>Dodaj Zadanie</Button>
+                        </div>
+                    )}
+
+                    {session?.user && !exerciseSet.isOwner && (
+                        <div className="flex justify-center mt-6 space-x-4">
+                            <Button onClick={handleCopyExerciseSet} disabled={isCopyingExerciseSet}>Kopiuj Zestaw Zadań</Button>
                         </div>
                     )}
                 </div>
@@ -314,11 +347,11 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
                             <Input
                                 value={editingExerciseSetName}
                                 onChange={(e) => setEditingExerciseSetName(e.target.value)}
-                                maxLength={50}
+                                maxLength={30}
                                 className="resize-none w-full mt-2 p-2 border rounded"
                             />
                             <p className="text-right text-sm text-gray-500 mt-2">
-                                {editingExerciseSetName.length}/50
+                                {editingExerciseSetName.length}/30
                             </p>
                         </div>
                         <DialogFooter className="gap-2">

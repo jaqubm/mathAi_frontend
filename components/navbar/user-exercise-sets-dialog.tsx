@@ -118,7 +118,7 @@ export function UserExerciseSetsDialog({ open, onClose, children }: { open: bool
                             {exerciseSetList.map((exerciseSet) => (
                                 <Card key={exerciseSet.id}>
                                     <CardHeader>
-                                        <CardTitle>{exerciseSet.name}</CardTitle>
+                                        <CardTitle className="break-all">{exerciseSet.name}</CardTitle>
                                     </CardHeader>
 
                                     <CardContent>

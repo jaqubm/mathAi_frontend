@@ -75,8 +75,7 @@ export default function CreateClassPage() {
                 setStudentEmail("")
                 toast({
                     title: "Student został pomyślnie dodany",
-                    description: `Student ${studentEmail} został pomyślnie dodany.`,
-                    action: <ToastAction altText="Zamknij">OK</ToastAction>
+                    description: `Student ${studentEmail} został pomyślnie dodany.`
                 });
             } else {
                 toast({

@@ -73,7 +73,7 @@ export function UserClassesDialog({ open, onClose, children }: { open: boolean, 
                             {classList.map((singleClass) => (
                                 <Card key={singleClass.id}>
                                     <CardHeader>
-                                        <CardTitle>{singleClass.name}</CardTitle>
+                                        <CardTitle className="break-all">{singleClass.name}</CardTitle>
                                     </CardHeader>
 
                                     <CardContent>
