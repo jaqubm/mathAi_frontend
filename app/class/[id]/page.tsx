@@ -5,28 +5,23 @@ import React, {useEffect, useState} from "react";
 import {useRouter} from "next/navigation";
 import {useSession} from "next-auth/react";
 import {getClass} from "@/app/api/class";
-import {Class} from "@/app/api/types";
+import {Class, User} from "@/app/api/types";
 
 export default function ClassPage({ params }: { params: { id: string } }) {
     const router = useRouter()
-    const { data: user } = useSession()
+    const { data: session } = useSession()
 
     const [cClass, setClass] = useState<Class>()
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
 
-    /*useEffect(() => {
+    useEffect(() => {
         setLoading(true)
 
         getClass(params.id)
             .then((result) => {
                 if (result.success) {
                     setClass(result.data)
-
-                    checkExerciseSetOwnership(user?.user?.email ?? "", result.data.userId)
-                        .then((isOwner) => {
-                            setIsClassOwner(isOwner)
-                        })
                 } else {
                     // @ts-ignore
                     setError(result.error)
@@ -39,7 +34,7 @@ export default function ClassPage({ params }: { params: { id: string } }) {
             .finally(() => {
                 setLoading(false)
             })
-    }, [params.id, user?.user?.email])*/
+    }, [params.id, session?.user?.email])
 
     console.log(cClass)
 
@@ -55,14 +50,14 @@ export default function ClassPage({ params }: { params: { id: string } }) {
                     <div className="flex flex-col items-center justify-center mb-10 text-center">
                         <h1 className="text-4xl font-bold mb-2">{cClass.name}</h1>
 
-                        <h3>Nauczyciel: {cClass.ownerId}</h3>
+                        <h3>Nauczyciel: {cClass.owner.name}</h3>
                     </div>
 
                     {/* Displaying exercises from exerciseSet */}
                     <div className="grid gap-5">
-                        {cClass.classStudents.map((student: any, index: number) => (
-                            <div key={student.id}>
-                                {student.studentId}
+                        {cClass.students.map((student: User, index: number) => (
+                            <div key={student.email}>
+                                {student.name}
                             </div>
                         ))}
                     </div>

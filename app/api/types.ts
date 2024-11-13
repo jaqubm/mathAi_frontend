@@ -47,7 +47,11 @@ export interface ExerciseSetList {
 }
 
 export interface Class {
-
+    name: string
+    owner: User
+    isOwner: boolean
+    students: User[]
+    assignments: AssignmentList[]
 }
 
 export interface ClassCreator {
@@ -59,4 +63,16 @@ export interface ClassList {
     id: string
     name: string
     owner: User
+}
+
+export interface Assignment {
+
+}
+
+export interface AssignmentList {
+    name: string
+    startDate: Date
+    dueDate: Date
+    classId: string
+    exerciseSetId: string
 }

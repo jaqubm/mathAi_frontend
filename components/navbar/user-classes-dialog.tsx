@@ -81,7 +81,7 @@ export function UserClassesDialog({ open, onClose, children }: { open: boolean, 
                                     </CardContent>
 
                                     <CardFooter className="gap-x-2">
-                                        <Button variant="outline" disabled onClick={() => handleClassPageRedirect(singleClass.id)}>
+                                        <Button variant="outline" onClick={() => handleClassPageRedirect(singleClass.id)}>
                                             Przejdź
                                         </Button>
                                         <Button variant="outline" disabled onClick={() => handleEditClassPageRedirect(singleClass.id)}>

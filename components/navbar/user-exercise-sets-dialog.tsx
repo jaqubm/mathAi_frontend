@@ -53,11 +53,6 @@ export function UserExerciseSetsDialog({ open, onClose, children }: { open: bool
         router.push(`/exerciseset/${exerciseSetId}`)
     }
 
-    const handleEditExerciseSetPageRedirect = (exerciseSetId: string) => {
-        onClose()
-        router.push(`/exerciseset/${exerciseSetId}/edit`)
-    }
-
     const handleDeleteExerciseSet = async () => {
         if (!selectedExerciseSetId) return
 
@@ -129,9 +124,6 @@ export function UserExerciseSetsDialog({ open, onClose, children }: { open: bool
                                     <CardFooter className="gap-x-2">
                                         <Button variant="outline" onClick={() => handleExerciseSetPageRedirect(exerciseSet.id)}>
                                             Przejdź
-                                        </Button>
-                                        <Button variant="outline" onClick={() => handleEditExerciseSetPageRedirect(exerciseSet.id)}>
-                                            Edytuj
                                         </Button>
 
                                         {/* Delete confirmation with AlertDialog */}

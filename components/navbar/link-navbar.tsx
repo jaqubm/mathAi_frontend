@@ -19,7 +19,7 @@ export function LinkNavbar({isTeacher}: {isTeacher: boolean}) {
                 <Link href="/" className="text-muted-foreground transition-colors hover:text-foreground">
                     Strona Główna
                 </Link>
-                <Link href="/generate" className="text-muted-foreground transition-colors hover:text-foreground">
+                <Link href="/exerciseset/generate" className="text-muted-foreground transition-colors hover:text-foreground">
                     Generuj Zestaw Zadań
                 </Link>
                 {isTeacher && (
