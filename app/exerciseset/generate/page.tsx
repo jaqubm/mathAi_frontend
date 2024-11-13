@@ -103,7 +103,7 @@ export default function GeneratePage() {
     return (
         <>
             <div className="w-full max-w-7xl mx-auto my-10">
-                <MultiStepLoader loadingStates={generateExerciseSetLoadingStates} loading={loading} duration={2000} />
+                <MultiStepLoader loadingStates={generateExerciseSetLoadingStates} loading={loading} duration={3000} loop={false} />
 
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
