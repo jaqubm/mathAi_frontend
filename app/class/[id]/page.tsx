@@ -62,7 +62,7 @@ export default function ClassPage({ params }: { params: { id: string } }) {
     const handleAddStudent = async () => {
         setCheckingStudent(true)
 
-        if (cClass && studentEmail.trim()) {
+        if (cClass && cClass.isOwner && studentEmail.trim()) {
             const result = await addStudentToClass(params.id, studentEmail)
 
             if (result.success) {
@@ -83,7 +83,7 @@ export default function ClassPage({ params }: { params: { id: string } }) {
     }
 
     const handleDeleteUserFromClass = async () => {
-        if (!deletingUserFromClass) return
+        if (!deletingUserFromClass || !cClass || !cClass.isOwner) return
 
         const result = await removeStudentFromClass(params.id, deletingUserFromClass)
 
@@ -145,14 +145,16 @@ export default function ClassPage({ params }: { params: { id: string } }) {
                                                                 {student.email}
                                                             </p>
 
-                                                            <Button
-                                                                variant="ghost"
-                                                                size="icon"
-                                                                className="text-red-500 absolute right-2 top-0 bottom-0"
-                                                                onClick={() => setDeletingUserFromClass(student.email)}
-                                                            >
-                                                                <X className="w-5 h-5" />
-                                                            </Button>
+                                                            {cClass.isOwner && (
+                                                                <Button
+                                                                    variant="ghost"
+                                                                    size="icon"
+                                                                    className="text-red-500 absolute right-2 top-0 bottom-0"
+                                                                    onClick={() => setDeletingUserFromClass(student.email)}
+                                                                >
+                                                                    <X className="w-5 h-5" />
+                                                                </Button>
+                                                            )}
                                                         </div>
                                                         {index !== cClass.students.length - 1 && <Separator className="my-2" />}
                                                     </div>
@@ -164,31 +166,33 @@ export default function ClassPage({ params }: { params: { id: string } }) {
 
                             </CardContent>
 
-                            <CardFooter className="flex flex-col items-center justify-center gap-2">
-                                <Label>Dodaj Studenta (Email)</Label>
-                                <div className="relative">
-                                    <Input
-                                        value={studentEmail}
-                                        onChange={(e) => setStudentEmail(e.target.value)}
-                                        placeholder="Wpisz Email studenta"
-                                        className="pr-10"
-                                    />
-                                    <Button
-                                        onClick={handleAddStudent}
-                                        type="button"
-                                        size="icon"
-                                        variant="ghost"
-                                        className="absolute inset-y-0 right-1 my-auto text-green-600"
-                                        disabled={checkingStudent}
-                                    >
-                                        {checkingStudent ? (
-                                            <Spinner size="small"/>
-                                        ) : (
-                                            <Plus className="w-5 h-5"/>
-                                        )}
-                                    </Button>
-                                </div>
-                            </CardFooter>
+                            {cClass.isOwner && (
+                                <CardFooter className="flex flex-col items-center justify-center gap-2 w-full">
+                                    <Label>Dodaj Studenta (Email)</Label>
+                                    <div className="relative w-full max-w-xs">
+                                        <Input
+                                            value={studentEmail}
+                                            onChange={(e) => setStudentEmail(e.target.value)}
+                                            placeholder="Wpisz Email studenta"
+                                            className="pr-10"
+                                        />
+                                        <Button
+                                            onClick={handleAddStudent}
+                                            type="button"
+                                            size="icon"
+                                            variant="ghost"
+                                            className="absolute inset-y-0 right-1 my-auto text-green-600"
+                                            disabled={checkingStudent}
+                                        >
+                                            {checkingStudent ? (
+                                                <Spinner size="small"/>
+                                            ) : (
+                                                <Plus className="w-5 h-5"/>
+                                            )}
+                                        </Button>
+                                    </div>
+                                </CardFooter>
+                            )}
                         </Card>
 
                         <Card className="flex-1 w-full">

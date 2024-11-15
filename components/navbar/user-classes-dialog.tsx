@@ -5,16 +5,33 @@ import {getUserClassList} from "@/app/api/user";
 import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
-import {useRouter} from "next/navigation";
+import {usePathname, useRouter} from "next/navigation";
 import {Spinner} from "@/components/ui/spinner";
 import {ClassList} from "@/app/api/types";
+import {
+    AlertDialog,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger
+} from "@/components/ui/alert-dialog";
+import {ToastAction} from "@/components/ui/toast";
+import {deleteClass} from "@/app/api/class";
+import {useToast} from "@/hooks/use-toast";
 
 export function UserClassesDialog({ open, onClose, children }: { open: boolean, onClose: () => void, children: ReactNode }) {
+    const router = useRouter()
+    const pathname = usePathname()
+    const { toast } = useToast()
+
     const [classList, setClassList] = useState<ClassList[]>()
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
 
-    const router = useRouter()
+    const [selectedClassId, setSelectedClassId] = useState<string | null>(null)
+    const [isAlertDialogOpen, setAlertDialogOpen] = useState(false)
 
     useEffect(() => {
         if (!open) return;
@@ -44,9 +61,42 @@ export function UserClassesDialog({ open, onClose, children }: { open: boolean, 
         router.push(`/class/${classId}`)
     }
 
-    const handleEditClassPageRedirect = (classId: string) => {
-        onClose()
-        router.push(`/class/${classId}/edit`)
+    const handleDeleteClass = async () => {
+        if (!selectedClassId) return
+
+        try {
+            const result = await deleteClass(selectedClassId)
+
+            if (result.success) {
+                if (pathname === `/class/${selectedClassId}`) {
+                    router.push("/")
+                }
+
+                setClassList((prev) =>
+                    prev ? prev.filter((singleClass) => singleClass.id !== selectedClassId) : []
+                )
+
+                toast({
+                    title: "Klasa usunięta",
+                    description: "Klasa została pomyślnie usunięta.",
+                })
+            } else {
+                toast({
+                    title: "Błąd usuwania",
+                    description: "Nie udało się usunąć klasy.",
+                    action: <ToastAction altText="Zamknij">OK</ToastAction>
+                })
+            }
+        } catch (e) {
+            console.error("Error deleting exercise set:", e)
+            toast({
+                title: "Błąd usuwania",
+                description: "Wystąpił niespodziewany błąd podczs próby usuwania klasy!",
+                action: <ToastAction altText="Zamknij">OK</ToastAction>
+            })
+        }
+        setSelectedClassId(null)
+        setAlertDialogOpen(false)
     }
 
     return (
@@ -84,9 +134,36 @@ export function UserClassesDialog({ open, onClose, children }: { open: boolean, 
                                         <Button variant="outline" onClick={() => handleClassPageRedirect(singleClass.id)}>
                                             Przejdź
                                         </Button>
-                                        <Button variant="outline" disabled onClick={() => handleEditClassPageRedirect(singleClass.id)}>
-                                            Edytuj
-                                        </Button>
+
+                                        {/* Delete confirmation with AlertDialog */}
+                                        {singleClass.isOwner && (
+                                            <AlertDialog open={isAlertDialogOpen} onOpenChange={setAlertDialogOpen}>
+                                                <AlertDialogTrigger asChild>
+                                                    <Button variant="destructive" onClick={() => {
+                                                        setSelectedClassId(singleClass.id)
+                                                        setAlertDialogOpen(true)
+                                                    }}>
+                                                        Usuń
+                                                    </Button>
+                                                </AlertDialogTrigger>
+                                                <AlertDialogContent>
+                                                    <AlertDialogHeader>
+                                                        <AlertDialogTitle>Potwierdź usunięcie</AlertDialogTitle>
+                                                        <AlertDialogDescription>
+                                                            Czy na pewno chcesz usunąć tę klasę? Tej akcji nie można cofnąć.
+                                                        </AlertDialogDescription>
+                                                    </AlertDialogHeader>
+                                                    <AlertDialogFooter>
+                                                        <Button variant="outline" onClick={() => setAlertDialogOpen(false)}>
+                                                            Anuluj
+                                                        </Button>
+                                                        <Button variant="destructive" onClick={handleDeleteClass}>
+                                                            Usuń
+                                                        </Button>
+                                                    </AlertDialogFooter>
+                                                </AlertDialogContent>
+                                            </AlertDialog>
+                                        )}
                                     </CardFooter>
                                 </Card>
                             ))}

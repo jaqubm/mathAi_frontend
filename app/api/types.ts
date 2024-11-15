@@ -63,6 +63,7 @@ export interface ClassList {
     id: string
     name: string
     owner: User
+    isOwner: boolean
 }
 
 export interface Assignment {

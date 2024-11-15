@@ -14,16 +14,16 @@ import { ExerciseSetList } from "@/app/api/types"
 import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter } from "@/components/ui/alert-dialog"
 
 export function UserExerciseSetsDialog({ open, onClose, children }: { open: boolean, onClose: () => void, children: ReactNode }) {
+    const router = useRouter()
+    const pathname = usePathname()
+    const { toast } = useToast()
+
     const [exerciseSetList, setExerciseSetList] = useState<ExerciseSetList[] | undefined>()
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
 
     const [selectedExerciseSetId, setSelectedExerciseSetId] = useState<string | null>(null)
     const [isAlertDialogOpen, setAlertDialogOpen] = useState(false)
-
-    const router = useRouter()
-    const pathname = usePathname()
-    const { toast } = useToast()
 
     useEffect(() => {
         if (!open) return
@@ -87,7 +87,7 @@ export function UserExerciseSetsDialog({ open, onClose, children }: { open: bool
             })
         }
         setSelectedExerciseSetId(null)
-        setAlertDialogOpen(false) // Close AlertDialog after deletion
+        setAlertDialogOpen(false)
     }
 
     return (
