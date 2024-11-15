@@ -13,16 +13,15 @@ import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {Plus, X} from "lucide-react";
 import {toast} from "@/hooks/use-toast";
-import {FormLabel} from "@/components/ui/form";
 import {Label} from "@/components/ui/label";
 import {
     AlertDialog,
     AlertDialogContent,
-    AlertDialogDescription, AlertDialogFooter,
+    AlertDialogDescription,
+    AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle
 } from "@/components/ui/alert-dialog";
-import {deleteExercise} from "@/app/api/exercise";
 
 export default function ClassPage({ params }: { params: { id: string } }) {
     const router = useRouter()
