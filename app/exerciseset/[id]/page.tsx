@@ -1,23 +1,29 @@
 'use client'
 
-import React, { useEffect, useState } from "react"
-import { generateAdditionalExercise, getExerciseSet, copyExerciseSet } from "@/app/api/exerciseset"
-import { deleteExercise, updateExercise } from "@/app/api/exercise"
-import { updateExerciseSetName } from "@/app/api/exerciseset"
-import { Spinner } from "@/components/ui/spinner"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import { useSession } from "next-auth/react"
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog"
-import { useRouter } from "next/navigation"
-import { Exercise, ExerciseSet, ExerciseUpdate } from "@/app/api/types"
-import { AutosizeTextarea } from "@/components/ui/autosize-textarea"
-import { toast } from "@/hooks/use-toast"
-import { Edit2, X } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import React, {useEffect, useState} from "react"
+import {copyExerciseSet, generateAdditionalExercise, getExerciseSet, updateExerciseSetName} from "@/app/api/exerciseset"
+import {deleteExercise, updateExercise} from "@/app/api/exercise"
+import {Spinner} from "@/components/ui/spinner"
+import {Card, CardContent, CardFooter, CardHeader, CardTitle} from "@/components/ui/card"
+import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/components/ui/accordion"
+import {useSession} from "next-auth/react"
+import {Button} from "@/components/ui/button"
+import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog"
+import {
+    AlertDialog,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle
+} from "@/components/ui/alert-dialog"
+import {useRouter} from "next/navigation"
+import {Exercise, ExerciseSet, ExerciseUpdate} from "@/app/api/types"
+import {AutosizeTextarea} from "@/components/ui/autosize-textarea"
+import {toast} from "@/hooks/use-toast"
+import {Edit2, X} from "lucide-react"
+import {Input} from "@/components/ui/input"
+import {Label} from "@/components/ui/label"
 import {ToastAction} from "@/components/ui/toast";
 
 export default function ExerciseSetPage({ params }: { params: { id: string } }) {
@@ -30,10 +36,11 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
 
     const [isAddingExercise, setIsAddingExercise] = useState(false)
     const [isCopyingExerciseSet, setIsCopyingExerciseSet] = useState(false)
-    const [refreshKey, setRefreshKey] = useState(0)
     const [editingExercise, setEditingExercise] = useState<Exercise | null>(null)
     const [deletingExerciseId, setDeletingExerciseId] = useState<string | null>(null)
     const [editingExerciseSetName, setEditingExerciseSetName] = useState<string | null>(null)
+
+    const [refreshKey, setRefreshKey] = useState(0)
 
     useEffect(() => {
         setLoading(true)
@@ -94,8 +101,7 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
             } else {
                 toast({
                     title: "Zadanie nie zostało zaktualizowane",
-                    description: result.error,
-                    action: <ToastAction altText="Zamknij">OK</ToastAction>
+                    description: result.error
                 })
             }
         }
@@ -116,8 +122,7 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
             } else {
                 toast({
                     title: "Nazwa zestawu zadań nie została zaktualizowana",
-                    description: result.error,
-                    action: <ToastAction altText="Zamknij">OK</ToastAction>
+                    description: result.error
                 })
             }
         }
@@ -138,8 +143,7 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
         } else {
             toast({
                 title: "Błąd usuwania zadania",
-                description: result.error,
-                action: <ToastAction altText="Zamknij">OK</ToastAction>
+                description: result.error
             })
         }
     }
@@ -161,8 +165,7 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
             } else {
                 toast({
                     title: "Błąd kopiowania zestawu zadań",
-                    description: result.error,
-                    action: <ToastAction altText="Zamknij">OK</ToastAction>
+                    description: result.error
                 })
             }
         }

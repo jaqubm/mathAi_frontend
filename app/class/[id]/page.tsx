@@ -4,11 +4,25 @@ import {Spinner} from "@/components/ui/spinner";
 import React, {useEffect, useState} from "react";
 import {useRouter} from "next/navigation";
 import {useSession} from "next-auth/react";
-import {getClass} from "@/app/api/class";
+import {addStudentToClass, getClass, removeStudentFromClass} from "@/app/api/class";
 import {AssignmentList, Class, User} from "@/app/api/types";
 import {Card, CardContent, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import {ScrollArea} from "@/components/ui/scroll-area";
 import {Separator} from "@/components/ui/separator";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
+import {Plus, X} from "lucide-react";
+import {toast} from "@/hooks/use-toast";
+import {FormLabel} from "@/components/ui/form";
+import {Label} from "@/components/ui/label";
+import {
+    AlertDialog,
+    AlertDialogContent,
+    AlertDialogDescription, AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle
+} from "@/components/ui/alert-dialog";
+import {deleteExercise} from "@/app/api/exercise";
 
 export default function ClassPage({ params }: { params: { id: string } }) {
     const router = useRouter()
@@ -17,6 +31,12 @@ export default function ClassPage({ params }: { params: { id: string } }) {
     const [cClass, setClass] = useState<Class>()
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+
+    const [checkingStudent, setCheckingStudent] = useState(false)
+    const [studentEmail, setStudentEmail] = useState("")
+    const [deletingUserFromClass, setDeletingUserFromClass] = useState<string | null>(null)
+
+    const [refreshKey, setRefreshKey] = useState(0)
 
     useEffect(() => {
         setLoading(true)
@@ -37,11 +57,54 @@ export default function ClassPage({ params }: { params: { id: string } }) {
             .finally(() => {
                 setLoading(false)
             })
-    }, [params.id, session?.user?.email])
+    }, [params.id, session?.user?.email, refreshKey])
+
+    const handleAddStudent = async () => {
+        setCheckingStudent(true)
+
+        if (cClass && studentEmail.trim()) {
+            const result = await addStudentToClass(params.id, studentEmail)
+
+            if (result.success) {
+                setStudentEmail("")
+                setRefreshKey((prevKey) => prevKey + 1)
+                toast({
+                    title: "Student został pomyślnie dodany",
+                    description: `Student ${studentEmail} został pomyślnie dodany.`
+                });
+            } else {
+                toast({
+                    title: "Błąd",
+                    description: `Konto ${studentEmail} nie zostało odnalezione lub jest kontem nauczyciela.`
+                });
+            }
+        }
+        setCheckingStudent(false)
+    }
+
+    const handleDeleteUserFromClass = async () => {
+        if (!deletingUserFromClass) return
+
+        const result = await removeStudentFromClass(params.id, deletingUserFromClass)
+
+        if (result.success) {
+            toast({
+                title: "Student został usunięty",
+                description: "Student zostało pomyślnie usunięty z klasy."
+            })
+            setDeletingUserFromClass(null)
+            setRefreshKey((prevKey) => prevKey + 1)
+        } else {
+            toast({
+                title: "Błąd usuwania studenta",
+                description: result.error
+            })
+        }
+    }
 
     return (
         <>
-            {loading && (
+            {loading && !cClass && (
                 <Spinner size="large"/>
             )}
 
@@ -71,27 +134,60 @@ export default function ClassPage({ params }: { params: { id: string } }) {
                                 )}
 
                                 {cClass.students.length > 0 && (
-                                    <ScrollArea className="max-h-80 overflow-y-scroll">
-                                        <ul>
-                                            {cClass.students.map((student: User, index: number) => (
-                                                <div key={student.email}>
-                                                    <div>
-                                                        <li className="font-bold">{student.name}</li>
-                                                        <p className="text-sm">
-                                                            {student.email}
-                                                        </p>
+                                    <Card className="px-2">
+                                        <ScrollArea className="max-h-80 overflow-y-scroll py-2">
+                                            <ul>
+                                                {cClass.students.map((student: User, index: number) => (
+                                                    <div key={student.email}>
+                                                        <div className="relative">
+                                                            <li className="font-bold">{student.name}</li>
+                                                            <p className="text-sm">
+                                                                {student.email}
+                                                            </p>
+
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                className="text-red-500 absolute right-2 top-0 bottom-0"
+                                                                onClick={() => setDeletingUserFromClass(student.email)}
+                                                            >
+                                                                <X className="w-5 h-5" />
+                                                            </Button>
+                                                        </div>
+                                                        {index !== cClass.students.length - 1 && <Separator className="my-2" />}
                                                     </div>
-                                                    {index !== cClass.students.length - 1 && <Separator className="my-2" />}
-                                                </div>
-                                            ))}
-                                        </ul>
-                                    </ScrollArea>
+                                                ))}
+                                            </ul>
+                                        </ScrollArea>
+                                    </Card>
                                 )}
 
                             </CardContent>
 
-                            <CardFooter>
-                                To be added..
+                            <CardFooter className="flex flex-col items-center justify-center gap-2">
+                                <Label>Dodaj Studenta (Email)</Label>
+                                <div className="relative">
+                                    <Input
+                                        value={studentEmail}
+                                        onChange={(e) => setStudentEmail(e.target.value)}
+                                        placeholder="Wpisz Email studenta"
+                                        className="pr-10"
+                                    />
+                                    <Button
+                                        onClick={handleAddStudent}
+                                        type="button"
+                                        size="icon"
+                                        variant="ghost"
+                                        className="absolute inset-y-0 right-1 my-auto text-green-600"
+                                        disabled={checkingStudent}
+                                    >
+                                        {checkingStudent ? (
+                                            <Spinner size="small"/>
+                                        ) : (
+                                            <Plus className="w-5 h-5"/>
+                                        )}
+                                    </Button>
+                                </div>
                             </CardFooter>
                         </Card>
 
@@ -116,7 +212,8 @@ export default function ClassPage({ params }: { params: { id: string } }) {
                                                     <div>
                                                         <li>{assignment.name}</li>
                                                     </div>
-                                                    {index !== cClass.assignments.length - 1 && <Separator className="my-2" />}
+                                                    {index !== cClass.assignments.length - 1 &&
+                                                        <Separator className="my-2"/>}
                                                 </div>
                                             ))}
                                         </ul>
@@ -138,6 +235,23 @@ export default function ClassPage({ params }: { params: { id: string } }) {
                 <div className="text-red-500">
                     <p>Error: {error}</p>
                 </div>
+            )}
+
+            {deletingUserFromClass && (
+                <AlertDialog open={true} onOpenChange={() => setDeletingUserFromClass(null)}>
+                    <AlertDialogContent className="sm:max-w-[480px] max-h-[90%] max-w-[95%] overflow-y-scroll">
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>Potwierdź usunięcie</AlertDialogTitle>
+                            <AlertDialogDescription>
+                                Czy na pewno chcesz usunąć to zadanie? Tej akcji nie można cofnąć.
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                            <Button variant="outline" onClick={() => setDeletingUserFromClass(null)}>Anuluj</Button>
+                            <Button variant="destructive" onClick={handleDeleteUserFromClass}>Potwierdź</Button>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
             )}
         </>
     )

@@ -61,8 +61,7 @@ export default function CreateClassPage() {
             if (students.includes(studentEmail)) {
                 toast({
                     title: "Student już istnieje",
-                    description: `Student ${studentEmail} jest już na liście.`,
-                    action: <ToastAction altText="Zamknij">OK</ToastAction>
+                    description: `Student ${studentEmail} jest już na liście.`
                 });
                 setCheckingStudent(false)
                 return
@@ -80,8 +79,7 @@ export default function CreateClassPage() {
             } else {
                 toast({
                     title: "Błąd",
-                    description: `Konto ${studentEmail} nie zostało odnalezione lub jest kontem nauczyciela.`,
-                    action: <ToastAction altText="Zamknij">OK</ToastAction>
+                    description: `Konto ${studentEmail} nie zostało odnalezione lub jest kontem nauczyciela.`
                 });
             }
         }
