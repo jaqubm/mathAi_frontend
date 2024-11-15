@@ -128,8 +128,11 @@ export default function CreateClassPage() {
                                         <FormItem>
                                             <FormLabel>Nazwa Klasy</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="Wpisz nazwę klasy" {...field} />
+                                                <Input placeholder="Wpisz nazwę klasy" maxLength={30} {...field} />
                                             </FormControl>
+                                            <p className="text-right text-sm text-gray-500 mt-2">
+                                                {field.value.length}/30
+                                            </p>
                                         </FormItem>
                                     )}
                                 />
@@ -143,6 +146,7 @@ export default function CreateClassPage() {
                                                 value={studentEmail}
                                                 onChange={(e) => setStudentEmail(e.target.value)}
                                                 placeholder="Wpisz Email studenta"
+                                                maxLength={255}
                                                 className="pr-10"
                                             />
                                         </FormControl>

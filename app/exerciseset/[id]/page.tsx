@@ -24,7 +24,6 @@ import {toast} from "@/hooks/use-toast"
 import {Edit2, X} from "lucide-react"
 import {Input} from "@/components/ui/input"
 import {Label} from "@/components/ui/label"
-import {ToastAction} from "@/components/ui/toast";
 
 export default function ExerciseSetPage({ params }: { params: { id: string } }) {
     const router = useRouter()
@@ -343,7 +342,7 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
                     <DialogContent className="sm:max-w-[480px] max-h-[90%] max-w-[95%] overflow-y-scroll">
                         <DialogHeader>
                             <DialogTitle>Edytuj Nazwę Zestawu Zadań</DialogTitle>
-                            <DialogDescription>Wprowadź nową nazwę zestawu i zapisz (maksymalnie 100 znaków).</DialogDescription>
+                            <DialogDescription>Wprowadź nową nazwę zestawu i zapisz (maksymalnie 30 znaków).</DialogDescription>
                         </DialogHeader>
                         <div>
                             <Label>Nazwa Zestawu Zadań</Label>

@@ -40,6 +40,25 @@ export const getClass = async (classId: string) => {
     }
 }
 
+export const updateClassName = async (classId: string, className: string) => {
+    try {
+        const response = await axiosInstance.put(`/Class/UpdateName/${classId}`, className);
+
+        return { success: true, data: response.data as string }
+
+    } catch (error: AxiosError | any) {
+        if (axios.isCancel(error)) {
+            return { success: false, error: "Request was canceled." }
+        }
+
+        const errorMessage = error.response
+            ? `HTTP error! Status: ${error.response.status} - ${error.response.statusText}`
+            : "Failed to update class name.";
+
+        return { success: false, error: errorMessage };
+    }
+}
+
 export const deleteClass = async (classId: string) => {
     try {
         const response = await axiosInstance.delete(`/Class/Delete/${classId}`);
