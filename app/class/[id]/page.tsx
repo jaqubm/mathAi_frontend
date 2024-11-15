@@ -227,7 +227,7 @@ export default function ClassPage({ params }: { params: { id: string } }) {
                             </CardContent>
 
                             <CardFooter>
-                                To be added..
+                                This card is currently work in progress!
                             </CardFooter>
                         </Card>
                     </div>
