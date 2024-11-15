@@ -4,14 +4,14 @@ import {Spinner} from "@/components/ui/spinner";
 import React, {useEffect, useState} from "react";
 import {useRouter} from "next/navigation";
 import {useSession} from "next-auth/react";
-import {addStudentToClass, getClass, removeStudentFromClass} from "@/app/api/class";
+import {addStudentToClass, getClass, removeStudentFromClass, updateClassName} from "@/app/api/class";
 import {AssignmentList, Class, User} from "@/app/api/types";
 import {Card, CardContent, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import {ScrollArea} from "@/components/ui/scroll-area";
 import {Separator} from "@/components/ui/separator";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
-import {Plus, X} from "lucide-react";
+import {Edit2, Plus, X} from "lucide-react";
 import {toast} from "@/hooks/use-toast";
 import {Label} from "@/components/ui/label";
 import {
@@ -22,6 +22,14 @@ import {
     AlertDialogHeader,
     AlertDialogTitle
 } from "@/components/ui/alert-dialog";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle
+} from "@/components/ui/dialog";
 
 export default function ClassPage({ params }: { params: { id: string } }) {
     const router = useRouter()
@@ -34,6 +42,7 @@ export default function ClassPage({ params }: { params: { id: string } }) {
     const [checkingStudent, setCheckingStudent] = useState(false)
     const [studentEmail, setStudentEmail] = useState("")
     const [deletingUserFromClass, setDeletingUserFromClass] = useState<string | null>(null)
+    const [editingClassName, setEditingClassName] = useState<string | null>(null)
 
     const [refreshKey, setRefreshKey] = useState(0)
 
@@ -57,6 +66,27 @@ export default function ClassPage({ params }: { params: { id: string } }) {
                 setLoading(false)
             })
     }, [params.id, session?.user?.email, refreshKey])
+
+    const handleSaveExerciseSetName = async () => {
+        if (editingClassName !== null && cClass) {
+            const result = await updateClassName(params.id, editingClassName)
+
+            if (result.success) {
+                toast({
+                    title: "Nazwa klasy została zaktualizowana",
+                    description: "Zmiany w nazwie klasy zostały zapisane."
+                })
+                setClass({ ...cClass, name: editingClassName })
+                setEditingClassName(null)
+                setRefreshKey((prevKey) => prevKey + 1)
+            } else {
+                toast({
+                    title: "Nazwa klasy nie została zaktualizowana",
+                    description: result.error
+                })
+            }
+        }
+    }
 
     const handleAddStudent = async () => {
         setCheckingStudent(true)
@@ -111,7 +141,19 @@ export default function ClassPage({ params }: { params: { id: string } }) {
                 <div className="w-full max-w-5xl px-4 my-6">
                     {/* Basic exerciseSet info */}
                     <div className="flex flex-col items-center justify-center mb-10 text-center">
-                        <h1 className="text-4xl font-bold mb-2">{cClass.name}</h1>
+                        <h1 className="text-4xl font-bold mb-2">
+                            {cClass.name}
+                            {cClass.isOwner && (
+                                <Button
+                                    className="ml-2"
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => setEditingClassName(cClass.name)}
+                                >
+                                    <Edit2 className="w-5 h-5"/>
+                                </Button>
+                            )}
+                        </h1>
 
                         <h3>Nauczyciel: {cClass.owner.name}</h3>
                     </div>
@@ -173,6 +215,7 @@ export default function ClassPage({ params }: { params: { id: string } }) {
                                             value={studentEmail}
                                             onChange={(e) => setStudentEmail(e.target.value)}
                                             placeholder="Wpisz Email studenta"
+                                            maxLength={255}
                                             className="pr-10"
                                         />
                                         <Button
@@ -238,6 +281,33 @@ export default function ClassPage({ params }: { params: { id: string } }) {
                 <div className="text-red-500">
                     <p>Error: {error}</p>
                 </div>
+            )}
+
+            {editingClassName && (
+                <Dialog open={true} onOpenChange={() => setEditingClassName(null)}>
+                    <DialogContent className="sm:max-w-[480px] max-h-[90%] max-w-[95%] overflow-y-scroll">
+                        <DialogHeader>
+                            <DialogTitle>Edytuj Nazwę Klasy</DialogTitle>
+                            <DialogDescription>Wprowadź nową nazwę klasy i zapisz (maksymalnie 30 znaków).</DialogDescription>
+                        </DialogHeader>
+                        <div>
+                            <Label>Nazwa Klasy</Label>
+                            <Input
+                                value={editingClassName}
+                                onChange={(e) => setEditingClassName(e.target.value)}
+                                maxLength={30}
+                                className="resize-none w-full mt-2 p-2 border rounded"
+                            />
+                            <p className="text-right text-sm text-gray-500 mt-2">
+                                {editingClassName.length}/30
+                            </p>
+                        </div>
+                        <DialogFooter className="gap-2">
+                            <Button variant="outline" onClick={() => setEditingClassName(null)}>Anuluj</Button>
+                            <Button onClick={handleSaveExerciseSetName}>Zapisz</Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
             )}
 
             {deletingUserFromClass && (
