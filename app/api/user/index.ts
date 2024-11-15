@@ -1,57 +1,52 @@
 import {axiosInstance} from "@/app/api";
+import {ClassList, ExerciseSetList, User} from "@/app/api/types";
 
-export async function getIsFirstTimeSignIn(email: string) {
+export async function getUser() {
+    try {
+        const { data } = await axiosInstance.get(`/User/Get`)
+        return data as User
+    } catch (error) {
+        console.error('Error:', error)
+        return null
+    }
+}
+
+export async function getUserExistsAndIsStudent(email: string) {
     if (!email) return false
 
     try {
-        const { data } = await axiosInstance.get(`/User/FirstTimeSignIn/${email}`)
-        return data === true
+        const { data } = await axiosInstance.get(`/User/GetExistsAndIsStudent/${email}`)
+        return data as boolean
     } catch (error) {
         console.error('Error:', error)
         return false
     }
 }
 
-export async function getIsTeacher(email: string) {
-    if (!email) return false
-
+export async function updateUserAccountType(isTeacher: boolean) {
     try {
-        const { data } = await axiosInstance.get(`/User/IsTeacher/${email}`)
-        return data === true
+        await axiosInstance.put(`/User/UpdateAccountType`, isTeacher);
     } catch (error) {
-        console.error('Error:', error)
-        return false
+        console.error('Error:', error);
     }
 }
 
-export async function updateToTeacher(email: string) {
-    if (!email) return
-
+export async function getUserExerciseSetList() {
     try {
-        await axiosInstance.put(`/User/UpdateToTeacher/${email}`)
-    } catch (error) {
-        console.error('Error:', error)
-    }
-}
-
-export async function updateToStudent(email: string) {
-    if (!email) return
-
-    try {
-        await axiosInstance.put(`/User/UpdateToStudent/${email}`)
-    } catch (error) {
-        console.error('Error:', error)
-    }
-}
-
-export async function getUserExerciseSets(email: string) {
-    if (!email) return { success: false, error: 'Email is missing!' }
-
-    try {
-        const { data } = await axiosInstance.get(`/User/GetExerciseSets/${email}`)
-        return { success: true, data: data }
+        const { data } = await axiosInstance.get(`/User/GetExerciseSetList`)
+        return { success: true, data: data as ExerciseSetList[] }
     } catch (error) {
         console.error('Error while trying to get users exercise sets:', error)
         return { success: false, error: 'Failed to get users exercise sets.' }
+    }
+}
+
+export async function getUserClassList() {
+    try {
+        const { data } = await axiosInstance.get(`/User/GetClassList`)
+        return { success: true, data: data as ClassList[] }
+    } catch (error) {
+        console.error('Error while trying to get users classes:', error)
+        return { success: false, error: 'Failed to get users classes.' }
     }
 }

@@ -20,48 +20,46 @@ import {
     DialogAccountTitle,
     DialogAccountType,
 } from "@/components/navbar/dialog-account-type";
-import {ClientNavbar} from "@/components/navbar/client-navbar";
-import {DialogTrigger} from "@/components/ui/dialog";
+import {LinkNavbar} from "@/components/navbar/link-navbar";
 import {UserExerciseSetsDialog} from "@/components/navbar/user-exercise-sets-dialog";
 import {signOut, useSession} from "next-auth/react";
-import {getIsFirstTimeSignIn, getIsTeacher, updateToStudent, updateToTeacher} from "@/app/api/user";
-import {useRouter} from "next/navigation";
+import {getUser, updateUserAccountType} from "@/app/api/user";
 import {handleServerSignIn, handleServerSignOut} from "@/app/api/auth";
 import {wakeUpDatabase} from "@/app/api/status";
 import {Spinner} from "@/components/ui/spinner";
+import {UserClassesDialog} from "@/components/navbar/user-classes-dialog";
+import {User} from "@/app/api/types";
 
 export function Navbar() {
-    const router = useRouter()
-
-    let { data: user } = useSession()
+    const { data: session } = useSession()
+    const [userDb, setUserDb] = useState<User>()
+    const [refresh, setRefresh] = useState(false)
 
     const [databaseWokeUp, setDatabaseWokeUp] = useState<boolean>(false)
 
-    const [firstTimeSignIn, setFirstTimeSignIn] = useState(false)
-    const [isTeacher, setIsTeacher] = useState(false)
-
-    const email = user?.user?.email ?? "";
+    const [openDialog, setOpenDialog] = useState<string | null>(null)
 
     useEffect(() => {
-        const wakeUpDatabaseAndSetState = async () => {
-            const response = await wakeUpDatabase()
-            setDatabaseWokeUp(response)
+        const wakeUpDatabaseUseEffect = async () => {
+            return await wakeUpDatabase()
         }
 
-        wakeUpDatabaseAndSetState()
+        wakeUpDatabaseUseEffect().then(res => setDatabaseWokeUp(res))
 
-        const intervalId = setInterval(wakeUpDatabaseAndSetState, 60000)
+        const intervalId = setInterval(wakeUpDatabaseUseEffect, 60000)
 
         return () => clearInterval(intervalId)
     }, [])
 
     useEffect(() => {
-        if (!email) return
+        const getUserUseEffect = async () => {
+            if (session?.idToken) return await getUser()
+        }
 
-        getIsFirstTimeSignIn(email).then(setFirstTimeSignIn)
-
-        getIsTeacher(email).then(setIsTeacher)
-    }, [email])
+        getUserUseEffect().then(res => {
+            if (res !== null) setUserDb(res)
+        })
+    }, [session?.idToken, refresh]);
 
     const handleSignIn = async () => {
         await handleServerSignIn()
@@ -75,37 +73,37 @@ export function Navbar() {
     }
 
     const handleUpdateToTeacher = async () => {
-        if (email) {
-            await updateToTeacher(email)
-
-            getIsFirstTimeSignIn(email).then(setFirstTimeSignIn)
-            getIsTeacher(email).then(setIsTeacher)
-
-            router.push('/')
+        if (session && session.idToken) {
+            await updateUserAccountType(true)
+            setRefresh(!refresh)
         }
     }
 
     const handleUpdateToStudent = async () => {
-        if (email) {
-            await updateToStudent(email)
-
-            getIsFirstTimeSignIn(email).then(setFirstTimeSignIn)
-            getIsTeacher(email).then(setIsTeacher)
-
-            router.push('/')
+        if (session && session.idToken) {
+            await updateUserAccountType(false)
+            setRefresh(!refresh)
         }
     }
 
+    const handleDialogOpen = (dialogType: string) => {
+        setOpenDialog(dialogType)
+    }
+
+    const handleDialogClose = () => {
+        setOpenDialog(null)
+    }
+
     return (
-        <header className="sticky top-0 flex h-16 w-full items-center justify-between gap-4 border-b bg-background px-4 md:px-6">
-            <ClientNavbar />
+        <header className="sticky top-0 flex h-16 w-full items-center justify-between gap-4 border-b bg-background px-4 md:px-6 z-50">
+            <LinkNavbar isTeacher={ !!(userDb && userDb.isTeacher) }/>
 
             <div className="flex items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
-                {user ? (
+                {session && userDb ? (
                     <>
                         {/* First-time sign-in dialog */}
-                        {firstTimeSignIn && (
-                            <DialogAccountType open={firstTimeSignIn}>
+                        {userDb.firstTimeSignIn && (
+                            <DialogAccountType open={userDb.firstTimeSignIn}>
                                 <DialogAccountContent className="sm:max-w-md">
                                     <DialogAccountHeader>
                                         <DialogAccountTitle>Twoje pierwsze logowanie?</DialogAccountTitle>
@@ -123,44 +121,50 @@ export function Navbar() {
                         )}
 
                         {/* Users exercise sets dialog with DropDownMenu */}
-                        <UserExerciseSetsDialog email={email}>
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button variant="secondary" size="icon" className="rounded-full">
-                                        <Avatar>
-                                            <AvatarImage
-                                                src={user.user?.image?.toString()}
-                                                alt={user.user?.name?.toString()}
-                                                className="w-full h-full"
-                                            />
-                                            <AvatarFallback>
-                                                <CircleUser className="h-5 w-5" />
-                                            </AvatarFallback>
-                                        </Avatar>
-                                        <span className="sr-only">Menu użytkownika</span>
-                                    </Button>
-                                </DropdownMenuTrigger>
+                        <UserExerciseSetsDialog open={openDialog === 'exerciseSets'} onClose={handleDialogClose} >
+                            <UserClassesDialog open={openDialog === 'classes'} onClose={handleDialogClose} >
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button variant="secondary" size="icon" className="rounded-full">
+                                            <Avatar>
+                                                <AvatarImage
+                                                    src={session.user?.image?.toString()}
+                                                    alt={userDb.name}
+                                                    className="w-full h-full"
+                                                />
+                                                <AvatarFallback>
+                                                    <CircleUser className="h-5 w-5" />
+                                                </AvatarFallback>
+                                            </Avatar>
+                                            <span className="sr-only">Menu użytkownika</span>
+                                        </Button>
+                                    </DropdownMenuTrigger>
 
-                                <DropdownMenuContent className="w-fit flex flex-col items-center" align="center">
-                                    <DropdownMenuLabel>{user.user?.name}</DropdownMenuLabel>
+                                    <DropdownMenuContent className="w-fit flex flex-col items-center" align="center">
+                                        <DropdownMenuLabel>{userDb.name}</DropdownMenuLabel>
 
-                                    <DropdownMenuSeparator />
+                                        <DropdownMenuSeparator />
 
-                                    <DialogTrigger asChild>
-                                        <DropdownMenuItem>Moje Zestawy Zadań</DropdownMenuItem>
-                                    </DialogTrigger>
-
-                                    <DropdownMenuSeparator />
-
-                                    <form action={handleSignOut}>
-                                        <DropdownMenuItem>
-                                            <button type="submit">
-                                                Wyloguj się
-                                            </button>
+                                        <DropdownMenuItem onClick={() => handleDialogOpen('exerciseSets')}>
+                                            Moje Zestawy Zadań
                                         </DropdownMenuItem>
-                                    </form>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
+
+                                        <DropdownMenuItem onClick={() => handleDialogOpen('classes')}>
+                                            Moje Klasy
+                                        </DropdownMenuItem>
+
+                                        <DropdownMenuSeparator />
+
+                                        <form action={handleSignOut}>
+                                            <DropdownMenuItem>
+                                                <button type="submit">
+                                                    Wyloguj się
+                                                </button>
+                                            </DropdownMenuItem>
+                                        </form>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            </UserClassesDialog>
                         </UserExerciseSetsDialog>
                     </>
                 ) : (

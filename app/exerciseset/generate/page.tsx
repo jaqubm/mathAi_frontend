@@ -9,7 +9,7 @@ import React, {useEffect, useState} from "react"
 import {useForm} from "react-hook-form"
 import {z} from "zod"
 import {zodResolver} from "@hookform/resolvers/zod"
-import {generateExerciseSet} from "@/app/api/generate"
+import {generateExerciseSet} from "@/app/api/exerciseset"
 import {
     AlertDialog,
     AlertDialogAction,
@@ -21,22 +21,19 @@ import {
 } from "@/components/ui/alert-dialog"
 import {Card, CardContent, CardFooter} from "@/components/ui/card"
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs"
-import {generateExerciseSetLoadingStates, generateExerciseSetTopics} from "@/app/data"
-import {useSession} from "next-auth/react"
+import {generateExerciseSetLoadingStates, generateExerciseSetTopics} from "@/data"
 import {RadioGroup, RadioGroupItem} from "@/components/ui/radio-group"
 import {Label} from "@/components/ui/label"
 
 const formSchema = z.object({
-    UserId: z.string().nullable().optional(),
-    SchoolType: z.string().min(1),
-    Grade: z.number().int(),
-    Subject: z.string().min(1),
-    NumberOfExercises: z.number().int().nonnegative(),
+    schoolType: z.string().min(1),
+    grade: z.number().int(),
+    subject: z.string().min(1),
+    numberOfExercises: z.number().int().nonnegative(),
 })
 
 export default function GeneratePage() {
     const router = useRouter()
-    const { data: user } = useSession()
 
     const [selectedSchoolType, setSelectedSchoolType] = useState("Szkoła Podstawowa")
     const [selectedGrade, setSelectedGrade] = useState<number | null>(null)
@@ -52,15 +49,14 @@ export default function GeneratePage() {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            UserId: "",
-            SchoolType: "",
-            Grade: 0,
-            Subject: "",
-            NumberOfExercises: 0,
+            schoolType: "",
+            grade: 0,
+            subject: "",
+            numberOfExercises: 0,
         },
     })
 
-    form.setValue("SchoolType", selectedSchoolType)
+    form.setValue("schoolType", selectedSchoolType)
 
     useEffect(() => {
         if (selectedSchoolType && selectedGrade !== null && selectedSubject && selectedNumberOfExercises !== null) {
@@ -74,10 +70,6 @@ export default function GeneratePage() {
         setLoading(true)
 
         const validatedData = formSchema.parse(data)
-
-        if (user) {
-            validatedData.UserId = user.user?.email
-        }
 
         const result = await generateExerciseSet(validatedData)
 
@@ -95,23 +87,23 @@ export default function GeneratePage() {
         setSelectedGrade(grade)
         setAvailableSubjects(generateExerciseSetTopics[selectedSchoolType][grade] || [])
         setSelectedSubject("") // Reset subject explicitly
-        form.setValue("Grade", grade)
+        form.setValue("grade", grade)
     }
 
     const handleSubjectChange = (value: string) => {
         setSelectedSubject(value)
-        form.setValue("Subject", value)
+        form.setValue("subject", value)
     }
 
     const handleNumberOfExercisesChange = (value: string) => {
         setSelectedNumberOfExercises(parseInt(value, 10))
-        form.setValue("NumberOfExercises", parseInt(value, 10))
+        form.setValue("numberOfExercises", parseInt(value, 10))
     }
 
     return (
         <>
             <div className="w-full max-w-7xl mx-auto my-10">
-                <MultiStepLoader loadingStates={generateExerciseSetLoadingStates} loading={loading} duration={2000} />
+                <MultiStepLoader loadingStates={generateExerciseSetLoadingStates} loading={loading} duration={3000} loop={false} />
 
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -119,7 +111,7 @@ export default function GeneratePage() {
                         <Tabs className="w-full flex flex-col items-center"
                             defaultValue={selectedSchoolType} onValueChange={(value) => {
                             setSelectedSchoolType(value)
-                            form.setValue("SchoolType", value)
+                            form.setValue("schoolType", value)
                             setSelectedGrade(null)
                             setAvailableSubjects([])
                             setSelectedSubject("")
@@ -140,7 +132,7 @@ export default function GeneratePage() {
                                         <div className="w-full flex gap-4">
                                             <FormField
                                                 control={form.control}
-                                                name="Grade"
+                                                name="grade"
                                                 render={() => (
                                                     <FormItem className="flex-1">
                                                         <FormLabel>Klasa</FormLabel>
@@ -164,7 +156,7 @@ export default function GeneratePage() {
 
                                             <FormField
                                                 control={form.control}
-                                                name="NumberOfExercises"
+                                                name="numberOfExercises"
                                                 render={() => (
                                                     <FormItem className="flex-1">
                                                         <FormLabel>Liczba zadań</FormLabel>
@@ -191,7 +183,7 @@ export default function GeneratePage() {
                                         {selectedGrade !== null && (
                                             <FormField
                                                 control={form.control}
-                                                name="Subject"
+                                                name="subject"
                                                 render={() => (
                                                     <FormItem>
                                                         <FormLabel>Dział</FormLabel>
