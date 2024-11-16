@@ -80,6 +80,12 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
 
     const handleSaveExerciseChanges = async () => {
         if (editingExercise) {
+            if (editingExercise.content === "") return
+            if (editingExercise.firstHint === "") return
+            if (editingExercise.secondHint === "") return
+            if (editingExercise.thirdHint === "") return
+            if (editingExercise.solution === "") return
+
             const exerciseUpdate: ExerciseUpdate = {
                 content: editingExercise.content,
                 firstHint: editingExercise.firstHint,
@@ -108,6 +114,8 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
 
     const handleSaveExerciseSetName = async () => {
         if (editingExerciseSetName !== null && exerciseSet) {
+            if (editingExerciseSetName === "") return
+
             const result = await updateExerciseSetName(params.id, editingExerciseSetName)
 
             if (result.success) {
@@ -337,8 +345,8 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
                 </Dialog>
             )}
 
-            {editingExerciseSetName && (
-                <Dialog open={true} onOpenChange={() => setEditingExerciseSetName(null)}>
+            {editingExerciseSetName !== null && (
+                <Dialog open={true} onOpenChange={(isOpen) => { if(!isOpen) setEditingExerciseSetName(null) }}>
                     <DialogContent className="sm:max-w-[480px] max-h-[90%] max-w-[95%] overflow-y-scroll">
                         <DialogHeader>
                             <DialogTitle>Edytuj Nazwę Zestawu Zadań</DialogTitle>
@@ -374,7 +382,7 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
                                 Czy na pewno chcesz usunąć to zadanie? Tej akcji nie można cofnąć.
                             </AlertDialogDescription>
                         </AlertDialogHeader>
-                        <AlertDialogFooter>
+                        <AlertDialogFooter className="gap-2">
                             <Button variant="outline" onClick={() => setDeletingExerciseId(null)}>Anuluj</Button>
                             <Button variant="destructive" onClick={handleDeleteExercise}>Potwierdź</Button>
                         </AlertDialogFooter>

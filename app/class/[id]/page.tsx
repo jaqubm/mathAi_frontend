@@ -67,8 +67,10 @@ export default function ClassPage({ params }: { params: { id: string } }) {
             })
     }, [params.id, session?.user?.email, refreshKey])
 
-    const handleSaveExerciseSetName = async () => {
+    const handleSaveClassName = async () => {
         if (editingClassName !== null && cClass) {
+            if (editingClassName === "") return
+
             const result = await updateClassName(params.id, editingClassName)
 
             if (result.success) {
@@ -283,8 +285,8 @@ export default function ClassPage({ params }: { params: { id: string } }) {
                 </div>
             )}
 
-            {editingClassName && (
-                <Dialog open={true} onOpenChange={() => setEditingClassName(null)}>
+            {editingClassName !== null && (
+                <Dialog open={true} onOpenChange={(isOpen) => { if (!isOpen) setEditingClassName(null) }}>
                     <DialogContent className="sm:max-w-[480px] max-h-[90%] max-w-[95%] overflow-y-scroll">
                         <DialogHeader>
                             <DialogTitle>Edytuj Nazwę Klasy</DialogTitle>
@@ -295,6 +297,7 @@ export default function ClassPage({ params }: { params: { id: string } }) {
                             <Input
                                 value={editingClassName}
                                 onChange={(e) => setEditingClassName(e.target.value)}
+                                minLength={1}
                                 maxLength={30}
                                 className="resize-none w-full mt-2 p-2 border rounded"
                             />
@@ -304,7 +307,7 @@ export default function ClassPage({ params }: { params: { id: string } }) {
                         </div>
                         <DialogFooter className="gap-2">
                             <Button variant="outline" onClick={() => setEditingClassName(null)}>Anuluj</Button>
-                            <Button onClick={handleSaveExerciseSetName}>Zapisz</Button>
+                            <Button onClick={handleSaveClassName}>Zapisz</Button>
                         </DialogFooter>
                     </DialogContent>
                 </Dialog>
@@ -319,7 +322,7 @@ export default function ClassPage({ params }: { params: { id: string } }) {
                                 Czy na pewno chcesz usunąć to zadanie? Tej akcji nie można cofnąć.
                             </AlertDialogDescription>
                         </AlertDialogHeader>
-                        <AlertDialogFooter>
+                        <AlertDialogFooter className="gap-2">
                             <Button variant="outline" onClick={() => setDeletingUserFromClass(null)}>Anuluj</Button>
                             <Button variant="destructive" onClick={handleDeleteUserFromClass}>Potwierdź</Button>
                         </AlertDialogFooter>
