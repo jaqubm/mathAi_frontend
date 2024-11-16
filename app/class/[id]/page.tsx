@@ -322,7 +322,7 @@ export default function ClassPage({ params }: { params: { id: string } }) {
                                 Czy na pewno chcesz usunąć to zadanie? Tej akcji nie można cofnąć.
                             </AlertDialogDescription>
                         </AlertDialogHeader>
-                        <AlertDialogFooter>
+                        <AlertDialogFooter className="gap-2">
                             <Button variant="outline" onClick={() => setDeletingUserFromClass(null)}>Anuluj</Button>
                             <Button variant="destructive" onClick={handleDeleteUserFromClass}>Potwierdź</Button>
                         </AlertDialogFooter>

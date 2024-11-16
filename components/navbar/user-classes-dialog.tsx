@@ -146,14 +146,14 @@ export function UserClassesDialog({ open, onClose, children }: { open: boolean, 
                                                         Usuń
                                                     </Button>
                                                 </AlertDialogTrigger>
-                                                <AlertDialogContent>
+                                                <AlertDialogContent className="sm:max-w-[480px] max-h-[90%] max-w-[95%] overflow-y-scroll">
                                                     <AlertDialogHeader>
                                                         <AlertDialogTitle>Potwierdź usunięcie</AlertDialogTitle>
                                                         <AlertDialogDescription>
                                                             Czy na pewno chcesz usunąć tę klasę? Tej akcji nie można cofnąć.
                                                         </AlertDialogDescription>
                                                     </AlertDialogHeader>
-                                                    <AlertDialogFooter>
+                                                    <AlertDialogFooter className="gap-2">
                                                         <Button variant="outline" onClick={() => setAlertDialogOpen(false)}>
                                                             Anuluj
                                                         </Button>
