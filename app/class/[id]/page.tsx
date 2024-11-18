@@ -67,10 +67,6 @@ export default function ClassPage({ params }: { params: { id: string } }) {
             })
     }, [params.id, session?.user?.email, refreshKey])
 
-    const createAssignment = () => {
-        router.push(`/class/${params.id}/assignment/create`)
-    }
-
     const handleSaveClassName = async () => {
         if (editingClassName !== null && cClass) {
             if (editingClassName === "") return
@@ -274,12 +270,8 @@ export default function ClassPage({ params }: { params: { id: string } }) {
 
                             </CardContent>
 
-                            <CardFooter className="flex flex-col items-center justify-center gap-2 w-full">
-                                {cClass.isOwner && (
-                                    <Button onClick={createAssignment}>
-                                        Stwórz Zadanie
-                                    </Button>
-                                )}
+                            <CardFooter>
+                                This card is currently work in progress!
                             </CardFooter>
                         </Card>
                     </div>

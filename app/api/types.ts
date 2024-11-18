@@ -1,5 +1,3 @@
-import {DateTime} from "@auth/core/providers/kakao";
-
 export interface User {
     email: string
     name: string
@@ -70,14 +68,6 @@ export interface ClassList {
 
 export interface Assignment {
 
-}
-
-export interface AssignmentCreator {
-    name: string
-    startDate: DateTime
-    dueDate: DateTime
-    classId: string
-    exerciseSetId: string
 }
 
 export interface AssignmentList {
