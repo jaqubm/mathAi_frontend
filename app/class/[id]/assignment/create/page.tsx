@@ -9,7 +9,7 @@ import {Label} from '@/components/ui/label'
 import {Card, CardContent, CardFooter, CardHeader, CardTitle} from '@/components/ui/card'
 import {Calendar} from '@/components/ui/calendar'
 import {Popover, PopoverContent, PopoverTrigger} from '@/components/ui/popover'
-import {TimePicker} from '@/components/ui/datetime-picker'
+import {TimePicker} from '@/components/ui/time-picker'
 import {getUserExerciseSetList} from "@/app/api/user"
 import {createAssignment} from '@/app/api/assignment'
 import {getClass} from '@/app/api/class'
@@ -189,7 +189,7 @@ export default function CreateAssignmentPage({ params }: { params: { id: string 
                                 <TimePicker
                                     date={startTime}
                                     onChange={setStartTime}
-                                    granularity="minute"
+                                    granularity={"minute"}
                                 />
                             </div>
                         </div>
@@ -220,7 +220,7 @@ export default function CreateAssignmentPage({ params }: { params: { id: string 
                                 <TimePicker
                                     date={dueTime}
                                     onChange={setDueTime}
-                                    granularity="minute"
+                                    granularity={"minute"}
                                 />
                             </div>
                         </div>
