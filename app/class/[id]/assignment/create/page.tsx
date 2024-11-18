@@ -1,59 +1,82 @@
 'use client'
 
 import {useEffect, useState} from 'react'
+import {useRouter} from 'next/navigation'
 import {Input} from '@/components/ui/input'
 import {Button} from '@/components/ui/button'
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select'
 import {Label} from '@/components/ui/label'
-import {createAssignment} from '@/app/api/assignment'
-import {toast} from '@/hooks/use-toast'
-import {AssignmentCreator, ExerciseSetList} from '@/app/api/types'
-import {getUserExerciseSetList} from "@/app/api/user"
-import {DateTimePicker, TimePicker} from '@/components/ui/datetime-picker'
 import {Card, CardContent, CardFooter, CardHeader, CardTitle} from '@/components/ui/card'
-import {pl} from "date-fns/locale"
-import {useRouter} from "next/navigation";
+import {Calendar} from '@/components/ui/calendar'
+import {Popover, PopoverContent, PopoverTrigger} from '@/components/ui/popover'
+import {TimePicker} from '@/components/ui/datetime-picker'
+import {getUserExerciseSetList} from "@/app/api/user"
+import {createAssignment} from '@/app/api/assignment'
+import {getClass} from '@/app/api/class'
+import {toast} from '@/hooks/use-toast'
+import {CalendarIcon} from 'lucide-react'
+import {AssignmentCreator, Class, ExerciseSetList} from '@/app/api/types'
+import {cn} from "@/lib/utils";
+import {Spinner} from "@/components/ui/spinner";
+
+function getDefaultTime(): Date {
+    const now = new Date()
+    now.setHours(0, 0, 0, 0)
+    return now
+}
 
 export default function CreateAssignmentPage({ params }: { params: { id: string } }) {
     const router = useRouter()
 
     const [assignmentName, setAssignmentName] = useState('')
     const [startDate, setStartDate] = useState<Date | undefined>()
-    const [startTime, setStartTime] = useState<Date | undefined>()
+    const [startTime, setStartTime] = useState<Date | undefined>(getDefaultTime())
     const [dueDate, setDueDate] = useState<Date | undefined>()
-    const [dueTime, setDueTime] = useState<Date | undefined>()
+    const [dueTime, setDueTime] = useState<Date | undefined>(getDefaultTime())
     const [selectedExerciseSetId, setSelectedExerciseSetId] = useState('')
 
-    const [exerciseSetList, setExerciseSetList] = useState<ExerciseSetList[]>([])
+    const [currClass, setCurrClass] = useState<Class | undefined>()
+    const [exerciseSetList, setExerciseSetList] = useState<ExerciseSetList[]>()
     const [loading, setLoading] = useState(false)
-    const [fetchingExerciseSets, setFetchingExerciseSets] = useState(false)
+    const [fetchingData, setFetchingData] = useState(true)
 
     useEffect(() => {
-        setFetchingExerciseSets(true)
-
-        getUserExerciseSetList()
-            .then((result) => {
-                if (result.success) {
-                    // @ts-ignore
-                    setExerciseSetList(result.data)
+        const fetchData = async () => {
+            try {
+                const classResult = await getClass(params.id)
+                if (classResult.success) {
+                    setCurrClass(classResult.data)
                 } else {
                     toast({
                         title: 'Błąd',
-                        description: result.error,
+                        description: 'Nie udało się załadować danych o klasie',
+                    })
+                    router.push(`/class/${params.id}`)
+                }
+
+                const exerciseSetResult = await getUserExerciseSetList()
+                if (exerciseSetResult.success) {
+                    setExerciseSetList(exerciseSetResult?.data)
+                } else {
+                    toast({
+                        title: 'Błąd',
+                        description: exerciseSetResult.error,
                     })
                 }
-            })
-            .catch((error) => {
-                console.error('Error fetching exercise sets:', error)
+            } catch (error) {
+                console.error('Error fetching data:', error)
                 toast({
                     title: 'Błąd',
-                    description: 'Wystąpił niespodziewany błąd podczas ładowania zestawów zadań.',
+                    description: 'Wystąpił niespodziewany błąd',
                 })
-            })
-            .finally(() => {
-                setFetchingExerciseSets(false)
-            })
-    }, [])
+                router.push(`/class/${params.id}`)
+            } finally {
+                setFetchingData(false)
+            }
+        }
+
+        fetchData()
+    }, [params.id, router])
 
     const combineDateTime = (date: Date | undefined, time: Date | undefined): Date | undefined => {
         if (!date || !time) return undefined
@@ -65,6 +88,11 @@ export default function CreateAssignmentPage({ params }: { params: { id: string 
     const handleCreateAssignment = async () => {
         const combinedStartDate = combineDateTime(startDate, startTime)
         const combinedDueDate = combineDateTime(dueDate, dueTime)
+
+        console.log('assignmentName', assignmentName)
+        console.log('combinedStartDate', combinedStartDate)
+        console.log('combinedDueDate', combinedDueDate)
+        console.log('selectedExerciseSetId', selectedExerciseSetId)
 
         if (!assignmentName || !combinedStartDate || !combinedDueDate || !selectedExerciseSetId) {
             toast({
@@ -90,12 +118,7 @@ export default function CreateAssignmentPage({ params }: { params: { id: string 
                 title: 'Sukces',
                 description: 'Zadanie zostało pomyślnie utworzone.',
             })
-            setAssignmentName('')
-            setStartDate(undefined)
-            setStartTime(undefined)
-            setDueDate(undefined)
-            setDueTime(undefined)
-            setSelectedExerciseSetId('')
+            router.push(`/class/${params.id}`)
         } else {
             toast({
                 title: 'Błąd',
@@ -106,15 +129,27 @@ export default function CreateAssignmentPage({ params }: { params: { id: string 
         setLoading(false)
     }
 
-    const handleGoBackToClass = () => {
-        router.push(`class/${params.id}`)
+    if (currClass !== undefined && !currClass.isOwner) {
+        toast({
+            title: 'Błąd',
+            description: 'Jedynie nauczyciel może utworzyć zadanie',
+        })
+
+        router.push(`/class/${params.id}`)
+    }
+
+    if (fetchingData) {
+        return <Spinner size="medium" />
     }
 
     return (
         <div className="w-full max-w-xl">
             <Card className="m-2">
-                <CardHeader>
-                    <CardTitle>Utwórz Nowe Zadanie</CardTitle>
+                <CardHeader className="gap-1">
+                    <CardTitle>
+                        Utwórz Nowe Zadanie
+                    </CardTitle>
+                    <h1>Klasa: {currClass?.name}</h1>
                 </CardHeader>
                 <CardContent>
                     <div className="space-y-4">
@@ -131,36 +166,67 @@ export default function CreateAssignmentPage({ params }: { params: { id: string 
                         {/* Start Date and Time */}
                         <div>
                             <Label>Data i Godzina Rozpoczęcia</Label>
-                            <div className="flex space-x-4">
-                                <DateTimePicker
-                                    granularity="day"
-                                    value={startDate}
-                                    onChange={setStartDate}
-                                    placeholder="Wybierz datę"
-                                    locale={pl}
+                            <div className="flex gap-2 sm:flex-row flex-col justify-between">
+                                <Popover>
+                                    <PopoverTrigger asChild>
+                                        <Button variant="outline" className={cn(
+                                            "sm:w-[280px] justify-start text-left font-normal",
+                                            !startDate && "text-muted-foreground"
+                                        )}>
+                                            <CalendarIcon className="mr-2 h-4 w-4" />
+                                            {startDate ? startDate.toLocaleDateString() : "Wybierz datę"}
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-auto p-0">
+                                        <Calendar
+                                            mode="single"
+                                            selected={startDate}
+                                            onSelect={setStartDate}
+                                            initialFocus
+                                        />
+                                    </PopoverContent>
+                                </Popover>
+                                <TimePicker
+                                    date={startTime}
+                                    onChange={setStartTime}
+                                    granularity="minute"
                                 />
-                                <TimePicker date={startTime} onChange={setStartTime} granularity={"minute"} />
                             </div>
                         </div>
 
                         {/* Due Date and Time */}
                         <div>
                             <Label>Data i Godzina Zakończenia</Label>
-                            <div className="flex space-x-4">
-                                <DateTimePicker
-                                    granularity="day"
-                                    value={dueDate}
-                                    onChange={setDueDate}
-                                    placeholder="Wybierz datę"
-                                    locale={pl}
+                            <div className="flex gap-2 sm:flex-row flex-col justify-between">
+                                <Popover>
+                                    <PopoverTrigger asChild>
+                                        <Button variant="outline" className={cn(
+                                            "sm:w-[280px] justify-start text-left font-normal",
+                                            !dueDate && "text-muted-foreground"
+                                        )}>
+                                            <CalendarIcon className="mr-2 h-4 w-4" />
+                                            {dueDate ? dueDate.toLocaleDateString() : "Wybierz datę"}
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-auto p-0">
+                                        <Calendar
+                                            mode="single"
+                                            selected={dueDate}
+                                            onSelect={setDueDate}
+                                            initialFocus
+                                        />
+                                    </PopoverContent>
+                                </Popover>
+                                <TimePicker
+                                    date={dueTime}
+                                    onChange={setDueTime}
+                                    granularity="minute"
                                 />
-                                <TimePicker date={dueTime} onChange={setDueTime} granularity={"minute"} />
                             </div>
                         </div>
-
                         <div>
                             <Label htmlFor="exercise-set">Zestaw Zadań</Label>
-                            {fetchingExerciseSets ? (
+                            {fetchingData ? (
                                 <p className="text-gray-500">Ładowanie zestawów zadań...</p>
                             ) : (
                                 <Select onValueChange={setSelectedExerciseSetId}>
@@ -168,7 +234,7 @@ export default function CreateAssignmentPage({ params }: { params: { id: string 
                                         <SelectValue placeholder="Wybierz zestaw zadań" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {exerciseSetList.map((set) => (
+                                        {exerciseSetList && exerciseSetList.map((set) => (
                                             <SelectItem key={set.id} value={set.id}>
                                                 {set.name}
                                             </SelectItem>
@@ -180,10 +246,10 @@ export default function CreateAssignmentPage({ params }: { params: { id: string 
                     </div>
                 </CardContent>
                 <CardFooter className="flex justify-between">
-                    <Button variant="outline" onClick={ handleGoBackToClass }>
+                    <Button variant="outline" onClick={() => router.push(`/class/${params.id}`)}>
                         Wróć
                     </Button>
-                    <Button onClick={handleCreateAssignment} disabled={loading || fetchingExerciseSets}>
+                    <Button onClick={handleCreateAssignment} disabled={loading || fetchingData}>
                         {loading ? 'Tworzenie...' : 'Utwórz'}
                     </Button>
                 </CardFooter>

@@ -274,9 +274,7 @@ export default function ClassPage({ params }: { params: { id: string } }) {
 
                             </CardContent>
 
-                            <CardFooter>
-                                This card is currently work in progress!
-
+                            <CardFooter className="flex flex-col items-center justify-center gap-2 w-full">
                                 {cClass.isOwner && (
                                     <Button onClick={createAssignment}>
                                         Stwórz Zadanie
