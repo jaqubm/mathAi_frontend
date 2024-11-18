@@ -18,6 +18,7 @@ import {CalendarIcon} from 'lucide-react'
 import {AssignmentCreator, Class, ExerciseSetList} from '@/app/api/types'
 import {cn} from "@/lib/utils";
 import {Spinner} from "@/components/ui/spinner";
+import {pl} from "date-fns/locale";
 
 function getDefaultTime(): Date {
     const now = new Date()
@@ -88,11 +89,6 @@ export default function CreateAssignmentPage({ params }: { params: { id: string 
     const handleCreateAssignment = async () => {
         const combinedStartDate = combineDateTime(startDate, startTime)
         const combinedDueDate = combineDateTime(dueDate, dueTime)
-
-        console.log('assignmentName', assignmentName)
-        console.log('combinedStartDate', combinedStartDate)
-        console.log('combinedDueDate', combinedDueDate)
-        console.log('selectedExerciseSetId', selectedExerciseSetId)
 
         if (!assignmentName || !combinedStartDate || !combinedDueDate || !selectedExerciseSetId) {
             toast({
@@ -182,6 +178,7 @@ export default function CreateAssignmentPage({ params }: { params: { id: string 
                                             mode="single"
                                             selected={startDate}
                                             onSelect={setStartDate}
+                                            locale={pl}
                                             initialFocus
                                         />
                                     </PopoverContent>
@@ -213,6 +210,7 @@ export default function CreateAssignmentPage({ params }: { params: { id: string 
                                             mode="single"
                                             selected={dueDate}
                                             onSelect={setDueDate}
+                                            locale={pl}
                                             initialFocus
                                         />
                                     </PopoverContent>
