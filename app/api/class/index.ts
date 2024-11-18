@@ -1,12 +1,12 @@
 import {axiosInstance} from "@/app/api";
 import axios, {AxiosError} from "axios";
-import {ClassCreator} from "@/app/api/types";
+import {Class, ClassCreator} from "@/app/api/types";
 
-export const createClass = async (cClass: ClassCreator) => {
+export const createClass = async (classCreator: ClassCreator) => {
     try {
-        const response = await axiosInstance.post('/Class/Create', cClass)
+        const response = await axiosInstance.post('/Class/Create', classCreator)
 
-        return { success: true, data: response.data }
+        return { success: true, data: response.data as string }
 
     } catch (error: AxiosError | any) {
         if (axios.isCancel(error)) {
@@ -25,7 +25,7 @@ export const getClass = async (classId: string) => {
     try {
         const response = await axiosInstance.get(`/Class/Get/${classId}`);
 
-        return { success: true, data: response.data }
+        return { success: true, data: response.data as Class }
 
     } catch (error: AxiosError | any) {
         if (axios.isCancel(error)) {
