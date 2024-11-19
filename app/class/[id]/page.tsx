@@ -288,9 +288,7 @@ export default function ClassPage({ params }: { params: { id: string } }) {
                                                         <div className="relative">
                                                             <li className="font-bold">{assignment.name}</li>
                                                             <p className="text-sm">
-                                                                {dayjs(assignment.startDate).format('YYYY.MM.DD HH:mm')}
-                                                                -
-                                                                {dayjs(assignment.dueDate).format('YYYY.MM.DD HH:mm')}
+                                                                {dayjs(assignment.startDate).format('YYYY.MM.DD HH:mm')} - {dayjs(assignment.dueDate).format('YYYY.MM.DD HH:mm')}
                                                             </p>
 
                                                             {cClass.isOwner && (
