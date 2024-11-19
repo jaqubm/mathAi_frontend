@@ -20,3 +20,26 @@ export const createAssignment = async (assignmentCreator: AssignmentCreator) => 
         return { success: false, error: errorMessage };
     }
 }
+
+// Get
+// UpdateName
+// UpdateDueDate
+
+export const deleteAssignment = async (assignmentId: string) => {
+    try {
+        const response = await axiosInstance.delete(`/Assignment/Delete/${assignmentId}`)
+
+        return { success: true, data: response.data as string }
+
+    } catch (error: AxiosError | any) {
+        if (axios.isCancel(error)) {
+            return { success: false, error: "Request was canceled." }
+        }
+
+        const errorMessage = error.response
+            ? `HTTP error! Status: ${error.response.status} - ${error.response.statusText}`
+            : "Failed to delete class.";
+
+        return { success: false, error: errorMessage };
+    }
+}

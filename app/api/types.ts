@@ -81,6 +81,7 @@ export interface AssignmentCreator {
 }
 
 export interface AssignmentList {
+    id: string
     name: string
     startDate: Date
     dueDate: Date

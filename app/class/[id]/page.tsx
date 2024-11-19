@@ -30,6 +30,8 @@ import {
     DialogHeader,
     DialogTitle
 } from "@/components/ui/dialog";
+import dayjs from "dayjs";
+import {deleteAssignment} from "@/app/api/assignment";
 
 export default function ClassPage({ params }: { params: { id: string } }) {
     const router = useRouter()
@@ -39,10 +41,11 @@ export default function ClassPage({ params }: { params: { id: string } }) {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
 
+    const [editingClassName, setEditingClassName] = useState<string | null>(null)
     const [checkingStudent, setCheckingStudent] = useState(false)
     const [studentEmail, setStudentEmail] = useState("")
     const [deletingUserFromClass, setDeletingUserFromClass] = useState<string | null>(null)
-    const [editingClassName, setEditingClassName] = useState<string | null>(null)
+    const [deletingAssignmentFromClass, setDeletingAssignmentFromClass] = useState<string | null>(null)
 
     const [refreshKey, setRefreshKey] = useState(0)
 
@@ -128,6 +131,26 @@ export default function ClassPage({ params }: { params: { id: string } }) {
                 description: "Student został pomyślnie usunięty z klasy."
             })
             setDeletingUserFromClass(null)
+            setRefreshKey((prevKey) => prevKey + 1)
+        } else {
+            toast({
+                title: "Błąd",
+                description: result.error
+            })
+        }
+    }
+
+    const handleDeleteAssignmentFromClass = async () => {
+        if (!deletingAssignmentFromClass || !cClass || !cClass.isOwner) return
+
+        const result = await deleteAssignment(deletingAssignmentFromClass)
+
+        if (result.success) {
+            toast({
+                title: "Sukces",
+                description: "Zadanie zostało pomyślnie usunięte z klasy."
+            })
+            setDeletingAssignmentFromClass(null)
             setRefreshKey((prevKey) => prevKey + 1)
         } else {
             toast({
@@ -257,19 +280,36 @@ export default function ClassPage({ params }: { params: { id: string } }) {
                                 )}
 
                                 {cClass.assignments.length > 0 && (
-                                    <ScrollArea className="max-h-80 overflow-y-scroll">
-                                        <ul>
-                                            {cClass.assignments.map((assignment: AssignmentList, index: number) => (
-                                                <div key={assignment.classId + assignment.exerciseSetId}>
-                                                    <div>
-                                                        <li>{assignment.name}</li>
+                                    <Card className="px-2">
+                                        <ScrollArea className="max-h-80 overflow-y-scroll py-2">
+                                            <ul>
+                                                {cClass.assignments.map((assignment: AssignmentList, index: number) => (
+                                                    <div key={assignment.id}>
+                                                        <div className="relative">
+                                                            <li className="font-bold">{assignment.name}</li>
+                                                            <p className="text-sm">
+                                                                {dayjs(assignment.startDate).format('YYYY.MM.DD HH:mm')}
+                                                                -
+                                                                {dayjs(assignment.dueDate).format('YYYY.MM.DD HH:mm')}
+                                                            </p>
+
+                                                            {cClass.isOwner && (
+                                                                <Button
+                                                                    variant="ghost"
+                                                                    size="icon"
+                                                                    className="text-red-500 absolute right-2 top-0 bottom-0"
+                                                                    onClick={() => setDeletingAssignmentFromClass(assignment.id)}
+                                                                >
+                                                                    <X className="w-5 h-5" />
+                                                                </Button>
+                                                            )}
+                                                        </div>
+                                                        {index !== cClass.assignments.length - 1 && <Separator className="my-2" />}
                                                     </div>
-                                                    {index !== cClass.assignments.length - 1 &&
-                                                        <Separator className="my-2"/>}
-                                                </div>
-                                            ))}
-                                        </ul>
-                                    </ScrollArea>
+                                                ))}
+                                            </ul>
+                                        </ScrollArea>
+                                    </Card>
                                 )}
 
                             </CardContent>
@@ -307,7 +347,6 @@ export default function ClassPage({ params }: { params: { id: string } }) {
                                 onChange={(e) => setEditingClassName(e.target.value)}
                                 minLength={1}
                                 maxLength={30}
-                                className="resize-none w-full mt-2 p-2 border rounded"
                             />
                             <p className="text-right text-sm text-gray-500 mt-2">
                                 {editingClassName.length}/30
@@ -327,12 +366,29 @@ export default function ClassPage({ params }: { params: { id: string } }) {
                         <AlertDialogHeader>
                             <AlertDialogTitle>Potwierdź usunięcie</AlertDialogTitle>
                             <AlertDialogDescription>
-                                Czy na pewno chcesz usunąć to zadanie? Tej akcji nie można cofnąć.
+                                Czy na pewno chcesz usunąć tego studenta? Tej akcji nie można cofnąć.
                             </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter className="gap-2">
                             <Button variant="outline" onClick={() => setDeletingUserFromClass(null)}>Anuluj</Button>
                             <Button variant="destructive" onClick={handleDeleteUserFromClass}>Potwierdź</Button>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
+            )}
+
+            {deletingAssignmentFromClass && (
+                <AlertDialog open={true} onOpenChange={() => setDeletingAssignmentFromClass(null)}>
+                    <AlertDialogContent className="sm:max-w-[480px] max-h-[90%] max-w-[95%] overflow-y-scroll">
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>Potwierdź usunięcie</AlertDialogTitle>
+                            <AlertDialogDescription>
+                                Czy na pewno chcesz usunąć to zadanie? Tej akcji nie można cofnąć.
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter className="gap-2">
+                            <Button variant="outline" onClick={() => setDeletingAssignmentFromClass(null)}>Anuluj</Button>
+                            <Button variant="destructive" onClick={handleDeleteAssignmentFromClass}>Potwierdź</Button>
                         </AlertDialogFooter>
                     </AlertDialogContent>
                 </AlertDialog>
