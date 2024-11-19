@@ -79,15 +79,15 @@ export default function ClassPage({ params }: { params: { id: string } }) {
 
             if (result.success) {
                 toast({
-                    title: "Nazwa klasy została zaktualizowana",
-                    description: "Zmiany w nazwie klasy zostały zapisane."
+                    title: "Sukces",
+                    description: "Nazwa klasy została zaktualizowana."
                 })
                 setClass({ ...cClass, name: editingClassName })
                 setEditingClassName(null)
                 setRefreshKey((prevKey) => prevKey + 1)
             } else {
                 toast({
-                    title: "Nazwa klasy nie została zaktualizowana",
+                    title: "Błąd",
                     description: result.error
                 })
             }
@@ -104,7 +104,7 @@ export default function ClassPage({ params }: { params: { id: string } }) {
                 setStudentEmail("")
                 setRefreshKey((prevKey) => prevKey + 1)
                 toast({
-                    title: "Student został pomyślnie dodany",
+                    title: "Sukces",
                     description: `Student ${studentEmail} został pomyślnie dodany.`
                 });
             } else {
@@ -124,14 +124,14 @@ export default function ClassPage({ params }: { params: { id: string } }) {
 
         if (result.success) {
             toast({
-                title: "Student został usunięty",
-                description: "Student zostało pomyślnie usunięty z klasy."
+                title: "Sukces",
+                description: "Student został pomyślnie usunięty z klasy."
             })
             setDeletingUserFromClass(null)
             setRefreshKey((prevKey) => prevKey + 1)
         } else {
             toast({
-                title: "Błąd usuwania studenta",
+                title: "Błąd",
                 description: result.error
             })
         }

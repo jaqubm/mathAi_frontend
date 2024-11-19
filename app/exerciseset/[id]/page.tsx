@@ -98,14 +98,14 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
 
             if (result.success) {
                 toast({
-                    title: "Zadanie zostało zaktualizowane",
-                    description: "Zmiany dokonane w zadaniu zostały zapisane."
+                    title: "Sukces",
+                    description: "Zadanie zostało zaktualizowane."
                 })
                 setEditingExercise(null)
                 setRefreshKey((prevKey) => prevKey + 1)
             } else {
                 toast({
-                    title: "Zadanie nie zostało zaktualizowane",
+                    title: "Błąd",
                     description: result.error
                 })
             }
@@ -120,15 +120,15 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
 
             if (result.success) {
                 toast({
-                    title: "Nazwa zestawu zadań została zaktualizowana",
-                    description: "Zmiany w nazwie zestawu zadań zostały zapisane."
+                    title: "Sukces",
+                    description: "Nazwa zestawu zadań została zaktualizowana."
                 })
                 setExerciseSet({ ...exerciseSet, name: editingExerciseSetName })
                 setEditingExerciseSetName(null)
                 setRefreshKey((prevKey) => prevKey + 1)
             } else {
                 toast({
-                    title: "Nazwa zestawu zadań nie została zaktualizowana",
+                    title: "Błąd",
                     description: result.error
                 })
             }
@@ -142,14 +142,14 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
 
         if (result.success) {
             toast({
-                title: "Zadanie zostało usunięte",
+                title: "Sukces",
                 description: "Zadanie zostało pomyślnie usunięte."
             })
             setDeletingExerciseId(null)
             setRefreshKey((prevKey) => prevKey + 1)
         } else {
             toast({
-                title: "Błąd usuwania zadania",
+                title: "Błąd",
                 description: result.error
             })
         }
@@ -165,13 +165,13 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
 
             if (result.success) {
                 toast({
-                    title: "Zestaw zadań został skopiowany",
+                    title: "Sukces",
                     description: "Pomyślnie utworzono kopię zestawu zadań."
                 })
                 router.push(`/exerciseset/${result.data}`)
             } else {
                 toast({
-                    title: "Błąd kopiowania zestawu zadań",
+                    title: "Błąd",
                     description: result.error
                 })
             }
