@@ -249,6 +249,12 @@ export default function CreateAssignmentPage({ params }: { params: { id: string 
                                         {exerciseSetList && exerciseSetList.map((set) => (
                                             <SelectItem key={set.id} value={set.id}>
                                                 {set.name}
+                                                <p className="text-xs">
+                                                    {set.schoolType} - Klasa {set.grade}
+                                                </p>
+                                                <p className="text-xs">
+                                                    Dział: {set.subject}
+                                                </p>
                                             </SelectItem>
                                         ))}
                                     </SelectContent>
