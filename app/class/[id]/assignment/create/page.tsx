@@ -98,7 +98,16 @@ export default function CreateAssignmentPage({ params }: { params: { id: string 
             return
         }
 
+        if (combinedDueDate < combinedStartDate) {
+            toast({
+                title: 'Błąd',
+                description: 'Data rozpoczęcia zadania musi być przed datą zakończenia zadania!',
+            })
+            return
+        }
+
         setLoading(true)
+
         const assignmentCreator: AssignmentCreator = {
             name: assignmentName,
             startDate: combinedStartDate.toISOString(),
