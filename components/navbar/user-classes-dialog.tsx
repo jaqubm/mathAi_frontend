@@ -77,22 +77,20 @@ export function UserClassesDialog({ open, onClose, children }: { open: boolean, 
                 )
 
                 toast({
-                    title: "Klasa usunięta",
+                    title: "Sukces",
                     description: "Klasa została pomyślnie usunięta.",
                 })
             } else {
                 toast({
-                    title: "Błąd usuwania",
+                    title: "Błąd",
                     description: "Nie udało się usunąć klasy.",
-                    action: <ToastAction altText="Zamknij">OK</ToastAction>
                 })
             }
         } catch (e) {
             console.error("Error deleting exercise set:", e)
             toast({
-                title: "Błąd usuwania",
+                title: "Błąd",
                 description: "Wystąpił niespodziewany błąd podczs próby usuwania klasy!",
-                action: <ToastAction altText="Zamknij">OK</ToastAction>
             })
         }
         setSelectedClassId(null)

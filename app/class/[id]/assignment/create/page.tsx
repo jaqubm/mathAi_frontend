@@ -1,6 +1,6 @@
 'use client'
 
-import {useEffect, useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {useRouter} from 'next/navigation'
 import {Input} from '@/components/ui/input'
 import {Button} from '@/components/ui/button'
@@ -98,7 +98,16 @@ export default function CreateAssignmentPage({ params }: { params: { id: string 
             return
         }
 
+        if (combinedDueDate < combinedStartDate) {
+            toast({
+                title: 'Błąd',
+                description: 'Data rozpoczęcia zadania musi być przed datą zakończenia zadania!',
+            })
+            return
+        }
+
         setLoading(true)
+
         const assignmentCreator: AssignmentCreator = {
             name: assignmentName,
             startDate: combinedStartDate.toISOString(),
@@ -148,19 +157,24 @@ export default function CreateAssignmentPage({ params }: { params: { id: string 
                     <h1>Klasa: {currClass?.name}</h1>
                 </CardHeader>
                 <CardContent>
-                    <div className="space-y-4">
+                    <div>
                         <div>
                             <Label htmlFor="assignment-name">Nazwa Zadania</Label>
                             <Input
                                 id="assignment-name"
                                 value={assignmentName}
                                 onChange={(e) => setAssignmentName(e.target.value)}
+                                minLength={1}
+                                maxLength={30}
                                 placeholder="Wpisz nazwę zadania"
                             />
+                            <p className="text-right text-sm text-gray-500 mt-2">
+                                {assignmentName.length}/30
+                            </p>
                         </div>
 
                         {/* Start Date and Time */}
-                        <div>
+                        <div className="mb-4">
                             <Label>Data i Godzina Rozpoczęcia</Label>
                             <div className="flex gap-2 sm:flex-row flex-col justify-between">
                                 <Popover>
@@ -192,7 +206,7 @@ export default function CreateAssignmentPage({ params }: { params: { id: string 
                         </div>
 
                         {/* Due Date and Time */}
-                        <div>
+                        <div className="mb-4">
                             <Label>Data i Godzina Zakończenia</Label>
                             <div className="flex gap-2 sm:flex-row flex-col justify-between">
                                 <Popover>
@@ -235,6 +249,12 @@ export default function CreateAssignmentPage({ params }: { params: { id: string 
                                         {exerciseSetList && exerciseSetList.map((set) => (
                                             <SelectItem key={set.id} value={set.id}>
                                                 {set.name}
+                                                <p className="text-xs">
+                                                    {set.schoolType} - Klasa {set.grade}
+                                                </p>
+                                                <p className="text-xs">
+                                                    Dział: {set.subject}
+                                                </p>
                                             </SelectItem>
                                         ))}
                                     </SelectContent>

@@ -60,7 +60,7 @@ export default function CreateClassPage() {
         if (studentEmail.trim()) {
             if (students.includes(studentEmail)) {
                 toast({
-                    title: "Student już istnieje",
+                    title: "Błąd",
                     description: `Student ${studentEmail} jest już na liście.`
                 });
                 setCheckingStudent(false)
@@ -73,7 +73,7 @@ export default function CreateClassPage() {
                 setValue("studentEmailList", [...students, studentEmail])
                 setStudentEmail("")
                 toast({
-                    title: "Student został pomyślnie dodany",
+                    title: "Sukces",
                     description: `Student ${studentEmail} został pomyślnie dodany.`
                 });
             } else {

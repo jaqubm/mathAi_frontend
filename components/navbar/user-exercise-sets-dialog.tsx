@@ -68,22 +68,20 @@ export function UserExerciseSetsDialog({ open, onClose, children }: { open: bool
                 )
 
                 toast({
-                    title: "Zestaw zadań usunięty",
+                    title: "Sukces",
                     description: "Zestaw zadań został pomyślnie usunięty.",
                 })
             } else {
                 toast({
-                    title: "Błąd usuwania",
+                    title: "Błąd",
                     description: "Nie udało się usunąć zestawu zadań.",
-                    action: <ToastAction altText="Zamknij">OK</ToastAction>
                 })
             }
         } catch (e) {
             console.error("Error deleting exercise set:", e)
             toast({
-                title: "Błąd usuwania",
+                title: "Błąd",
                 description: "Wystąpił niespodziewany błąd podczs próby usuwania zestawu zadań!",
-                action: <ToastAction altText="Zamknij">OK</ToastAction>
             })
         }
         setSelectedExerciseSetId(null)
