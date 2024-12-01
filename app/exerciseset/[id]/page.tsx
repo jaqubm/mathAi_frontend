@@ -24,6 +24,7 @@ import {toast} from "@/hooks/use-toast"
 import {Edit2, X} from "lucide-react"
 import {Input} from "@/components/ui/input"
 import {Label} from "@/components/ui/label"
+import {MathJax, MathJaxContext} from "better-react-mathjax";
 
 export default function ExerciseSetPage({ params }: { params: { id: string } }) {
     const router = useRouter()
@@ -238,25 +239,55 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
                                         )}
                                     </CardHeader>
 
-                                    <CardContent>{exercise.content}</CardContent>
+                                    <CardContent className="whitespace-pre-wrap">
+                                        <MathJaxContext>
+                                            <MathJax>
+                                                {exercise.content}
+                                            </MathJax>
+                                        </MathJaxContext>
+                                    </CardContent>
 
                                     <CardFooter>
                                         <Accordion type="multiple" className="w-full">
                                             <AccordionItem value="Podpowiedź 1">
                                                 <AccordionTrigger>Podpowiedź 1</AccordionTrigger>
-                                                <AccordionContent>{exercise.firstHint}</AccordionContent>
+                                                <AccordionContent className="whitespace-pre-wrap">
+                                                    <MathJaxContext>
+                                                        <MathJax>
+                                                            {exercise.firstHint}
+                                                        </MathJax>
+                                                    </MathJaxContext>
+                                                </AccordionContent>
                                             </AccordionItem>
                                             <AccordionItem value="Podpowiedź 2">
                                                 <AccordionTrigger>Podpowiedź 2</AccordionTrigger>
-                                                <AccordionContent>{exercise.secondHint}</AccordionContent>
+                                                <AccordionContent className="whitespace-pre-wrap">
+                                                    <MathJaxContext>
+                                                        <MathJax>
+                                                            {exercise.secondHint}
+                                                        </MathJax>
+                                                    </MathJaxContext>
+                                                </AccordionContent>
                                             </AccordionItem>
                                             <AccordionItem value="Podpowiedź 3">
                                                 <AccordionTrigger>Podpowiedź 3</AccordionTrigger>
-                                                <AccordionContent>{exercise.thirdHint}</AccordionContent>
+                                                <AccordionContent className="whitespace-pre-wrap">
+                                                    <MathJaxContext>
+                                                        <MathJax>
+                                                            {exercise.thirdHint}
+                                                        </MathJax>
+                                                    </MathJaxContext>
+                                                </AccordionContent>
                                             </AccordionItem>
                                             <AccordionItem value="Rozwiązanie">
                                                 <AccordionTrigger>Rozwiązanie</AccordionTrigger>
-                                                <AccordionContent>{exercise.solution}</AccordionContent>
+                                                <AccordionContent className="whitespace-pre-wrap">
+                                                    <MathJaxContext>
+                                                        <MathJax>
+                                                            {exercise.solution}
+                                                        </MathJax>
+                                                    </MathJaxContext>
+                                                </AccordionContent>
                                             </AccordionItem>
                                         </Accordion>
                                     </CardFooter>
