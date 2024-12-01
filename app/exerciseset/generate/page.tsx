@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import {Card, CardContent, CardFooter} from "@/components/ui/card"
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs"
-import {generateExerciseSetLoadingStates, generateExerciseSetTopics} from "@/data"
+import {generateExerciseSetLoadingStates, generateExerciseSetPersonalizedList, generateExerciseSetTopics} from "@/data"
 import {RadioGroup, RadioGroupItem} from "@/components/ui/radio-group"
 import {Label} from "@/components/ui/label"
 
@@ -29,6 +29,7 @@ const formSchema = z.object({
     schoolType: z.string().min(1),
     grade: z.number().int(),
     subject: z.string().min(1),
+    personalized: z.string(),
     numberOfExercises: z.number().int().nonnegative(),
 })
 
@@ -39,8 +40,9 @@ export default function GeneratePage() {
     const [selectedGrade, setSelectedGrade] = useState<number | null>(null)
     const [availableSubjects, setAvailableSubjects] = useState<string[]>([])
     const [isAllSelected, setIsAllSelected] = useState(false)
-    const [selectedSubject, setSelectedSubject] = useState("") // Track selected subject
-    const [selectedNumberOfExercises, setSelectedNumberOfExercises] = useState<number | null>(null) // Track number of exercises separately
+    const [selectedSubject, setSelectedSubject] = useState("")
+    const [selectedPersonalized, setSelectedPersonalized] = useState("")
+    const [selectedNumberOfExercises, setSelectedNumberOfExercises] = useState<number | null>(null)
 
     const [loading, setLoading] = useState(false)
     const [showAlert, setShowAlert] = useState(false)
@@ -52,6 +54,7 @@ export default function GeneratePage() {
             schoolType: "",
             grade: 0,
             subject: "",
+            personalized: "",
             numberOfExercises: 0,
         },
     })
@@ -129,41 +132,70 @@ export default function GeneratePage() {
                             <TabsContent value={selectedSchoolType}>
                                 <Card className="mx-2 sm:w-[640px]">
                                     <CardContent className="p-4 space-y-4">
-                                        <div className="w-full flex gap-4">
+
+                                        <FormField
+                                            control={form.control}
+                                            name="grade"
+                                            render={() => (
+                                                <FormItem className="w-full max-w-64">
+                                                    <FormLabel>Klasa</FormLabel>
+                                                    <FormControl>
+                                                        <Select onValueChange={handleGradeChange}
+                                                                disabled={!selectedSchoolType}>
+                                                            <SelectTrigger className="w-full">
+                                                                <SelectValue placeholder="Wybierz klasę"/>
+                                                            </SelectTrigger>
+                                                            <SelectContent>
+                                                                {Object.keys(generateExerciseSetTopics[selectedSchoolType] || {}).map((grade) => (
+                                                                    <SelectItem key={grade} value={grade}>
+                                                                        {grade}
+                                                                    </SelectItem>
+                                                                ))}
+                                                            </SelectContent>
+                                                        </Select>
+                                                    </FormControl>
+                                                </FormItem>
+                                            )}
+                                        />
+
+                                        {/* Conditionally render Subject only if grade is selected */}
+                                        {selectedGrade !== null && (
                                             <FormField
                                                 control={form.control}
-                                                name="grade"
+                                                name="subject"
                                                 render={() => (
-                                                    <FormItem className="flex-1">
-                                                        <FormLabel>Klasa</FormLabel>
-                                                        <FormControl>
-                                                            <Select onValueChange={handleGradeChange} disabled={!selectedSchoolType}>
-                                                                <SelectTrigger className="w-full">
-                                                                    <SelectValue placeholder="Wybierz klasę" />
-                                                                </SelectTrigger>
-                                                                <SelectContent>
-                                                                    {Object.keys(generateExerciseSetTopics[selectedSchoolType] || {}).map((grade) => (
-                                                                        <SelectItem key={grade} value={grade}>
-                                                                            {grade}
-                                                                        </SelectItem>
-                                                                    ))}
-                                                                </SelectContent>
-                                                            </Select>
-                                                        </FormControl>
+                                                    <FormItem>
+                                                        <FormLabel>Dział</FormLabel>
+                                                        <RadioGroup value={selectedSubject}
+                                                                    onValueChange={handleSubjectChange}
+                                                                    className="space-y-2">
+                                                            {availableSubjects.map((subject, index) => (
+                                                                <div key={index}
+                                                                     className="flex items-center space-x-2">
+                                                                    <RadioGroupItem value={subject}
+                                                                                    id={`subject-${index}`}/>
+                                                                    <Label
+                                                                        htmlFor={`subject-${index}`}>{subject}</Label>
+                                                                </div>
+                                                            ))}
+                                                        </RadioGroup>
                                                     </FormItem>
                                                 )}
                                             />
+                                        )}
+
+                                        <div className="w-full flex sm:flex-row flex-col gap-4">
 
                                             <FormField
                                                 control={form.control}
                                                 name="numberOfExercises"
                                                 render={() => (
-                                                    <FormItem className="flex-1">
+                                                    <FormItem className="w-full max-w-64">
                                                         <FormLabel>Liczba zadań</FormLabel>
                                                         <FormControl>
                                                             <Select onValueChange={handleNumberOfExercisesChange}>
                                                                 <SelectTrigger className="w-full">
-                                                                    <SelectValue placeholder="Wybierz liczbę zadań" />
+                                                                    <SelectValue placeholder="Wybierz liczbę zadań"/>
                                                                 </SelectTrigger>
                                                                 <SelectContent>
                                                                     {[...Array(15)].map((_, i) => (
@@ -177,28 +209,40 @@ export default function GeneratePage() {
                                                     </FormItem>
                                                 )}
                                             />
-                                        </div>
 
-                                        {/* Conditionally render Subject only if grade is selected */}
-                                        {selectedGrade !== null && (
                                             <FormField
                                                 control={form.control}
-                                                name="subject"
+                                                name="personalized"
                                                 render={() => (
-                                                    <FormItem>
-                                                        <FormLabel>Dział</FormLabel>
-                                                        <RadioGroup value={selectedSubject} onValueChange={handleSubjectChange} className="space-y-2">
-                                                            {availableSubjects.map((subject, index) => (
-                                                                <div key={index} className="flex items-center space-x-2">
-                                                                    <RadioGroupItem value={subject} id={`subject-${index}`} />
-                                                                    <Label htmlFor={`subject-${index}`}>{subject}</Label>
-                                                                </div>
-                                                            ))}
-                                                        </RadioGroup>
+                                                    <FormItem className="w-full max-w-96">
+                                                        <FormLabel>Personalizacja</FormLabel>
+                                                        <FormControl>
+                                                            <Select
+                                                                defaultValue="Brak"
+                                                                onValueChange={(value) => {
+                                                                    setSelectedPersonalized(value);
+                                                                    form.setValue("personalized", value === "Brak" ? "" : value);
+                                                                }}
+                                                            >
+                                                                <SelectTrigger className="w-full">
+                                                                    <SelectValue placeholder="Wybierz opcję"/>
+                                                                </SelectTrigger>
+                                                                <SelectContent>
+                                                                    {generateExerciseSetPersonalizedList.map((personalized) => (
+                                                                        <SelectItem key={personalized}
+                                                                                    value={personalized}>
+                                                                            {personalized}
+                                                                        </SelectItem>
+                                                                    ))}
+                                                                </SelectContent>
+                                                            </Select>
+                                                        </FormControl>
                                                     </FormItem>
                                                 )}
                                             />
-                                        )}
+
+                                        </div>
+
                                     </CardContent>
                                     <CardFooter className="flex justify-end">
                                         <Button type="submit" disabled={!isAllSelected}>Generuj</Button>

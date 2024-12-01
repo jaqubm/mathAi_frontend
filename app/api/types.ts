@@ -29,6 +29,7 @@ export interface ExerciseSet {
     schoolType: string
     grade: number
     subject: string
+    personalized: string
     isOwner: boolean
     exercises: Exercise[]
 }
@@ -37,6 +38,7 @@ export interface ExerciseSetSettings {
     schoolType: string
     grade: number
     subject: string
+    personalized: string
     numberOfExercises: number
 }
 
@@ -46,6 +48,7 @@ export interface ExerciseSetList {
     schoolType: string
     grade: string
     subject: string
+    personalized: string
 }
 
 export interface Class {

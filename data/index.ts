@@ -1,6 +1,6 @@
 // noinspection JSNonASCIINames
 
-export const generateExerciseSetLoadingStates = [
+export const generateExerciseSetLoadingStates: { text: string} [] = [
     { text: "Przygotowywanie danych..." },
     { text: "Komunikowanie się z serwerem..." },
     { text: "Generowanie zadań..." },
@@ -99,3 +99,10 @@ export const generateExerciseSetTopics: { [key: string]: { [key: string]: string
         ]
     },
 }
+
+export const generateExerciseSetPersonalizedList: string[] = [
+    "Brak",
+    "Sport",
+    "Muzyka",
+    "Gry Komputerowe"
+]
