@@ -24,6 +24,7 @@ import {toast} from "@/hooks/use-toast"
 import {Edit2, X} from "lucide-react"
 import {Input} from "@/components/ui/input"
 import {Label} from "@/components/ui/label"
+import {MathJax, MathJaxContext} from "better-react-mathjax";
 
 export default function ExerciseSetPage({ params }: { params: { id: string } }) {
     const router = useRouter()
@@ -72,7 +73,10 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
         if (result.success) {
             setRefreshKey((prevKey) => prevKey + 1)
         } else {
-            setError("Failed to generate the exercise set.")
+            toast({
+                title: "Błąd",
+                description: result.error
+            })
         }
 
         setIsAddingExercise(false)
@@ -178,6 +182,8 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
         }
     }
 
+    console.log(exerciseSet)
+
     return (
         <>
             {loading && <Spinner size="large" />}
@@ -202,6 +208,9 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
                         </div>
                         <h3>{exerciseSet.schoolType} - klasa {exerciseSet.grade}</h3>
                         <h3>{exerciseSet.subject}</h3>
+                        {exerciseSet.personalized !== "" && (
+                            <h3>Personalizacja zadań: {exerciseSet.personalized}</h3>
+                        )}
                     </div>
 
                     {exerciseSet.exercises.length === 0 && (
@@ -212,56 +221,78 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
 
                     {exerciseSet.exercises.length > 0 && (
                         <div className="grid gap-5">
-                            {exerciseSet.exercises.map((exercise, index) => (
-                                <Card key={exercise.id} className="relative">
-                                    <CardHeader>
-                                        <CardTitle>Zadanie {index + 1}</CardTitle>
+                            <MathJaxContext onError={ (error) => console.error(error) } >
+                                {exerciseSet.exercises.map((exercise, index) => (
+                                    <Card key={exercise.id} className="relative">
+                                        <CardHeader>
+                                            <CardTitle>Zadanie {index + 1}</CardTitle>
 
-                                        {exerciseSet.isOwner && (
-                                            <div className="absolute top-2 right-2 flex gap-1">
-                                                <Button
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    onClick={() => setEditingExercise(exercise)}
-                                                >
-                                                    <Edit2 className="w-4 h-4" />
-                                                </Button>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    className="text-red-500"
-                                                    onClick={() => setDeletingExerciseId(exercise.id)}
-                                                >
-                                                    <X className="w-5 h-5" />
-                                                </Button>
-                                            </div>
-                                        )}
-                                    </CardHeader>
+                                            {exerciseSet.isOwner && (
+                                                <div className="absolute top-2 right-2 flex gap-1">
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        onClick={() => setEditingExercise(exercise)}
+                                                    >
+                                                        <Edit2 className="w-4 h-4" />
+                                                    </Button>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="text-red-500"
+                                                        onClick={() => setDeletingExerciseId(exercise.id)}
+                                                    >
+                                                        <X className="w-5 h-5" />
+                                                    </Button>
+                                                </div>
+                                            )}
+                                        </CardHeader>
 
-                                    <CardContent>{exercise.content}</CardContent>
+                                        <CardContent className="whitespace-pre-wrap">
+                                            <MathJax dynamic>
+                                                {exercise.content}
+                                            </MathJax>
+                                        </CardContent>
 
-                                    <CardFooter>
-                                        <Accordion type="multiple" className="w-full">
-                                            <AccordionItem value="Podpowiedź 1">
-                                                <AccordionTrigger>Podpowiedź 1</AccordionTrigger>
-                                                <AccordionContent>{exercise.firstHint}</AccordionContent>
-                                            </AccordionItem>
-                                            <AccordionItem value="Podpowiedź 2">
-                                                <AccordionTrigger>Podpowiedź 2</AccordionTrigger>
-                                                <AccordionContent>{exercise.secondHint}</AccordionContent>
-                                            </AccordionItem>
-                                            <AccordionItem value="Podpowiedź 3">
-                                                <AccordionTrigger>Podpowiedź 3</AccordionTrigger>
-                                                <AccordionContent>{exercise.thirdHint}</AccordionContent>
-                                            </AccordionItem>
-                                            <AccordionItem value="Rozwiązanie">
-                                                <AccordionTrigger>Rozwiązanie</AccordionTrigger>
-                                                <AccordionContent>{exercise.solution}</AccordionContent>
-                                            </AccordionItem>
-                                        </Accordion>
-                                    </CardFooter>
-                                </Card>
-                            ))}
+                                        <CardFooter>
+                                            <Accordion type="multiple" className="w-full">
+                                                <AccordionItem value="Podpowiedź 1">
+                                                    <AccordionTrigger>Podpowiedź 1</AccordionTrigger>
+                                                    <AccordionContent className="whitespace-pre-wrap">
+                                                        <MathJax dynamic>
+                                                            {exercise.firstHint}
+                                                        </MathJax>
+                                                    </AccordionContent>
+                                                </AccordionItem>
+                                                <AccordionItem value="Podpowiedź 2">
+                                                    <AccordionTrigger>Podpowiedź 2</AccordionTrigger>
+                                                    <AccordionContent className="whitespace-pre-wrap">
+                                                        <MathJax dynamic>
+                                                            {exercise.secondHint}
+                                                        </MathJax>
+                                                    </AccordionContent>
+                                                </AccordionItem>
+                                                <AccordionItem value="Podpowiedź 3">
+                                                    <AccordionTrigger>Podpowiedź 3</AccordionTrigger>
+                                                    <AccordionContent className="whitespace-pre-wrap">
+                                                        <MathJax dynamic>
+                                                            {exercise.thirdHint}
+                                                        </MathJax>
+                                                    </AccordionContent>
+                                                </AccordionItem>
+                                                <AccordionItem value="Rozwiązanie">
+                                                    <AccordionTrigger>Rozwiązanie</AccordionTrigger>
+                                                    <AccordionContent className="whitespace-pre-wrap">
+                                                        <MathJax dynamic>
+                                                            {exercise.solution}
+                                                        </MathJax>
+                                                    </AccordionContent>
+                                                </AccordionItem>
+                                            </Accordion>
+                                        </CardFooter>
+                                    </Card>
+                                ))}
+                            </MathJaxContext>
                         </div>
                     )}
 
