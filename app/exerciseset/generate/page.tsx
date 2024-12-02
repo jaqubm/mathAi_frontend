@@ -24,6 +24,7 @@ import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs"
 import {generateExerciseSetLoadingStates, generateExerciseSetPersonalizedList, generateExerciseSetTopics} from "@/data"
 import {RadioGroup, RadioGroupItem} from "@/components/ui/radio-group"
 import {Label} from "@/components/ui/label"
+import {Input} from "@/components/ui/input";
 
 const formSchema = z.object({
     schoolType: z.string().min(1),
@@ -41,8 +42,8 @@ export default function GeneratePage() {
     const [availableSubjects, setAvailableSubjects] = useState<string[]>([])
     const [isAllSelected, setIsAllSelected] = useState(false)
     const [selectedSubject, setSelectedSubject] = useState("")
-    const [selectedPersonalized, setSelectedPersonalized] = useState("")
     const [selectedNumberOfExercises, setSelectedNumberOfExercises] = useState<number | null>(null)
+    const [selectedPersonalized, setSelectedPersonalized] = useState("")
 
     const [loading, setLoading] = useState(false)
     const [showAlert, setShowAlert] = useState(false)
@@ -89,7 +90,7 @@ export default function GeneratePage() {
         const grade = parseInt(value, 10)
         setSelectedGrade(grade)
         setAvailableSubjects(generateExerciseSetTopics[selectedSchoolType][grade] || [])
-        setSelectedSubject("") // Reset subject explicitly
+        setSelectedSubject("")
         form.setValue("grade", grade)
     }
 
@@ -119,6 +120,7 @@ export default function GeneratePage() {
                             setAvailableSubjects([])
                             setSelectedSubject("")
                             setSelectedNumberOfExercises(null)
+                            setSelectedPersonalized("")
                         }}>
                             <TabsList>
                                 {Object.keys(generateExerciseSetTopics).map((schoolType) => (
@@ -131,13 +133,13 @@ export default function GeneratePage() {
                             {/* Card for Grade, Subject, Number of Exercises Selection */}
                             <TabsContent value={selectedSchoolType}>
                                 <Card className="mx-2 sm:w-[640px]">
-                                    <CardContent className="p-4 space-y-4">
+                                    <CardContent className="p-4 space-y-4 flex flex-col">
 
                                         <FormField
                                             control={form.control}
                                             name="grade"
                                             render={() => (
-                                                <FormItem className="w-full max-w-64">
+                                                <FormItem className="w-full max-w-64 self-center">
                                                     <FormLabel>Klasa</FormLabel>
                                                     <FormControl>
                                                         <Select onValueChange={handleGradeChange}
@@ -190,7 +192,7 @@ export default function GeneratePage() {
                                                 control={form.control}
                                                 name="numberOfExercises"
                                                 render={() => (
-                                                    <FormItem className="w-full max-w-64">
+                                                    <FormItem className="w-full flex-1">
                                                         <FormLabel>Liczba zadań</FormLabel>
                                                         <FormControl>
                                                             <Select onValueChange={handleNumberOfExercisesChange}>
@@ -214,26 +216,32 @@ export default function GeneratePage() {
                                                 control={form.control}
                                                 name="personalized"
                                                 render={() => (
-                                                    <FormItem className="w-full max-w-96">
+                                                    <FormItem className="w-full flex-1">
                                                         <FormLabel>Personalizacja</FormLabel>
                                                         <FormControl>
                                                             <Select
                                                                 defaultValue="Brak"
                                                                 onValueChange={(value) => {
                                                                     setSelectedPersonalized(value);
-                                                                    form.setValue("personalized", value === "Brak" ? "" : value);
+                                                                    if (value === "Inne") {
+                                                                        form.setValue("personalized", ""); // Set as empty initially for custom input
+                                                                    } else {
+                                                                        form.setValue("personalized", value === "Brak" ? "" : value);
+                                                                    }
                                                                 }}
                                                             >
                                                                 <SelectTrigger className="w-full">
-                                                                    <SelectValue placeholder="Wybierz opcję"/>
+                                                                    <SelectValue placeholder="Wybierz opcję" />
                                                                 </SelectTrigger>
                                                                 <SelectContent>
                                                                     {generateExerciseSetPersonalizedList.map((personalized) => (
-                                                                        <SelectItem key={personalized}
-                                                                                    value={personalized}>
+                                                                        <SelectItem key={personalized} value={personalized}>
                                                                             {personalized}
                                                                         </SelectItem>
                                                                     ))}
+                                                                    <SelectItem key="Inne" value="Inne">
+                                                                        Inne
+                                                                    </SelectItem>
                                                                 </SelectContent>
                                                             </Select>
                                                         </FormControl>
@@ -242,6 +250,22 @@ export default function GeneratePage() {
                                             />
 
                                         </div>
+
+                                        {selectedPersonalized === "Inne" && (
+                                            <div className="mt-4">
+                                                <Label htmlFor="custom-personalized">Wpisz własną
+                                                    personalizację:</Label>
+                                                <Input
+                                                    id="custom-personalized"
+                                                    placeholder="Wpisz personalizację (max 255 znaków)"
+                                                    maxLength={255}
+                                                    onChange={(e) => form.setValue("personalized", e.target.value)}
+                                                />
+                                                <p className="text-right text-sm text-gray-500 mt-2">
+                                                    {form.watch("personalized")?.length || 0} / 255
+                                                </p>
+                                            </div>
+                                            )}
 
                                     </CardContent>
                                     <CardFooter className="flex justify-end">

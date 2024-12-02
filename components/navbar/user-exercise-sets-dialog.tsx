@@ -1,17 +1,24 @@
 'use client'
 
-import { ReactNode, useEffect, useState } from "react"
-import { getUserExerciseSetList } from "@/app/api/user"
-import { deleteExerciseSet } from "@/app/api/exerciseset"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import React, {ReactNode, useEffect, useState} from "react"
+import {getUserExerciseSetList} from "@/app/api/user"
+import {deleteExerciseSet} from "@/app/api/exerciseset"
+import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog"
+import {Button} from "@/components/ui/button"
+import {Card, CardContent, CardFooter, CardHeader, CardTitle} from "@/components/ui/card"
 import {usePathname, useRouter} from "next/navigation"
-import { Spinner } from "@/components/ui/spinner"
-import { useToast } from "@/hooks/use-toast"
-import { ToastAction } from "@/components/ui/toast"
-import { ExerciseSetList } from "@/app/api/types"
-import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter } from "@/components/ui/alert-dialog"
+import {Spinner} from "@/components/ui/spinner"
+import {useToast} from "@/hooks/use-toast"
+import {ExerciseSetList} from "@/app/api/types"
+import {
+    AlertDialog,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger
+} from "@/components/ui/alert-dialog"
 
 export function UserExerciseSetsDialog({ open, onClose, children }: { open: boolean, onClose: () => void, children: ReactNode }) {
     const router = useRouter()
@@ -117,6 +124,9 @@ export function UserExerciseSetsDialog({ open, onClose, children }: { open: bool
                                     <CardContent>
                                         <h3>{exerciseSet.schoolType} - klasa {exerciseSet.grade}</h3>
                                         <h3>{exerciseSet.subject}</h3>
+                                        {exerciseSet.personalized !== "" && (
+                                            <h3>Personalizacja zadań: {exerciseSet.personalized}</h3>
+                                        )}
                                     </CardContent>
 
                                     <CardFooter className="gap-x-2">

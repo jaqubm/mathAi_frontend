@@ -255,6 +255,11 @@ export default function CreateAssignmentPage({ params }: { params: { id: string 
                                                 <p className="text-xs">
                                                     Dział: {set.subject}
                                                 </p>
+                                                {set.personalized !== "" && (
+                                                    <p className="text-xs">
+                                                        Personalizacja zadań: {set.personalized}
+                                                    </p>
+                                                )}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>

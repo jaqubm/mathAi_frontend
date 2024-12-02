@@ -182,6 +182,8 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
         }
     }
 
+    console.log(exerciseSet)
+
     return (
         <>
             {loading && <Spinner size="large" />}
@@ -206,6 +208,9 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
                         </div>
                         <h3>{exerciseSet.schoolType} - klasa {exerciseSet.grade}</h3>
                         <h3>{exerciseSet.subject}</h3>
+                        {exerciseSet.personalized !== "" && (
+                            <h3>Personalizacja zadań: {exerciseSet.personalized}</h3>
+                        )}
                     </div>
 
                     {exerciseSet.exercises.length === 0 && (
