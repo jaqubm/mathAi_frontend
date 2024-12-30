@@ -75,6 +75,7 @@ export type ExerciseDetailed = {
 export type Exercise = {
     id: string
     content: string
+    isAnswered: boolean
 }
 
 export type ExerciseSet = {

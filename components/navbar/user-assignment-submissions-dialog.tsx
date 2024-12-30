@@ -5,7 +5,7 @@ import {getUserAssignmentSubmissionList} from "@/app/api/user"
 import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog"
 import {Button} from "@/components/ui/button"
 import {Card, CardContent, CardFooter, CardHeader, CardTitle} from "@/components/ui/card"
-import {usePathname, useRouter} from "next/navigation"
+import {useRouter} from "next/navigation"
 import {Spinner} from "@/components/ui/spinner"
 import {useToast} from "@/hooks/use-toast"
 import {UserAssignmentSubmissionList} from "@/app/api/types"
@@ -14,7 +14,6 @@ import dayjs from "dayjs";
 
 export function UserAssignmentSubmissionsDialog({ open, onClose, children }: { open: boolean, onClose: () => void, children: ReactNode }) {
     const router = useRouter()
-    const pathname = usePathname()
     const { toast } = useToast()
 
     const todayTime: DateTime = new Date().toISOString()
@@ -48,7 +47,7 @@ export function UserAssignmentSubmissionsDialog({ open, onClose, children }: { o
 
     const handleAssignmentSubmissionPageRedirect = (assignmentSubmissionId: string) => {
         onClose()
-        //router.push(`/exerciseset/${exerciseSetId}`)
+        router.push(`/assignment/submission/${assignmentSubmissionId}`)
     }
 
     return (
@@ -95,7 +94,7 @@ export function UserAssignmentSubmissionsDialog({ open, onClose, children }: { o
                                         {!assignmentSubmission.completed
                                             && Date.parse(assignmentSubmission.startDate) <= Date.parse(todayTime)
                                             && Date.parse(assignmentSubmission.dueDate) >= Date.parse(todayTime) && (
-                                            <Button variant="outline" disabled onClick={() => handleAssignmentSubmissionPageRedirect(assignmentSubmission.id)}>
+                                            <Button variant="outline" onClick={() => handleAssignmentSubmissionPageRedirect(assignmentSubmission.id)}>
                                                 Rozwiąż
                                             </Button>
                                         )}
