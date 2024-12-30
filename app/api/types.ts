@@ -1,6 +1,6 @@
 import {DateTime} from "@auth/core/providers/kakao";
 
-export interface AssignmentCreator {
+export type AssignmentCreator = {
     name: string
     startDate: DateTime
     dueDate: DateTime
@@ -8,7 +8,7 @@ export interface AssignmentCreator {
     exerciseSetId: string
 }
 
-export interface Assignment {
+export type Assignment = {
     name: string
     startDate: DateTime
     dueDate: DateTime
@@ -18,7 +18,7 @@ export interface Assignment {
     assignmentSubmissionList: AssignmentSubmissionList[]
 }
 
-export interface AssignmentList {
+export type AssignmentList = {
     id: string
     name: string
     startDate: Date
@@ -27,7 +27,7 @@ export interface AssignmentList {
     exerciseSetId: string
 }
 
-export interface AssignmentSubmission {
+export type AssignmentSubmission = {
     id: string
     assignmentName: string
     startDate: DateTime
@@ -35,7 +35,7 @@ export interface AssignmentSubmission {
     exerciseList: Exercise[]
 }
 
-export interface AssignmentSubmissionList {
+export type AssignmentSubmissionList = {
     id: string
     submissionDate: DateTime | null
     completed: boolean
@@ -44,12 +44,12 @@ export interface AssignmentSubmissionList {
     score: number | null
 }
 
-export interface ClassCreator {
+export type ClassCreator = {
     name: string
     studentEmailList: string[]
 }
 
-export interface Class {
+export type Class = {
     name: string
     owner: User
     isOwner: boolean
@@ -57,13 +57,13 @@ export interface Class {
     assignmentList: AssignmentList[]
 }
 
-export interface ExerciseAnswerCreator {
+export type ExerciseAnswerCreator = {
     assignmentSubmissionId: string
     exerciseId: string
     answerImageFile: File
 }
 
-export interface ExerciseDetailed {
+export type ExerciseDetailed = {
     id: string
     content: string
     firstHint: string
@@ -72,12 +72,12 @@ export interface ExerciseDetailed {
     solution: string
 }
 
-export interface Exercise {
+export type Exercise = {
     id: string
     content: string
 }
 
-export interface ExerciseSet {
+export type ExerciseSet = {
     name: string
     schoolType: string
     grade: number
@@ -87,7 +87,7 @@ export interface ExerciseSet {
     exerciseList: ExerciseDetailed[]
 }
 
-export interface ExerciseSetSettings {
+export type ExerciseSetSettings = {
     schoolType: string
     grade: number
     subject: string
@@ -95,7 +95,7 @@ export interface ExerciseSetSettings {
     numberOfExercises: number
 }
 
-export interface ExerciseUpdate {
+export type ExerciseUpdate = {
     content: string
     firstHint: string
     secondHint: string
@@ -103,7 +103,7 @@ export interface ExerciseUpdate {
     solution: string
 }
 
-export interface UserAssignmentSubmissionList {
+export type UserAssignmentSubmissionList = {
     id: string
     completed: boolean
     assignmentId: string
@@ -113,21 +113,21 @@ export interface UserAssignmentSubmissionList {
     dueDate: DateTime
 }
 
-export interface UserClassList {
+export type UserClassList = {
     id: string
     name: string
     owner: User
     isOwner: boolean
 }
 
-export interface User {
+export type User = {
     email: string
     name: string
     isTeacher: boolean
     firstTimeSignIn: boolean
 }
 
-export interface UserExerciseSetList {
+export type UserExerciseSetList = {
     id: string
     name: string
     schoolType: string

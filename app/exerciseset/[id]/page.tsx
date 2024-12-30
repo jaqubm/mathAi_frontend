@@ -182,8 +182,6 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
         }
     }
 
-    console.log(exerciseSet)
-
     return (
         <>
             {loading && <Spinner size="large" />}
