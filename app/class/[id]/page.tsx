@@ -197,17 +197,17 @@ export default function ClassPage({ params }: { params: { id: string } }) {
 
                             <CardContent>
 
-                                {cClass.students.length === 0 && (
+                                {cClass.studentList.length === 0 && (
                                     <div>
                                         Lista studnetów jest pusta!
                                     </div>
                                 )}
 
-                                {cClass.students.length > 0 && (
+                                {cClass.studentList.length > 0 && (
                                     <Card className="px-2">
                                         <ScrollArea className="max-h-80 overflow-y-scroll py-2">
                                             <ul>
-                                                {cClass.students.map((student: User, index: number) => (
+                                                {cClass.studentList.map((student: User, index: number) => (
                                                     <div key={student.email}>
                                                         <div className="relative">
                                                             <li className="font-bold">{student.name}</li>
@@ -226,7 +226,7 @@ export default function ClassPage({ params }: { params: { id: string } }) {
                                                                 </Button>
                                                             )}
                                                         </div>
-                                                        {index !== cClass.students.length - 1 && <Separator className="my-2" />}
+                                                        {index !== cClass.studentList.length - 1 && <Separator className="my-2" />}
                                                     </div>
                                                 ))}
                                             </ul>
@@ -273,17 +273,17 @@ export default function ClassPage({ params }: { params: { id: string } }) {
 
                             <CardContent>
 
-                                {cClass.assignments.length === 0 && (
+                                {cClass.assignmentList.length === 0 && (
                                     <div>
                                         Lista zadań jest pusta!
                                     </div>
                                 )}
 
-                                {cClass.assignments.length > 0 && (
+                                {cClass.assignmentList.length > 0 && (
                                     <Card className="px-2">
                                         <ScrollArea className="max-h-80 overflow-y-scroll py-2">
                                             <ul>
-                                                {cClass.assignments.map((assignment: AssignmentList, index: number) => (
+                                                {cClass.assignmentList.map((assignment: AssignmentList, index: number) => (
                                                     <div key={assignment.id}>
                                                         <div className="relative">
                                                             <li className="font-bold">{assignment.name}</li>
@@ -302,7 +302,7 @@ export default function ClassPage({ params }: { params: { id: string } }) {
                                                                 </Button>
                                                             )}
                                                         </div>
-                                                        {index !== cClass.assignments.length - 1 && <Separator className="my-2" />}
+                                                        {index !== cClass.assignmentList.length - 1 && <Separator className="my-2" />}
                                                     </div>
                                                 ))}
                                             </ul>

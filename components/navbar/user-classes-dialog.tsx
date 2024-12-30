@@ -7,7 +7,7 @@ import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import {usePathname, useRouter} from "next/navigation";
 import {Spinner} from "@/components/ui/spinner";
-import {ClassList} from "@/app/api/types";
+import {UserClassList} from "@/app/api/types";
 import {
     AlertDialog,
     AlertDialogContent,
@@ -26,7 +26,7 @@ export function UserClassesDialog({ open, onClose, children }: { open: boolean, 
     const pathname = usePathname()
     const { toast } = useToast()
 
-    const [classList, setClassList] = useState<ClassList[]>()
+    const [classList, setClassList] = useState<UserClassList[]>()
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
 

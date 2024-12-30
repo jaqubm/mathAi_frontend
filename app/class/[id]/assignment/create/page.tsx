@@ -15,7 +15,7 @@ import {createAssignment} from '@/app/api/assignment'
 import {getClass} from '@/app/api/class'
 import {toast} from '@/hooks/use-toast'
 import {CalendarIcon} from 'lucide-react'
-import {AssignmentCreator, Class, ExerciseSetList} from '@/app/api/types'
+import {AssignmentCreator, Class, UserExerciseSetList} from '@/app/api/types'
 import {cn} from "@/lib/utils";
 import {Spinner} from "@/components/ui/spinner";
 import {pl} from "date-fns/locale";
@@ -37,7 +37,7 @@ export default function CreateAssignmentPage({ params }: { params: { id: string 
     const [selectedExerciseSetId, setSelectedExerciseSetId] = useState('')
 
     const [currClass, setCurrClass] = useState<Class | undefined>()
-    const [exerciseSetList, setExerciseSetList] = useState<ExerciseSetList[]>()
+    const [exerciseSetList, setExerciseSetList] = useState<UserExerciseSetList[]>()
     const [loading, setLoading] = useState(false)
     const [fetchingData, setFetchingData] = useState(true)
 

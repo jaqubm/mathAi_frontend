@@ -9,7 +9,7 @@ import {Card, CardContent, CardFooter, CardHeader, CardTitle} from "@/components
 import {usePathname, useRouter} from "next/navigation"
 import {Spinner} from "@/components/ui/spinner"
 import {useToast} from "@/hooks/use-toast"
-import {ExerciseSetList} from "@/app/api/types"
+import {UserExerciseSetList} from "@/app/api/types"
 import {
     AlertDialog,
     AlertDialogContent,
@@ -25,7 +25,7 @@ export function UserExerciseSetsDialog({ open, onClose, children }: { open: bool
     const pathname = usePathname()
     const { toast } = useToast()
 
-    const [exerciseSetList, setExerciseSetList] = useState<ExerciseSetList[] | undefined>()
+    const [exerciseSetList, setExerciseSetList] = useState<UserExerciseSetList[] | undefined>()
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
 
