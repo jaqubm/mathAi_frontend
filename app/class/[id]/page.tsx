@@ -199,7 +199,7 @@ export default function ClassPage({ params }: { params: { id: string } }) {
 
                                 {cClass.studentList.length === 0 && (
                                     <div>
-                                        Lista studnetów jest pusta!
+                                        Lista studentów jest pusta!
                                     </div>
                                 )}
 
