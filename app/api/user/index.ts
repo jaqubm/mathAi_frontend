@@ -1,5 +1,5 @@
 import {axiosInstance} from "@/app/api";
-import {ClassList, ExerciseSetList, User} from "@/app/api/types";
+import {User, UserAssignmentSubmissionList, UserClassList, UserExerciseSetList} from "@/app/api/types";
 
 export async function getUser() {
     try {
@@ -34,7 +34,7 @@ export async function updateUserAccountType(isTeacher: boolean) {
 export async function getUserExerciseSetList() {
     try {
         const { data } = await axiosInstance.get(`/User/GetExerciseSetList`)
-        return { success: true, data: data as ExerciseSetList[] }
+        return { success: true, data: data as UserExerciseSetList[] }
     } catch (error) {
         console.error('Error while trying to get users exercise sets:', error)
         return { success: false, error: 'Failed to get users exercise sets.' }
@@ -44,9 +44,19 @@ export async function getUserExerciseSetList() {
 export async function getUserClassList() {
     try {
         const { data } = await axiosInstance.get(`/User/GetClassList`)
-        return { success: true, data: data as ClassList[] }
+        return { success: true, data: data as UserClassList[] }
     } catch (error) {
         console.error('Error while trying to get users classes:', error)
         return { success: false, error: 'Failed to get users classes.' }
+    }
+}
+
+export async function getUserAssignmentSubmissionList() {
+    try {
+        const { data } = await axiosInstance.get(`/User/GetAssignmentSubmissionList`)
+        return { success: true, data: data as UserAssignmentSubmissionList[] }
+    } catch (error) {
+        console.error('Error while trying to get users assignment submissions:', error)
+        return { success: false, error: 'Failed to get users assignment submissions.' }
     }
 }

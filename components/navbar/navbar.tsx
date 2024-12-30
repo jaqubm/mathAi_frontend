@@ -29,6 +29,7 @@ import {wakeUpDatabase} from "@/app/api/status";
 import {Spinner} from "@/components/ui/spinner";
 import {UserClassesDialog} from "@/components/navbar/user-classes-dialog";
 import {User} from "@/app/api/types";
+import {UserAssignmentSubmissionsDialog} from "@/components/navbar/user-assignment-submissions-dialog";
 
 export function Navbar() {
     const { data: session } = useSession()
@@ -123,47 +124,55 @@ export function Navbar() {
                         {/* Users exercise sets dialog with DropDownMenu */}
                         <UserExerciseSetsDialog open={openDialog === 'exerciseSets'} onClose={handleDialogClose} >
                             <UserClassesDialog open={openDialog === 'classes'} onClose={handleDialogClose} >
-                                <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                        <Button variant="secondary" size="icon" className="rounded-full">
-                                            <Avatar>
-                                                <AvatarImage
-                                                    src={session.user?.image?.toString()}
-                                                    alt={userDb.name}
-                                                    className="w-full h-full"
-                                                />
-                                                <AvatarFallback>
-                                                    <CircleUser className="h-5 w-5" />
-                                                </AvatarFallback>
-                                            </Avatar>
-                                            <span className="sr-only">Menu użytkownika</span>
-                                        </Button>
-                                    </DropdownMenuTrigger>
+                                <UserAssignmentSubmissionsDialog open={openDialog === 'assignmentSubmissions'} onClose={handleDialogClose} >
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button variant="secondary" size="icon" className="rounded-full">
+                                                <Avatar>
+                                                    <AvatarImage
+                                                        src={session.user?.image?.toString()}
+                                                        alt={userDb.name}
+                                                        className="w-full h-full"
+                                                    />
+                                                    <AvatarFallback>
+                                                        <CircleUser className="h-5 w-5" />
+                                                    </AvatarFallback>
+                                                </Avatar>
+                                                <span className="sr-only">Menu użytkownika</span>
+                                            </Button>
+                                        </DropdownMenuTrigger>
 
-                                    <DropdownMenuContent className="w-fit flex flex-col items-center" align="center">
-                                        <DropdownMenuLabel>{userDb.name}</DropdownMenuLabel>
+                                        <DropdownMenuContent className="w-fit flex flex-col items-center" align="center">
+                                            <DropdownMenuLabel>{userDb.name}</DropdownMenuLabel>
 
-                                        <DropdownMenuSeparator />
+                                            <DropdownMenuSeparator />
 
-                                        <DropdownMenuItem onClick={() => handleDialogOpen('exerciseSets')}>
-                                            Moje Zestawy Zadań
-                                        </DropdownMenuItem>
-
-                                        <DropdownMenuItem onClick={() => handleDialogOpen('classes')}>
-                                            Moje Klasy
-                                        </DropdownMenuItem>
-
-                                        <DropdownMenuSeparator />
-
-                                        <form action={handleSignOut}>
-                                            <DropdownMenuItem>
-                                                <button type="submit">
-                                                    Wyloguj się
-                                                </button>
+                                            <DropdownMenuItem onClick={() => handleDialogOpen('exerciseSets')}>
+                                                Moje Zestawy Zadań
                                             </DropdownMenuItem>
-                                        </form>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
+
+                                            <DropdownMenuItem onClick={() => handleDialogOpen('classes')}>
+                                                Moje Klasy
+                                            </DropdownMenuItem>
+
+                                            {!userDb.isTeacher && (
+                                                <DropdownMenuItem onClick={() => handleDialogOpen('assignmentSubmissions')}>
+                                                    Moje Zadania
+                                                </DropdownMenuItem>
+                                            )}
+
+                                            <DropdownMenuSeparator />
+
+                                            <form action={handleSignOut}>
+                                                <DropdownMenuItem>
+                                                    <button type="submit">
+                                                        Wyloguj się
+                                                    </button>
+                                                </DropdownMenuItem>
+                                            </form>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
+                                </UserAssignmentSubmissionsDialog>
                             </UserClassesDialog>
                         </UserExerciseSetsDialog>
                     </>

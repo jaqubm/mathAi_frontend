@@ -18,7 +18,7 @@ import {
     AlertDialogTitle
 } from "@/components/ui/alert-dialog"
 import {useRouter} from "next/navigation"
-import {Exercise, ExerciseSet, ExerciseUpdate} from "@/app/api/types"
+import {ExerciseDetailed, ExerciseSet, ExerciseUpdate} from "@/app/api/types"
 import {AutosizeTextarea} from "@/components/ui/autosize-textarea"
 import {toast} from "@/hooks/use-toast"
 import {Edit2, X} from "lucide-react"
@@ -36,7 +36,7 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
 
     const [isAddingExercise, setIsAddingExercise] = useState(false)
     const [isCopyingExerciseSet, setIsCopyingExerciseSet] = useState(false)
-    const [editingExercise, setEditingExercise] = useState<Exercise | null>(null)
+    const [editingExercise, setEditingExercise] = useState<ExerciseDetailed | null>(null)
     const [deletingExerciseId, setDeletingExerciseId] = useState<string | null>(null)
     const [editingExerciseSetName, setEditingExerciseSetName] = useState<string | null>(null)
 
@@ -182,8 +182,6 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
         }
     }
 
-    console.log(exerciseSet)
-
     return (
         <>
             {loading && <Spinner size="large" />}
@@ -213,16 +211,16 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
                         )}
                     </div>
 
-                    {exerciseSet.exercises.length === 0 && (
+                    {exerciseSet.exerciseList.length === 0 && (
                         <div className="flex flex-col items-center justify-center mb-10 text-center font-bold gap-5">
                             {isAddingExercise ? <Spinner size="medium"/> : "Ten zestaw zadań jest pusty!"}
                         </div>
                     )}
 
-                    {exerciseSet.exercises.length > 0 && (
+                    {exerciseSet.exerciseList.length > 0 && (
                         <div className="grid gap-5">
                             <MathJaxContext onError={ (error) => console.error(error) } >
-                                {exerciseSet.exercises.map((exercise, index) => (
+                                {exerciseSet.exerciseList.map((exercise, index) => (
                                     <Card key={exercise.id} className="relative">
                                         <CardHeader>
                                             <CardTitle>Zadanie {index + 1}</CardTitle>
