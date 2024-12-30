@@ -15,7 +15,7 @@ export interface Assignment {
     classId: string
     class: Class
     exerciseSetId: string
-    assignmentSubmissionList: [AssignmentSubmissionList]
+    assignmentSubmissionList: AssignmentSubmissionList[]
 }
 
 export interface AssignmentList {
@@ -32,7 +32,7 @@ export interface AssignmentSubmission {
     assignmentName: string
     startDate: DateTime
     dueDate: DateTime
-    exerciseList: [Exercise]
+    exerciseList: Exercise[]
 }
 
 export interface AssignmentSubmissionList {
@@ -53,8 +53,8 @@ export interface Class {
     name: string
     owner: User
     isOwner: boolean
-    studentList: [User]
-    assignmentList: [AssignmentList]
+    studentList: User[]
+    assignmentList: AssignmentList[]
 }
 
 export interface ExerciseAnswerCreator {
@@ -84,7 +84,7 @@ export interface ExerciseSet {
     subject: string
     personalized: string
     isOwner: boolean
-    exerciseList: [ExerciseDetailed]
+    exerciseList: ExerciseDetailed[]
 }
 
 export interface ExerciseSetSettings {

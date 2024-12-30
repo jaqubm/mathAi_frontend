@@ -21,10 +21,6 @@ export const createAssignment = async (assignmentCreator: AssignmentCreator) => 
     }
 }
 
-// Get
-// UpdateName
-// UpdateDueDate
-
 export const deleteAssignment = async (assignmentId: string) => {
     try {
         const response = await axiosInstance.delete(`/Assignment/Delete/${assignmentId}`)
