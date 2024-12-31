@@ -298,13 +298,13 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
 
                     {exerciseSet.isOwner && (
                         <div className="flex justify-center mt-6 space-x-4">
-                            <Button onClick={handleAddExercise} disabled={isAddingExercise}>Dodaj Zadanie</Button>
+                            <Button variant="outline" onClick={handleAddExercise} disabled={isAddingExercise}>Dodaj Zadanie</Button>
                         </div>
                     )}
 
                     {session && session.user && !exerciseSet.isOwner && (
                         <div className="flex justify-center mt-6 space-x-4">
-                            <Button onClick={handleCopyExerciseSet} disabled={isCopyingExerciseSet}>Kopiuj Zestaw Zadań</Button>
+                            <Button variant="outline" onClick={handleCopyExerciseSet} disabled={isCopyingExerciseSet}>Kopiuj Zestaw Zadań</Button>
                         </div>
                     )}
                 </div>

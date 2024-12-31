@@ -195,7 +195,7 @@ export default function CreateClassPage() {
                             </CardContent>
 
                             <CardFooter className="flex justify-end">
-                                <Button type="submit" disabled={loading} className="mt-4">
+                                <Button variant="outline" type="submit" disabled={loading} className="mt-4">
                                     {loading ? "Tworzenie..." : "Utwórz Klasę"}
                                 </Button>
                             </CardFooter>
