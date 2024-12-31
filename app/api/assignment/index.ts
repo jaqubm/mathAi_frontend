@@ -1,4 +1,4 @@
-import {AssignmentCreator} from "@/app/api/types";
+import {Assignment, AssignmentCreator} from "@/app/api/types";
 import axios, {AxiosError} from "axios";
 import axiosInstance from "@/app/api";
 
@@ -7,6 +7,25 @@ export const createAssignment = async (assignmentCreator: AssignmentCreator) => 
         const response = await axiosInstance.post('/Assignment/Create', assignmentCreator)
 
         return { success: true, data: response.data as string }
+
+    } catch (error: AxiosError | any) {
+        if (axios.isCancel(error)) {
+            return { success: false, error: "Request was canceled." }
+        }
+
+        const errorMessage = error.response
+            ? `HTTP error! Status: ${error.response.status} - ${error.response.statusText}`
+            : "Failed to create class.";
+
+        return { success: false, error: errorMessage };
+    }
+}
+
+export const getAssignment = async (assignmentId: string) => {
+    try {
+        const response = await axiosInstance.get(`/Assignment/Get/${assignmentId}`)
+
+        return { success: true, data: response.data as Assignment }
 
     } catch (error: AxiosError | any) {
         if (axios.isCancel(error)) {

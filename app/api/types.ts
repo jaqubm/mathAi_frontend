@@ -13,7 +13,7 @@ export type Assignment = {
     startDate: DateTime
     dueDate: DateTime
     classId: string
-    class: Class
+    className: string
     exerciseSetId: string
     assignmentSubmissionList: AssignmentSubmissionList[]
 }
