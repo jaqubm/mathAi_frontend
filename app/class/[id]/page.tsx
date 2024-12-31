@@ -285,17 +285,23 @@ export default function ClassPage({ params }: { params: { id: string } }) {
                                             <ul>
                                                 {cClass.assignmentList.map((assignment: AssignmentList, index: number) => (
                                                     <div key={assignment.id}>
-                                                        <div className="relative">
-                                                            <li className="font-bold">{assignment.name}</li>
-                                                            <p className="text-sm">
-                                                                {dayjs(assignment.startDate).format('YYYY.MM.DD HH:mm')} - {dayjs(assignment.dueDate).format('YYYY.MM.DD HH:mm')}
-                                                            </p>
+                                                        <div className="flex justify-between items-center">
+                                                            <Button
+                                                                variant="ghost"
+                                                                className="w-full flex flex-col items-start h-fit"
+                                                                onClick={() => router.push(`/assignment/${assignment.id}`)}
+                                                            >
+                                                                <li className="font-bold">{assignment.name}</li>
+                                                                <p className="text-sm">
+                                                                    {dayjs(assignment.startDate).format('YYYY.MM.DD HH:mm')} - {dayjs(assignment.dueDate).format('YYYY.MM.DD HH:mm')}
+                                                                </p>
+                                                            </Button>
 
                                                             {cClass.isOwner && (
                                                                 <Button
                                                                     variant="ghost"
                                                                     size="icon"
-                                                                    className="text-red-500 absolute right-2 top-0 bottom-0"
+                                                                    className="text-red-500 mx-2"
                                                                     onClick={() => setDeletingAssignmentFromClass(assignment.id)}
                                                                 >
                                                                     <X className="w-5 h-5" />
@@ -314,7 +320,7 @@ export default function ClassPage({ params }: { params: { id: string } }) {
 
                             <CardFooter className="flex flex-col items-center justify-center gap-2 w-full">
                                 {cClass.isOwner && (
-                                    <Button onClick={createAssignment}>
+                                    <Button  onClick={createAssignment}>
                                         Stwórz Zadanie
                                     </Button>
                                 )}
@@ -352,7 +358,7 @@ export default function ClassPage({ params }: { params: { id: string } }) {
                         </div>
                         <DialogFooter className="gap-2">
                             <Button variant="outline" onClick={() => setEditingClassName(null)}>Anuluj</Button>
-                            <Button onClick={handleSaveClassName}>Zapisz</Button>
+                            <Button variant="outline" onClick={handleSaveClassName}>Zapisz</Button>
                         </DialogFooter>
                     </DialogContent>
                 </Dialog>
