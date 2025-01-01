@@ -15,6 +15,7 @@ export type Assignment = {
     classId: string
     className: string
     exerciseSetId: string
+    exerciseList: Exercise[]
     assignmentSubmissionList: AssignmentSubmissionList[]
 }
 
@@ -42,6 +43,7 @@ export type AssignmentSubmissionList = {
     studentId: string
     student: User
     score: number
+    exerciseAnswerList: ExerciseAnswer[]
 }
 
 export type ClassCreator = {
@@ -61,6 +63,14 @@ export type ExerciseAnswerCreator = {
     assignmentSubmissionId: string
     exerciseId: string
     answerImageFile: File
+}
+
+export type ExerciseAnswer = {
+    id: string
+    exerciseId: string
+    grade: number
+    feedback: string
+    // answerImageFile: File
 }
 
 export type ExerciseDetailed = {

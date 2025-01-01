@@ -276,26 +276,34 @@ export default function ClassPage({ params }: { params: { id: string } }) {
                                             <ul>
                                                 {cClass.assignmentList.map((assignment: AssignmentList, index: number) => (
                                                     <div key={assignment.id}>
-                                                        <div className="flex justify-between items-center">
-                                                            <Button
-                                                                variant="ghost"
-                                                                className="w-full flex flex-col items-start h-fit"
-                                                                onClick={() => handleViewAssignment(assignment.id)}
-                                                            >
-                                                                <li className="font-bold">{assignment.name}</li>
-                                                                <p className="text-sm">
-                                                                    {dayjs(assignment.startDate).format('YYYY.MM.DD HH:mm')} - {dayjs(assignment.dueDate).format('YYYY.MM.DD HH:mm')}
-                                                                </p>
-                                                            </Button>
+                                                        {cClass.isOwner ? (
+                                                            <div className="flex justify-between items-center px-2">
+                                                                <Button
+                                                                    variant="ghost"
+                                                                    className="w-full flex flex-col items-start h-fit"
+                                                                    onClick={() => handleViewAssignment(assignment.id)}
+                                                                >
+                                                                    <li className="font-bold">{assignment.name}</li>
+                                                                    <p className="text-sm">
+                                                                        {dayjs(assignment.startDate).format('YYYY.MM.DD HH:mm')} - {dayjs(assignment.dueDate).format('YYYY.MM.DD HH:mm')}
+                                                                    </p>
+                                                                </Button>
 
-                                                            {cClass.isOwner && (
                                                                 <X
                                                                     className="text-red-500 mx-2 w-5 h-5 hover:w-6 hover:h-6 hover:cursor-pointer"
                                                                     onClick={() => setDeletingAssignmentFromClass(assignment.id)}
                                                                 />
-                                                            )}
-                                                        </div>
-                                                        {index !== cClass.assignmentList.length - 1 && <Separator className="my-2" />}
+                                                            </div>
+                                                        ) : (
+                                                            <div className="w-full flex flex-col items-start h-fit px-2">
+                                                                <li className="font-bold">{assignment.name}</li>
+                                                                <p className="text-sm">
+                                                                    {dayjs(assignment.startDate).format('YYYY.MM.DD HH:mm')} - {dayjs(assignment.dueDate).format('YYYY.MM.DD HH:mm')}
+                                                                </p>
+                                                            </div>
+                                                        )}
+
+                                                        {index !== cClass.assignmentList.length - 1 && <Separator className="my-2"/>}
                                                     </div>
                                                 ))}
                                             </ul>

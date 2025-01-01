@@ -1,4 +1,4 @@
-import {AssignmentSubmission, ExerciseAnswerCreator} from "@/app/api/types";
+import {AssignmentSubmission, ExerciseAnswer, ExerciseAnswerCreator} from "@/app/api/types";
 import axios, {AxiosError} from "axios";
 import axiosInstance from "@/app/api";
 
@@ -15,7 +15,7 @@ export const getAssignmentSubmission = async (assignmentSubmissionId: string) =>
 
         const errorMessage = error.response
             ? `HTTP error! Status: ${error.response.status} - ${error.response.statusText}`
-            : "Failed to create class.";
+            : "Failed to get assignment submission.";
 
         return { success: false, error: errorMessage };
     }
@@ -44,7 +44,7 @@ export const addExerciseAnswerToAssignmentSubmission = async (exerciseAnswerCrea
 
         const errorMessage = error.response
             ? `HTTP error! Status: ${error.response.status} - ${error.response.statusText}`
-            : "Failed to create class.";
+            : "Failed to add answer.";
 
         return { success: false, error: errorMessage };
     }
@@ -63,7 +63,7 @@ export const markAssignmentSubmissionAsCompleted = async (assignmentSubmissionId
 
         const errorMessage = error.response
             ? `HTTP error! Status: ${error.response.status} - ${error.response.statusText}`
-            : "Failed to create class.";
+            : "Failed to mark assignment as completed.";
 
         return { success: false, error: errorMessage };
     }
