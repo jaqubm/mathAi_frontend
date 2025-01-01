@@ -13,7 +13,7 @@ export type Assignment = {
     startDate: DateTime
     dueDate: DateTime
     classId: string
-    class: Class
+    className: string
     exerciseSetId: string
     assignmentSubmissionList: AssignmentSubmissionList[]
 }
@@ -41,7 +41,7 @@ export type AssignmentSubmissionList = {
     completed: boolean
     studentId: string
     student: User
-    score: number | null
+    score: number
 }
 
 export type ClassCreator = {

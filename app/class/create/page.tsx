@@ -150,20 +150,14 @@ export default function CreateClassPage() {
                                                 className="pr-10"
                                             />
                                         </FormControl>
-                                        <Button
-                                            onClick={handleAddStudent}
-                                            type="button"
-                                            size="icon"
-                                            variant="ghost"
-                                            className="absolute inset-y-0 right-1 my-auto text-green-600"
-                                            disabled={checkingStudent}
-                                        >
-                                            {checkingStudent ? (
-                                                <Spinner size="small" />
-                                            ) : (
-                                                <Plus className="w-5 h-5" />
-                                            )}
-                                        </Button>
+                                        {checkingStudent ? (
+                                            <Spinner size="small" className="absolute inset-y-0 right-3 my-auto"/>
+                                        ) : (
+                                            <Plus
+                                                className="absolute inset-y-0 right-3 my-auto text-green-600 w-5 h-5 hover:w-6 hover:h-6 hover:cursor-pointer"
+                                                onClick={handleAddStudent}
+                                            />
+                                        )}
                                     </div>
                                 </FormItem>
 
@@ -195,7 +189,7 @@ export default function CreateClassPage() {
                             </CardContent>
 
                             <CardFooter className="flex justify-end">
-                                <Button type="submit" disabled={loading} className="mt-4">
+                                <Button variant="outline" type="submit" disabled={loading} className="mt-4">
                                     {loading ? "Tworzenie..." : "Utwórz Klasę"}
                                 </Button>
                             </CardFooter>

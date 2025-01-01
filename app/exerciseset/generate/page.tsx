@@ -269,7 +269,7 @@ export default function GeneratePage() {
 
                                     </CardContent>
                                     <CardFooter className="flex justify-end">
-                                        <Button type="submit" disabled={!isAllSelected}>Generuj</Button>
+                                        <Button variant="outline" type="submit" disabled={!isAllSelected}>Generuj</Button>
                                     </CardFooter>
                                 </Card>
                             </TabsContent>

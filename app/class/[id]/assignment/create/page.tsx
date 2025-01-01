@@ -272,7 +272,7 @@ export default function CreateAssignmentPage({ params }: { params: { id: string 
                     <Button variant="outline" onClick={() => router.push(`/class/${params.id}`)}>
                         Wróć
                     </Button>
-                    <Button onClick={handleCreateAssignment} disabled={loading || fetchingData}>
+                    <Button variant="outline" onClick={handleCreateAssignment} disabled={loading || fetchingData}>
                         {loading ? 'Tworzenie...' : 'Utwórz'}
                     </Button>
                 </CardFooter>

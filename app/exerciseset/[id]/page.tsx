@@ -190,17 +190,13 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
                 <div className="w-full max-w-5xl px-4 my-6">
                     <div className="flex flex-col items-center justify-center mb-10 text-center">
                         <div className="flex justify-center items-center space-x-2">
-                            <h1 className="text-4xl font-bold mb-2 break-all">
+                            <h1 className="text-4xl font-bold mb-2 break-all flex items-center">
                                 {exerciseSet.name}
                                 {exerciseSet.isOwner && (
-                                    <Button
-                                        className="ml-2"
-                                        variant="ghost"
-                                        size="icon"
+                                    <Edit2
+                                        className="ml-2 w-5 h-5 hover:w-6 hover:h-6 hover:cursor-pointer"
                                         onClick={() => setEditingExerciseSetName(exerciseSet.name)}
-                                    >
-                                        <Edit2 className="w-5 h-5"/>
-                                    </Button>
+                                    />
                                 )}
                             </h1>
                         </div>
@@ -226,22 +222,15 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
                                             <CardTitle>Zadanie {index + 1}</CardTitle>
 
                                             {exerciseSet.isOwner && (
-                                                <div className="absolute top-2 right-2 flex gap-1">
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
+                                                <div className="absolute top-5 right-5 flex items-center gap-3 m-3">
+                                                    <Edit2
+                                                        className="ml-2 w-4 h-4 hover:w-5 hover:h-5 hover:cursor-pointer"
                                                         onClick={() => setEditingExercise(exercise)}
-                                                    >
-                                                        <Edit2 className="w-4 h-4" />
-                                                    </Button>
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        className="text-red-500"
+                                                    />
+                                                    <X
+                                                        className="text-red-500 mx-2 w-5 h-5 hover:w-6 hover:h-6 hover:cursor-pointer"
                                                         onClick={() => setDeletingExerciseId(exercise.id)}
-                                                    >
-                                                        <X className="w-5 h-5" />
-                                                    </Button>
+                                                    />
                                                 </div>
                                             )}
                                         </CardHeader>
@@ -298,13 +287,13 @@ export default function ExerciseSetPage({ params }: { params: { id: string } }) 
 
                     {exerciseSet.isOwner && (
                         <div className="flex justify-center mt-6 space-x-4">
-                            <Button onClick={handleAddExercise} disabled={isAddingExercise}>Dodaj Zadanie</Button>
+                            <Button variant="outline" onClick={handleAddExercise} disabled={isAddingExercise}>Dodaj Zadanie</Button>
                         </div>
                     )}
 
                     {session && session.user && !exerciseSet.isOwner && (
                         <div className="flex justify-center mt-6 space-x-4">
-                            <Button onClick={handleCopyExerciseSet} disabled={isCopyingExerciseSet}>Kopiuj Zestaw Zadań</Button>
+                            <Button variant="outline" onClick={handleCopyExerciseSet} disabled={isCopyingExerciseSet}>Kopiuj Zestaw Zadań</Button>
                         </div>
                     )}
                 </div>

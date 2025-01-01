@@ -70,7 +70,11 @@ export default function ClassPage({ params }: { params: { id: string } }) {
             })
     }, [params.id, session?.user?.email, refreshKey])
 
-    const createAssignment = () => {
+    const handleViewAssignment = (assignmentId: string) => {
+        router.push(`/assignment/${assignmentId}`)
+    }
+
+    const handleCreateAssignment = () => {
         router.push(`/class/${params.id}/assignment/create`)
     }
 
@@ -168,26 +172,21 @@ export default function ClassPage({ params }: { params: { id: string } }) {
 
             {!loading && cClass && (
                 <div className="w-full max-w-5xl px-4 my-6">
-                    {/* Basic exerciseSet info */}
+
                     <div className="flex flex-col items-center justify-center mb-10 text-center">
-                        <h1 className="text-4xl font-bold mb-2">
+                        <h1 className="text-4xl font-bold mb-2 flex items-center">
                             {cClass.name}
                             {cClass.isOwner && (
-                                <Button
-                                    className="ml-2"
-                                    variant="ghost"
-                                    size="icon"
+                                <Edit2
+                                    className="ml-2 w-5 h-5 hover:w-6 hover:h-6 hover:cursor-pointer"
                                     onClick={() => setEditingClassName(cClass.name)}
-                                >
-                                    <Edit2 className="w-5 h-5"/>
-                                </Button>
+                                />
                             )}
                         </h1>
 
                         <h3>Nauczyciel: {cClass.owner.name}</h3>
                     </div>
 
-                    {/* Displaying exercises from exerciseSet */}
                     <div className="w-full flex md:flex-row flex-col justify-center items-center gap-2">
 
                         <Card className="flex-1 w-full">
@@ -209,21 +208,19 @@ export default function ClassPage({ params }: { params: { id: string } }) {
                                             <ul>
                                                 {cClass.studentList.map((student: User, index: number) => (
                                                     <div key={student.email}>
-                                                        <div className="relative">
-                                                            <li className="font-bold">{student.name}</li>
-                                                            <p className="text-sm">
-                                                                {student.email}
-                                                            </p>
+                                                        <div className="w-full flex items-center justify-between">
+                                                            <div className="ml-2">
+                                                                <li className="font-bold">{student.name}</li>
+                                                                <p className="text-sm">
+                                                                    {student.email}
+                                                                </p>
+                                                            </div>
 
                                                             {cClass.isOwner && (
-                                                                <Button
-                                                                    variant="ghost"
-                                                                    size="icon"
-                                                                    className="text-red-500 absolute right-2 top-0 bottom-0"
+                                                                <X
+                                                                    className="text-red-500 mx-2 w-5 h-5 hover:w-6 hover:h-6 hover:cursor-pointer"
                                                                     onClick={() => setDeletingUserFromClass(student.email)}
-                                                                >
-                                                                    <X className="w-5 h-5" />
-                                                                </Button>
+                                                                />
                                                             )}
                                                         </div>
                                                         {index !== cClass.studentList.length - 1 && <Separator className="my-2" />}
@@ -247,20 +244,14 @@ export default function ClassPage({ params }: { params: { id: string } }) {
                                             maxLength={255}
                                             className="pr-10"
                                         />
-                                        <Button
-                                            onClick={handleAddStudent}
-                                            type="button"
-                                            size="icon"
-                                            variant="ghost"
-                                            className="absolute inset-y-0 right-1 my-auto text-green-600"
-                                            disabled={checkingStudent}
-                                        >
-                                            {checkingStudent ? (
-                                                <Spinner size="small"/>
-                                            ) : (
-                                                <Plus className="w-5 h-5"/>
-                                            )}
-                                        </Button>
+                                        {checkingStudent ? (
+                                            <Spinner size="small" className="absolute inset-y-0 right-3 my-auto"/>
+                                        ) : (
+                                            <Plus
+                                                className="absolute inset-y-0 right-3 my-auto text-green-600 w-5 h-5 hover:w-6 hover:h-6 hover:cursor-pointer"
+                                                onClick={handleAddStudent}
+                                            />
+                                        )}
                                     </div>
                                 </CardFooter>
                             )}
@@ -285,21 +276,23 @@ export default function ClassPage({ params }: { params: { id: string } }) {
                                             <ul>
                                                 {cClass.assignmentList.map((assignment: AssignmentList, index: number) => (
                                                     <div key={assignment.id}>
-                                                        <div className="relative">
-                                                            <li className="font-bold">{assignment.name}</li>
-                                                            <p className="text-sm">
-                                                                {dayjs(assignment.startDate).format('YYYY.MM.DD HH:mm')} - {dayjs(assignment.dueDate).format('YYYY.MM.DD HH:mm')}
-                                                            </p>
+                                                        <div className="flex justify-between items-center">
+                                                            <Button
+                                                                variant="ghost"
+                                                                className="w-full flex flex-col items-start h-fit"
+                                                                onClick={() => handleViewAssignment(assignment.id)}
+                                                            >
+                                                                <li className="font-bold">{assignment.name}</li>
+                                                                <p className="text-sm">
+                                                                    {dayjs(assignment.startDate).format('YYYY.MM.DD HH:mm')} - {dayjs(assignment.dueDate).format('YYYY.MM.DD HH:mm')}
+                                                                </p>
+                                                            </Button>
 
                                                             {cClass.isOwner && (
-                                                                <Button
-                                                                    variant="ghost"
-                                                                    size="icon"
-                                                                    className="text-red-500 absolute right-2 top-0 bottom-0"
+                                                                <X
+                                                                    className="text-red-500 mx-2 w-5 h-5 hover:w-6 hover:h-6 hover:cursor-pointer"
                                                                     onClick={() => setDeletingAssignmentFromClass(assignment.id)}
-                                                                >
-                                                                    <X className="w-5 h-5" />
-                                                                </Button>
+                                                                />
                                                             )}
                                                         </div>
                                                         {index !== cClass.assignmentList.length - 1 && <Separator className="my-2" />}
@@ -314,7 +307,7 @@ export default function ClassPage({ params }: { params: { id: string } }) {
 
                             <CardFooter className="flex flex-col items-center justify-center gap-2 w-full">
                                 {cClass.isOwner && (
-                                    <Button onClick={createAssignment}>
+                                    <Button  onClick={handleCreateAssignment}>
                                         Stwórz Zadanie
                                     </Button>
                                 )}
@@ -352,7 +345,7 @@ export default function ClassPage({ params }: { params: { id: string } }) {
                         </div>
                         <DialogFooter className="gap-2">
                             <Button variant="outline" onClick={() => setEditingClassName(null)}>Anuluj</Button>
-                            <Button onClick={handleSaveClassName}>Zapisz</Button>
+                            <Button variant="outline" onClick={handleSaveClassName}>Zapisz</Button>
                         </DialogFooter>
                     </DialogContent>
                 </Dialog>
