@@ -3,10 +3,10 @@
 import {useRouter} from "next/navigation";
 import {useSession} from "next-auth/react";
 import React, {useEffect, useState} from "react";
-import {Assignment, AssignmentSubmissionList, User} from "@/app/api/types";
+import {Assignment, AssignmentSubmissionList} from "@/app/api/types";
 import {getAssignment, updateAssignmentName} from "@/app/api/assignment";
 import {Spinner} from "@/components/ui/spinner";
-import {Edit2, Plus, X} from "lucide-react";
+import {Edit2} from "lucide-react";
 import dayjs from "dayjs";
 import {toast} from "@/hooks/use-toast";
 import {
@@ -20,8 +20,9 @@ import {
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
-import {Card, CardContent, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
+import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {ScrollArea} from "@/components/ui/scroll-area";
+import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/components/ui/accordion";
 import {Separator} from "@/components/ui/separator";
 
 export default function AssignmentPage({ params }: { params: { id: string } }) {
@@ -35,6 +36,28 @@ export default function AssignmentPage({ params }: { params: { id: string } }) {
     const [editingAssignmentName, setEditingAssignmentName] = useState<string | null>(null)
 
     const [refreshKey, setRefreshKey] = useState(0)
+
+    useEffect(() => {
+        setLoading(true)
+
+        getAssignment(params.id)
+            .then((result) => {
+                if (result.success) {
+                    setAssignment(result.data)
+                } else {
+                    // @ts-ignore
+                    setError(result.error)
+                }
+            })
+            .catch((error) => {
+                console.error('Error fetching assignment:', error)
+                setError('An unexpected error occurred')
+            })
+            .finally(() => {
+                setLoading(false)
+            })
+
+    }, [params.id, session?.user?.email, refreshKey])
 
     const handleSaveAssignmentName = async () => {
         if (editingAssignmentName !== null && assignment) {
@@ -58,27 +81,6 @@ export default function AssignmentPage({ params }: { params: { id: string } }) {
             }
         }
     }
-
-    useEffect(() => {
-        setLoading(true)
-
-        getAssignment(params.id)
-            .then((result) => {
-                if (result.success) {
-                    setAssignment(result.data)
-                } else {
-                    // @ts-ignore
-                    setError(result.error)
-                }
-            })
-            .catch((error) => {
-                console.error('Error fetching exercise set:', error)
-                setError('An unexpected error occurred')
-            })
-            .finally(() => {
-                setLoading(false)
-            })
-    }, [params.id, session?.user?.email, refreshKey])
 
     return (
         <>
@@ -121,13 +123,13 @@ export default function AssignmentPage({ params }: { params: { id: string } }) {
                             {assignment.assignmentSubmissionList.length > 0 && (
                                 <Card className="px-2">
                                     <ScrollArea className="max-h-80 overflow-y-scroll py-2">
-                                        <ul>
+                                        <Accordion type="multiple" className="w-full">
                                             {assignment.assignmentSubmissionList.map((assignmentSubmission: AssignmentSubmissionList, index: number) => (
-                                                <div key={assignmentSubmission.id}>
-                                                    <div className="w-full flex items-center justify-between px-2">
+                                                <AccordionItem key={assignmentSubmission.id} value={assignmentSubmission.id}>
+                                                    <AccordionTrigger className="w-full flex items-center justify-between px-2">
 
-                                                        <div>
-                                                            <li className="font-bold">{assignmentSubmission.student.name}</li>
+                                                        <div className="flex flex-col items-center justify-center">
+                                                            <h1 className="font-bold">{assignmentSubmission.student.name}</h1>
                                                             <p className="text-sm">
                                                                 {assignmentSubmission.student.email}
                                                             </p>
@@ -148,12 +150,38 @@ export default function AssignmentPage({ params }: { params: { id: string } }) {
                                                             <p className="text-sm">{assignmentSubmission.score * 100}%</p>
                                                         </div>
 
-                                                    </div>
-                                                    {index !== assignment.assignmentSubmissionList.length - 1 &&
-                                                        <Separator className="my-2"/>}
-                                                </div>
+                                                    </AccordionTrigger>
+
+                                                    <AccordionContent>
+                                                        {assignment.exerciseList.map((exercise, index) => {
+                                                            const exerciseAnswer = assignmentSubmission
+                                                                .exerciseAnswerList
+                                                                .find(exerciseAnswer => exerciseAnswer.exerciseId === exercise.id);
+
+                                                            return (
+                                                                <div key={exercise.id} className="p-2 border rounded mb-2">
+                                                                    <h1 className="font-bold">Zadanie {index + 1}</h1>
+                                                                    <p>{exercise.content}</p>
+
+                                                                    <br/>
+
+                                                                    {exerciseAnswer ? (
+                                                                        <div>
+                                                                            <p><strong>Ocena:</strong> {exerciseAnswer.grade}%</p>
+                                                                            <p><strong>Informacja zwrotna:</strong> {exerciseAnswer.feedback}</p>
+                                                                        </div>
+                                                                    ) : (
+                                                                        <p>Odpowiedź nie została przesłana!</p>
+                                                                    )}
+
+                                                                    {index !== assignment.exerciseList.length - 1 && <Separator className="my-2" />}
+                                                                </div>
+                                                            );
+                                                        })}
+                                                    </AccordionContent>
+                                                </AccordionItem>
                                             ))}
-                                        </ul>
+                                        </Accordion>
                                     </ScrollArea>
                                 </Card>
                             )}
