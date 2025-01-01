@@ -209,7 +209,7 @@ export default function ClassPage({ params }: { params: { id: string } }) {
                                                 {cClass.studentList.map((student: User, index: number) => (
                                                     <div key={student.email}>
                                                         <div className="w-full flex items-center justify-between">
-                                                            <div>
+                                                            <div className="ml-2">
                                                                 <li className="font-bold">{student.name}</li>
                                                                 <p className="text-sm">
                                                                     {student.email}
